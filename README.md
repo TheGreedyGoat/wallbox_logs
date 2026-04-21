@@ -11,13 +11,13 @@ Geladenes Stromvolumen (KWh)
 
 ## User Story
 
-Der IK geht in das Webinterface der Ladeäsulen und downloadet das Lade-Log. Er erhält eine CSV Datei. Er kann nun diese CSV-Datei in unser Programm einlesen. Dieses interpretiert die Daten und gibt eine entsprechende Rechnungsvorlage aus.
+Der IK geht in das Webinterface der Ladesäulen und downloadet das Lade-Log. Er erhält eine CSV Datei. Er kann nun diese CSV-Datei in unser Programm einlesen. Dieses interpretiert die Daten und gibt eine entsprechende Rechnungsvorlage aus.
 
 ## Entwicklungsphasen
 
 ### Phase 1: Log einlesen
 
-Das Programm kann eine gegebene CSV-Datei (aus Assets einlesen) und die Daten interpretieren. Ausgabe wäre dann eine "Ladekarte X hat Y Kwh geladen)"
+Das Programm kann eine gegebene CSV-Datei (aus Assets einlesen) und die Daten interpretieren. (Ausgabe wäre dann eine "Ladekarte X hat Y Kwh geladen)"
 
 ### Phase 2: Logdatei auswählen
 

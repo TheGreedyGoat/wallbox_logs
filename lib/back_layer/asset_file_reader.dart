@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:wallbox_logs/mid/data/file_data.dart';
+import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
 class AssetFileReader {
   static Future<void> loadFileData(

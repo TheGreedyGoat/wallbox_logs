@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/back/asset_file_reader.dart';
-import 'package:wallbox_logs/mid/data/file_data.dart';
-import 'package:wallbox_logs/mid/parser.dart';
+import 'package:wallbox_logs/back_layer/asset_file_reader.dart';
+import 'package:wallbox_logs/mid_layer/data/file_data.dart';
+import 'package:wallbox_logs/mid_layer/parser.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
