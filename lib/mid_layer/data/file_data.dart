@@ -77,7 +77,7 @@ class FileData {
   //=========INSTANCE METHODS=========//
 
   bool equals(FileData other) {
-    return this.fullName == other.fullName;
+    return fullName == other.fullName;
   }
 
   void delete() => _delete(this);

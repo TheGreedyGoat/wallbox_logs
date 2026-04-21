@@ -1,6 +1,7 @@
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
 class Parser {
+  //TODO: Create a place to store the extracted data
   static void parseWallBoxFile(FileData data) {
     assert(
       data.extension == 'csv',
@@ -52,6 +53,7 @@ class Parser {
     return {"id": id, "level": level};
   }
 
+  //TODO: more in depth validation of Wallbox file
   static bool checkWallBoxDataList(List<String> dataList) {
     //   txstart2: id 0xffffffffffffffff, socket 1,  2026-01-24 07:40:58 2593.341kWh 050FE8E3210000 3 2 N
     // start/stop: id [idhex],            sockedNum, Datum               Stand       ???            ???
