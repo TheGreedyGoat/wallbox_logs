@@ -1,6 +1,5 @@
 # Device, ACE0398688
 # Generated, 14.04.2026 14:19:39
-
 txstart2: id 0xffffffffffffffff, socket 1, 2026-01-24 07:40:58 2593.341kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-01-24 07:40:58 2593.341 N
 mv: socket 1, 2026-01-24 07:41:00 2593.341 N

@@ -29,6 +29,7 @@ formatter:
 analyzer:
   errors:
     avoid_print: ignore
+    unnecessary_this: ignore
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
