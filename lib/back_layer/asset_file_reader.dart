@@ -11,7 +11,7 @@ class AssetFileReader {
       String fullFileName = path.split('/').last;
       callback(FileData.fromFullName(fullName: fullFileName, content: content));
     } catch (e) {
-      print("Error on CSV File $path: $e");
+      print("Error on CSV File '$path':\n==============================\n $e");
     }
   }
 }

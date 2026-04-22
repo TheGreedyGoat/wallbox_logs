@@ -1,13 +1,33 @@
+// ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
+
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
 class Parser {
-  //TODO: Create a place to store the extracted data
   static void parseWallBoxFile(FileData data) {
     assert(
       data.extension == 'csv',
       '${data.fullName} is not of file type csv!',
     );
-    var dataList = data.content
+    var dataList = getDataListFromWallboxFile(data);
+
+    for (int start = 0; start + 1 < dataList.length; start += 2) {
+      int stop = start + 1;
+      var extractedData = parseData(
+        dataList[start].trim(),
+        dataList[stop].trim(),
+      );
+      print('|| VALIDATION |||: ' + extractedData['validation']);
+      assert(
+        extractedData['validation'] == "ok",
+        '\nValidation failed on charging process $start:\n' +
+            ' Parsing result:\n' +
+            extractedData.toString(),
+      );
+    }
+  }
+
+  static List<String> getDataListFromWallboxFile(FileData data) {
+    return data.content
         .split('\n')
         .where(
           (element) =>
@@ -17,52 +37,88 @@ class Parser {
                   element.isEmpty),
         )
         .toList();
-    if (!checkWallBoxDataList(dataList)) {
-      return;
-    }
-    for (int i = 0; i + 1 < dataList.length; i += 2) {
-      var res = parseData(dataList[i], dataList[i + 1]);
-
-      print('Tankkarte ${res['id']} hat ${res['usage']}kWh getankt.');
-    }
   }
 
   static Map<String, dynamic> parseData(String start, String stop) {
+    String validation = 'ok';
+    int? id;
+    double? usage;
+    DateTime? startTime, stopTime;
+
     var startMap = parseLine(start);
     var stopMap = parseLine(stop);
+    //validate order of start/ stop
+    if (startMap['type'] != 'txstart2' || stopMap['type'] != 'txstop2') {
+      validation =
+          '\nleading tags invalid: \nstart: {${startMap['type']}\nend: ${stopMap['type']}}';
+    }
+    // validate power levels
+    if (validation == 'ok') {
+      double? startLevel = double.tryParse(startMap['level'] ?? 'r');
+      double? stopLevel = double.tryParse(stopMap['level'] ?? 'r');
+      id = int.parse(startMap['id']!);
 
-    double? startLevel = double.tryParse(startMap['level'] ?? 'r');
-    double? stopLevel = double.tryParse(stopMap['level'] ?? 'r');
-    String id = int.parse(startMap['id']!).toString();
+      bool validLevels =
+          startLevel != null && stopLevel != null && startLevel <= stopLevel;
+      usage = (validLevels) ? stopLevel - startLevel : double.nan;
+      validation = validLevels
+          ? 'ok'
+          : 'Invalid Power usage levels:' +
+                ' \nstart:$startLevel' +
+                ' \nstop:$stopLevel';
+    }
+    // validate timestamps
+    if (validation == 'ok') {
+      String? startStamp = startMap['timeStamp'];
+      String? stopStamp = stopMap['timeStamp'];
+      if (startStamp != null && stopStamp != null) {
+        startTime = DateTime.tryParse(startStamp);
+        stopTime = DateTime.tryParse(stopStamp);
+      }
+      if (startTime == null ||
+          stopTime == null ||
+          stopTime.millisecondsSinceEpoch < startTime.millisecondsSinceEpoch) {
+        validation =
+            'Dates invalid: either null or stopTime <= startTime:\n' +
+            '____________________________________________________\n' +
+            'start: $startTime (from stamp $startStamp)\n' +
+            'stop: $stopTime (from stamp $stopStamp)';
+      }
+    }
 
-    double usage = (startLevel != null && stopLevel != null)
-        ? stopLevel - startLevel
-        : -1;
-
-    return {'id': id, 'usage': usage};
+    return {
+      'validation': validation,
+      'id': id,
+      'usage': usage,
+      'startTime': startTime,
+      'stopTime': stopTime,
+    };
   }
 
   static Map<String, String> parseLine(String line) {
+    final String type;
     final String id;
+    final String timeStamp;
+
     String level;
-    var split = line.split(',');
-    id = split[0].split(' ').last;
-    level = split[2].split(' ')[3];
-    level = level.replaceAll('kWh', '');
 
-    return {"id": id, "level": level};
-  }
+    List<String> splitLine = line.split(',');
 
-  //TODO: more in depth validation of Wallbox file
-  static bool checkWallBoxDataList(List<String> dataList) {
-    //   txstart2: id 0xffffffffffffffff, socket 1,  2026-01-24 07:40:58 2593.341kWh 050FE8E3210000 3 2 N
-    // start/stop: id [idhex],            sockedNum, Datum               Stand       ???            ???
-    for (int i = 0; i < dataList.length; i++) {
-      String startString = i % 2 == 0 ? 'txstart2:' : 'txstop2:';
-      if (!dataList[i].startsWith(startString)) {
-        return false;
-      }
-    }
-    return true;
+    List<String> head = splitLine[0].split(' ');
+    List<String> details = splitLine.last.trim().split(' ');
+
+    type = head[0].replaceAll(':', '');
+
+    id = head.last;
+    level = details[2].replaceAll('kWh', '');
+
+    timeStamp = '${details[0]} ${details[1]}';
+
+    return {
+      "type": type,
+      "id": id,
+      'timeStamp': timeStamp,
+      "level": level,
+    };
   }
 }
