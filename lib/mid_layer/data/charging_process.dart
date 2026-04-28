@@ -1,5 +1,3 @@
-import 'package:wallbox_logs/general/utility.dart';
-
 class ChargingProcess {
   int id;
   final ChargingEvent start;
@@ -15,7 +13,7 @@ class ChargingProcess {
   double? get powerUsageWH =>
       isFinished ? stop!.powerLevelWh - start.powerLevelWh : null;
 
-  ChargingProcess.finished({
+  ChargingProcess.complete({
     required this.id,
     required this.start,
     required this.stop,
@@ -41,7 +39,9 @@ class ChargingProcess {
       "ERROR while creating ChargingProcess:\n ids dont match up:\n* Process: $id\n* start: ${start.id},\n* Stop:${stop!.id}",
     );
   }
-  ChargingProcess.unfinished({required this.id, required this.start});
+  ChargingProcess.unfinished({required this.id, required this.start}) {
+    stop = null;
+  }
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -53,6 +53,14 @@ class ChargingProcess {
   String toString() => toJson().toString();
 }
 
+//  ####### #     # ####### #     # #######
+//  #       #     # #       ##    #    #
+//  #       #     # #       # #   #    #
+//  #####   #     # #####   #  #  #    #
+//  #        #   #  #       #   # #    #
+//  #         # #   #       #    ##    #
+//  #######    #    ####### #     #    #
+
 enum ChargingEventType { start, stop, invalid }
 
 /// whenever a charging process was started or stopped
@@ -60,21 +68,20 @@ class ChargingEvent {
   late int id;
   late final ChargingEventType type;
   final DateTime timeStamp;
-  int get timeSeconds => (timeStamp.millisecondsSinceEpoch / 1000).floor();
   late final double powerLevelKiloWH;
+  int get timeSeconds => (timeStamp.millisecondsSinceEpoch / 1000).floor();
 
   double get powerLevelWh => powerLevelKiloWH * 1000;
 
   ChargingEvent({
     required this.id,
-    required String tag,
+    required this.type,
     required this.timeStamp,
     required powerLevelInKiloWattHours,
   }) {
-    this.type = fromString(tag);
-    this.powerLevelKiloWH = Utility.roundDouble(powerLevelInKiloWattHours, 3);
+    this.powerLevelKiloWH = powerLevelInKiloWattHours;
   }
-  static ChargingEventType fromString(String tag) {
+  static ChargingEventType typeFromString(String tag) {
     switch (tag) {
       case 'txstart2:':
         return ChargingEventType.start;

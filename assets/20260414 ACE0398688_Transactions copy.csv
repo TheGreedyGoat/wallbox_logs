@@ -1,6 +1,6 @@
 # Device, ACE0398688
 # Generated, 14.04.2026 14:19:39
-txstart2: id 0xffffffffffffffff, socket 1, 2026-01-24 07:40:58 2593.341kWh 050FE8E3210000 3 2 N
+txstart2: id 0x000000, socket 1, 2026-01-24 07:40:58 2593.341kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-01-24 07:40:58 2593.341 N
 mv: socket 1, 2026-01-24 07:41:00 2593.341 N
 mv: socket 1, 2026-01-24 07:55:59 2596.066 N
@@ -32,7 +32,7 @@ mv: socket 1, 2026-01-24 14:10:59 2620.683 N
 mv: socket 1, 2026-01-24 14:25:59 2620.683 N
 mv: socket 1, 2026-01-24 14:40:59 2620.683 N
 mv: socket 1, 2026-01-24 14:43:49 2620.683 N
-txstop2: id 0xffffffffffffffff, socket 1, 2026-01-24 14:43:49 2620.683kWh 050FE8E3210000 6 5 N
+txstop2: id 0x000000, socket 1, 2026-01-24 14:43:49 2620.683kWh 050FE8E3210000 6 5 N
 txstart2: id 0xffffffffffffffff, socket 1, 2026-01-26 08:03:34 2620.683kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-01-26 08:03:34 2620.683 N
 mv: socket 1, 2026-01-26 08:03:36 2620.683 N
@@ -449,7 +449,7 @@ mv: socket 1, 2026-02-07 12:38:54 2947.588 N
 mv: socket 1, 2026-02-07 12:53:54 2947.588 N
 mv: socket 1, 2026-02-07 12:59:05 2947.588 N
 txstop2: id 0xffffffffffffffff, socket 1, 2026-02-07 12:59:05 2947.588kWh 050FE8E3210000 6 5 N
-txstart2: id 0xffffffffffffffff, socket 1, 2026-02-09 07:31:19 2947.588kWh 050FE8E3210000 3 2 N
+txstart2: id 0x1111111, socket 1, 2026-02-09 07:31:19 2947.588kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-02-09 07:31:19 2947.588 N
 mv: socket 1, 2026-02-09 07:31:21 2947.588 N
 mv: socket 1, 2026-02-09 07:46:20 2949.382 N
@@ -494,7 +494,7 @@ mv: socket 1, 2026-02-09 17:16:21 2970.938 N
 mv: socket 1, 2026-02-09 17:31:20 2970.938 N
 mv: socket 1, 2026-02-09 17:46:20 2970.938 N
 mv: socket 1, 2026-02-09 17:47:00 2970.938 N
-txstop2: id 0xffffffffffffffff, socket 1, 2026-02-09 17:47:00 2970.938kWh 050FE8E3210000 6 5 N
+txstop2: id 0x1111111, socket 1, 2026-02-09 17:47:00 2970.938kWh 050FE8E3210000 6 5 N
 txstart2: id 0xffffffffffffffff, socket 1, 2026-02-10 07:52:32 2970.938kWh 0421102A577481 3 2 N
 mv: socket 1, 2026-02-10 07:52:32 2970.938 N
 mv: socket 1, 2026-02-10 07:52:34 2970.938 N
@@ -541,7 +541,7 @@ mv: socket 1, 2026-02-10 17:52:33 2996.661 N
 mv: socket 1, 2026-02-10 18:07:33 2996.661 N
 mv: socket 1, 2026-02-10 18:19:22 2996.661 N
 txstop2: id 0xffffffffffffffff, socket 1, 2026-02-10 18:19:22 2996.661kWh 0421102A577481 6 5 N
-txstart2: id 0xffffffffffffffff, socket 1, 2026-02-11 07:21:56 2996.661kWh 050FE8E3210000 3 2 N
+txstart2: id 0x1111111, socket 1, 2026-02-11 07:21:56 2996.661kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-02-11 07:21:56 2996.661 N
 mv: socket 1, 2026-02-11 07:21:58 2996.661 N
 mv: socket 1, 2026-02-11 07:36:57 2996.801 N
@@ -585,7 +585,7 @@ mv: socket 1, 2026-02-11 16:51:57 2996.801 N
 mv: socket 1, 2026-02-11 17:06:57 2996.801 N
 mv: socket 1, 2026-02-11 17:21:57 2996.801 N
 mv: socket 1, 2026-02-11 17:33:08 2996.801 N
-txstop2: id 0xffffffffffffffff, socket 1, 2026-02-11 17:33:08 2996.801kWh 050FE8E3210000 6 5 N
+txstop2: id 0x1111111, socket 1, 2026-02-11 17:33:08 2996.801kWh 050FE8E3210000 6 5 N
 txstart2: id 0xffffffffffffffff, socket 1, 2026-02-12 07:35:33 2996.801kWh 050FE8E3210000 3 2 N
 mv: socket 1, 2026-02-12 07:35:33 2996.801 N
 mv: socket 1, 2026-02-12 07:35:34 2996.801 N

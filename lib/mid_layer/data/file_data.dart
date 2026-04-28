@@ -1,5 +1,5 @@
 class FileData {
-  static Map<String, List<FileData>> savedFiles = {};
+  static Map<String, List<FileData>> savedFilesByExtension = {};
   String filename;
   String extension;
   String content;
@@ -40,11 +40,13 @@ class FileData {
   }
   //=========STATIC METHODS=========//
   static void _saveFile(FileData fileData) {
-    if (savedFiles.containsKey(fileData.extension) &&
-        savedFiles[fileData.extension] != null) {
-      savedFiles[fileData.extension]!.add(fileData);
+    if (savedFilesByExtension.containsKey(fileData.extension) &&
+        savedFilesByExtension[fileData.extension] != null) {
+      savedFilesByExtension[fileData.extension]!.add(fileData);
     } else {
-      savedFiles[fileData.extension] = List.of([fileData], growable: true);
+      savedFilesByExtension[fileData.extension] = List.of([
+        fileData,
+      ], growable: true);
     }
   }
 
@@ -53,10 +55,11 @@ class FileData {
   }
 
   static FileData? tryFind(String filename, String extension) {
-    if (!savedFiles.containsKey(extension) || savedFiles[extension] == null) {
+    if (!savedFilesByExtension.containsKey(extension) ||
+        savedFilesByExtension[extension] == null) {
       return null;
     }
-    for (FileData file in savedFiles[extension]!) {
+    for (FileData file in savedFilesByExtension[extension]!) {
       if (file.filename == filename) {
         return file;
       }
@@ -65,11 +68,11 @@ class FileData {
   }
 
   static List<FileData>? tryGetFilesOfType(String extension) {
-    return savedFiles[extension];
+    return savedFilesByExtension[extension];
   }
 
   static void _delete(FileData file) {
-    savedFiles[file.extension]?.removeWhere(
+    savedFilesByExtension[file.extension]?.removeWhere(
       (element) => element.equals(file),
     );
   }
