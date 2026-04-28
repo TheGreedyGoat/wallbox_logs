@@ -10,14 +10,7 @@ import 'package:wallbox_logs/mid_layer/data/user_profile.dart';
 /// 3 => date;
 /// 4 => time;
 /// 5 => power level
-enum _Value {
-  tag,
-  idValue,
-  socketnum,
-  date,
-  time,
-  powerLevel,
-}
+enum _Value { tag, idValue, socketnum, date, time, powerLevel, id2Value }
 
 class Parser {
   static void parseWallBoxFile(FileData data) {
@@ -26,7 +19,7 @@ class Parser {
       '${data.fullName} is not of file type csv!',
     );
     var dataList = getDataListFromWallboxFile(data);
-    _parseList2(dataList);
+    _parseList(dataList);
   }
 
   static List<String> getDataListFromWallboxFile(FileData data) {
@@ -36,15 +29,15 @@ class Parser {
         .toList();
   }
 
-  static void _parseList2(List<String> dataList) {
-    List<ChargingProcess> processes = List.empty(growable: true);
+  static void _parseList(List<String> dataList) {
     int i = 0;
     while (i < dataList.length) {
-      var currentData = _parseLine2(dataList[i]);
+      var currentData = _parseLine(dataList[i]);
       final ChargingEventType lineType = currentData[_Value.tag];
       //! For now We ignore the case if the file starts within a process
       ChargingEvent start = ChargingEvent(
         id: currentData[_Value.idValue],
+        id2: currentData[_Value.id2Value],
         type: currentData[_Value.tag],
         timeStamp: currentData[_Value.date],
         powerLevelInKiloWattHours: currentData[_Value.powerLevel],
@@ -52,26 +45,26 @@ class Parser {
       if (lineType == ChargingEventType.start && i + 1 < dataList.length) {
         //? build this and the next one
 
-        var nextData = _parseLine2(dataList[i + 1]);
+        var nextData = _parseLine(dataList[i + 1]);
         ChargingEvent stop = ChargingEvent(
           id: nextData[_Value.idValue],
+          id2: nextData[_Value.id2Value],
           type: nextData[_Value.tag],
           timeStamp: nextData[_Value.date],
           powerLevelInKiloWattHours: nextData[_Value.powerLevel],
         );
 
-        UserProfile.insertProcess(
-          ChargingProcess.complete(id: start.id, start: start, stop: stop),
+        UserData.insertProcess(
+          ChargingProcess.completed(start: start, stop: stop),
         );
         i += 2;
       } else {
-        processes.add(ChargingProcess.unfinished(id: start.id, start: start));
         i++;
       }
     }
   }
 
-  static Map<_Value, dynamic> _parseLine2(String line) {
+  static Map<_Value, dynamic> _parseLine(String line) {
     line = line
         .replaceFirst(' id', '')
         .replaceFirst(' socket', '')
@@ -87,6 +80,7 @@ class Parser {
       _Value.idValue: int.tryParse(filteredList[1]),
       _Value.date: DateTime.parse('${filteredList[3]} ${filteredList[4]}'),
       _Value.powerLevel: double.tryParse(filteredList[5].replaceAll('kWh', '')),
+      _Value.id2Value: filteredList[6],
     };
 
     var status = _validateParsedMap(parsedData);
@@ -120,131 +114,5 @@ class Parser {
     }
 
     return 'ok';
-  }
-
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-  ///
-
-  // static Map<String, dynamic> parseData(String start, String stop) {
-  //   String validation = 'ok';
-  //   int? id;
-  //   DateTime? startTime, stopTime;
-  //   double? startLevel;
-  //   double? stopLevel;
-
-  //   var startMap = parseLine(start);
-  //   var stopMap = parseLine(stop);
-  //   //validate order of start/ stop
-  //   if (startMap['type'] != 'txstart2' || stopMap['type'] != 'txstop2') {
-  //     validation =
-  //         '\nleading tags invalid: \nstart: {${startMap['type']}\nend: ${stopMap['type']}}';
-  //   }
-
-  //   // validate power levels
-  //   if (validation == 'ok') {
-  //     startLevel = double.tryParse(startMap['level'] ?? 'r');
-  //     stopLevel = double.tryParse(stopMap['level'] ?? 'r');
-
-  //     bool validLevels =
-  //         startLevel != null && stopLevel != null && startLevel <= stopLevel;
-
-  //     validation = validLevels
-  //         ? 'ok'
-  //         : 'Invalid Power usage levels:' +
-  //               ' \nstart:$startLevel' +
-  //               ' \nstop:$stopLevel';
-  //   }
-  //   // validate id
-  //   if (validation == 'ok') {
-  //     String? startID = startMap['id'];
-  //     String? stopID = stopMap['id'];
-
-  //     if (startID == stopID) {
-  //       id = int.parse(startMap['id']!);
-  //     } else {
-  //       validation = "Start id ($startID) and Stop id($stopID) don't match";
-  //     }
-  //   }
-  //   // validate timestamps
-  //   if (validation == 'ok') {
-  //     String? startStamp = startMap['timeStamp'];
-  //     String? stopStamp = stopMap['timeStamp'];
-  //     if (startStamp != null && stopStamp != null) {
-  //       startTime = DateTime.tryParse(startStamp);
-  //       stopTime = DateTime.tryParse(stopStamp);
-  //     }
-  //     if (startTime == null ||
-  //         stopTime == null ||
-  //         stopTime.millisecondsSinceEpoch < startTime.millisecondsSinceEpoch) {
-  //       validation =
-  //           'Dates invalid: either null or stopTime <= startTime:\n' +
-  //           '____________________________________________________\n' +
-  //           'start: $startTime (from stamp $startStamp)\n' +
-  //           'stop: $stopTime (from stamp $stopStamp)';
-  //     }
-  //   }
-
-  //   return {
-  //     'validation': validation,
-  //     'value': validation == 'ok'
-  //         ? ChargingProcess.finished(
-  //             id: id!,
-  //             start: ChargingEvent(
-  //               id: id,
-  //               tag: startMap['type']!,
-  //               timeStamp: startTime!,
-  //               powerLevelInKiloWattHours: startLevel!,
-  //             ),
-  //             stop: ChargingEvent(
-  //               id: id,
-  //               tag: stopMap['type']!,
-  //               timeStamp: stopTime!,
-  //               powerLevelInKiloWattHours: stopLevel!,
-  //             ),
-  //           )
-  //         : null,
-  //   };
-  // }
-
-  // ChargingProcess
-  static Map<String, String> parseLine(String line) {
-    final String type;
-    final String id;
-    final String timeStamp;
-
-    String level;
-
-    List<String> splitLine = line.split(',');
-
-    List<String> head = splitLine[0].split(' ');
-    List<String> details = splitLine.last.trim().split(' ');
-
-    type = head[0].replaceAll(':', '');
-
-    id = head.last;
-    level = details[2].replaceAll('kWh', '');
-
-    timeStamp = '${details[0]} ${details[1]}';
-
-    return {
-      "type": type,
-      "id": id,
-      'timeStamp': timeStamp,
-      "level": level,
-    };
   }
 }

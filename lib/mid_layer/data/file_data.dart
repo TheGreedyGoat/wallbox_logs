@@ -1,3 +1,4 @@
+/// As kind of an archive for the wallbox files
 class FileData {
   static Map<String, List<FileData>> savedFilesByExtension = {};
   String filename;

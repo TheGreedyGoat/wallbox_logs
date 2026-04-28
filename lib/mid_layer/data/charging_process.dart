@@ -1,20 +1,27 @@
+///
+/// In this class we keep wevery time somebody charged their vehicle at a wallbox
+/// We keep data about the begin and end oft the charging process and can recieve how much power was used
+///
+/// A Charging process can be unfinished, if a log has a starting line and then ends without a stop line.
+///
+///
 class ChargingProcess {
-  int id;
   final ChargingEvent start;
   late ChargingEvent? stop;
 
+  int get id => start.id;
+  String get id2 => start.id2;
+  DateTime get startDate => start.timeStamp;
+  DateTime? get stopDate => stop?.timeStamp;
   bool get isFinished => stop != null;
 
   int? get durationSeconds =>
       isFinished ? stop!.timeSeconds - start.timeSeconds : null;
 
-  double? get powerUsageKiloWh =>
-      isFinished ? stop!.powerLevelKiloWH - start.powerLevelKiloWH : null;
-  double? get powerUsageWH =>
-      isFinished ? stop!.powerLevelWh - start.powerLevelWh : null;
+  double get powerUsageKiloWh =>
+      isFinished ? stop!.powerLevelKiloWH - start.powerLevelKiloWH : 0.0;
 
-  ChargingProcess.complete({
-    required this.id,
+  ChargingProcess.completed({
     required this.start,
     required this.stop,
   }) {
@@ -38,8 +45,13 @@ class ChargingProcess {
       start.id == id && stop!.id == id,
       "ERROR while creating ChargingProcess:\n ids dont match up:\n* Process: $id\n* start: ${start.id},\n* Stop:${stop!.id}",
     );
+    assert(
+      start.id2 == id2 && stop!.id2 == id2,
+      "ERROR while creating ChargingProcess:\n id2s dont match up:\n* Process: $id\n* start: ${start.id},\n* Stop:${stop!.id}",
+    );
   }
-  ChargingProcess.unfinished({required this.id, required this.start}) {
+
+  ChargingProcess.unfinished({required this.start}) {
     stop = null;
   }
 
@@ -66,6 +78,7 @@ enum ChargingEventType { start, stop, invalid }
 /// whenever a charging process was started or stopped
 class ChargingEvent {
   late int id;
+  late String id2;
   late final ChargingEventType type;
   final DateTime timeStamp;
   late final double powerLevelKiloWH;
@@ -75,6 +88,7 @@ class ChargingEvent {
 
   ChargingEvent({
     required this.id,
+    required this.id2,
     required this.type,
     required this.timeStamp,
     required powerLevelInKiloWattHours,
