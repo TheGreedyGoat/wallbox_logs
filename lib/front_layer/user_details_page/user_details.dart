@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/mid_layer/data/user_profile.dart';
+import 'package:wallbox_logs/mid_layer/data/user_data.dart';
 import 'package:wallbox_logs/utility.dart';
 
 class UserDetails extends StatelessWidget {
@@ -20,6 +20,12 @@ class UserDetails extends StatelessWidget {
           ),
           for (var process in profile.completedChargingProcesses)
             TableRow(
+              decoration: BoxDecoration(
+                color:
+                    profile.completedChargingProcesses.indexOf(process) % 2 == 0
+                    ? null
+                    : Colors.grey[200],
+              ),
               children: [
                 Text(
                   '${Utility.niceDateString(process.startDate)}, ${Utility.niceTimeString(process.startDate)}',

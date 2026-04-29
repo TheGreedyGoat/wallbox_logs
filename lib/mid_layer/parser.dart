@@ -2,69 +2,86 @@
 
 import 'package:wallbox_logs/mid_layer/data/charging_process.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
-import 'package:wallbox_logs/mid_layer/data/user_profile.dart';
 
-/// 0 => tag;
-/// 1 => id;
-/// 2 => socketnum;
-/// 3 => date;
-/// 4 => time;
-/// 5 => power level
-enum _Value { tag, idValue, socketnum, date, time, powerLevel, id2Value }
+enum ParseValue { tag, idValue, date, time, powerLevel, id2Value }
 
 class Parser {
-  static void parseWallBoxFile(FileData data) {
-    assert(
-      data.extension == 'csv',
-      '${data.fullName} is not of file type csv!',
-    );
-    var dataList = getDataListFromWallboxFile(data);
-    _parseList(dataList);
-  }
-
-  static List<String> getDataListFromWallboxFile(FileData data) {
-    return data.content
-        .split('\n')
-        .where((element) => element.startsWith('tx'))
-        .toList();
-  }
-
-  static void _parseList(List<String> dataList) {
-    int i = 0;
-    while (i < dataList.length) {
-      var currentData = _parseLine(dataList[i]);
-      final ChargingEventType lineType = currentData[_Value.tag];
-      //! For now We ignore the case if the file starts within a process
-      ChargingEvent start = ChargingEvent(
-        id: currentData[_Value.idValue],
-        id2: currentData[_Value.id2Value],
-        type: currentData[_Value.tag],
-        timeStamp: currentData[_Value.date],
-        powerLevelInKiloWattHours: currentData[_Value.powerLevel],
+  static void parseWallBoxFile2(FileData data) {
+    const String startTag = 'txstart2';
+    const String stopTag = 'txstop2';
+    const String mvTag = 'mv';
+    try {
+      assert(
+        data.extension == 'csv',
+        '${data.fullName} is not of file type csv!',
       );
-      if (lineType == ChargingEventType.start && i + 1 < dataList.length) {
-        //? build this and the next one
+      List<String> dataList = data.content.split('\n').where(
+        (element) {
+          return element.isNotEmpty &&
+              (element.startsWith('mv') || element.startsWith('tx'));
+        },
+      ).toList();
+      //? Find index of first starting tag
 
-        var nextData = _parseLine(dataList[i + 1]);
-        ChargingEvent stop = ChargingEvent(
-          id: nextData[_Value.idValue],
-          id2: nextData[_Value.id2Value],
-          type: nextData[_Value.tag],
-          timeStamp: nextData[_Value.date],
-          powerLevelInKiloWattHours: nextData[_Value.powerLevel],
-        );
-
-        UserData.insertProcess(
-          ChargingProcess.completed(start: start, stop: stop),
-        );
-        i += 2;
-      } else {
-        i++;
+      int startIndex = 0;
+      while (startIndex < dataList.length &&
+          _getTag(dataList[startIndex]) != startTag) {
+        print('startIndex');
+        startIndex++;
       }
+
+      //? Find index of last stop tag
+      int stopIndex = dataList.length - 1;
+      for (
+        ;
+        stopIndex >= 0 && _getTag(dataList[stopIndex]) != stopTag;
+        stopIndex--
+      ) {}
+
+      //? core
+      for (int i = startIndex; i <= stopIndex; i++) {
+        String tag = _getTag(dataList[i]);
+        assert(
+          tag == startTag,
+          'expected to finde tag $startTag, but found $tag at line $i.',
+        );
+        int j = i + 1;
+        for (; j < stopIndex; j++) {
+          String tagJ = _getTag(dataList[j]);
+          assert(
+            tagJ != startTag,
+            'Invalid order of tags: expected tags $mvTag or $stopTag, but found $startTag at line $j',
+          );
+          if (tagJ == stopTag) {
+            //? parse start and stop
+            parseFullProcess(dataList[i], dataList[j]);
+            break;
+          }
+        }
+
+        i = j;
+      }
+
+      //TODO resolve loose starts/ stops, as soon as we have access to multiple files
+      if (startIndex != 0) {}
+      if (stopIndex != dataList.length - 1) {}
+    } on Exception catch (e) {
+      print("Error on Wallbox file ${data.fullName}: \n$e");
     }
   }
 
-  static Map<_Value, dynamic> _parseLine(String line) {
+  static void parseFullProcess(String start, String stop) {
+    var startParsed = _parseLine(start);
+    var stopParsed = _parseLine(stop);
+    ChargingProcess.completed(
+      start: ChargingEvent.fromMap(startParsed),
+      stop: ChargingEvent.fromMap(stopParsed),
+    );
+  }
+
+  static String _getTag(String line) => line.split(':')[0];
+
+  static Map<ParseValue, dynamic> _parseLine(String line) {
     line = line
         .replaceFirst(' id', '')
         .replaceFirst(' socket', '')
@@ -72,15 +89,17 @@ class Parser {
         .replaceAll(',,', ',');
 
     var filteredList = line.split(',');
-    var valueList = _Value.values;
+    var valueList = ParseValue.values;
     assert(filteredList.length >= valueList.length);
 
     var parsedData = {
-      _Value.tag: ChargingEvent.typeFromString(filteredList[0]),
-      _Value.idValue: int.tryParse(filteredList[1]),
-      _Value.date: DateTime.parse('${filteredList[3]} ${filteredList[4]}'),
-      _Value.powerLevel: double.tryParse(filteredList[5].replaceAll('kWh', '')),
-      _Value.id2Value: filteredList[6],
+      ParseValue.tag: ChargingEvent.typeFromString(filteredList[0]),
+      ParseValue.idValue: int.tryParse(filteredList[1]),
+      ParseValue.date: DateTime.parse('${filteredList[3]} ${filteredList[4]}'),
+      ParseValue.powerLevel: double.tryParse(
+        filteredList[5].replaceAll('kWh', ''),
+      ),
+      ParseValue.id2Value: filteredList[6],
     };
 
     var status = _validateParsedMap(parsedData);
@@ -92,23 +111,23 @@ class Parser {
     return parsedData;
   }
 
-  static String _validateParsedMap(Map<_Value, dynamic> parsed) {
-    var tag = parsed[_Value.tag]!;
+  static String _validateParsedMap(Map<ParseValue, dynamic> parsed) {
+    var tag = parsed[ParseValue.tag]!;
     if (tag == ChargingEventType.invalid) {
       return 'Line has invalid tag!';
     }
 
-    var id = parsed[_Value.idValue];
+    var id = parsed[ParseValue.idValue];
     if (id == null) {
       return 'No user ID found!';
     }
 
-    var date = parsed[_Value.date];
+    var date = parsed[ParseValue.date];
     if (date == null) {
       return 'No date found!';
     }
 
-    var powerLevel = parsed[_Value.powerLevel];
+    var powerLevel = parsed[ParseValue.powerLevel];
     if (powerLevel == null) {
       return 'No Power Level found!';
     }

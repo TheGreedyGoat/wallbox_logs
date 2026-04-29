@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/front_layer/user_details_page/user_details.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
-import 'package:wallbox_logs/mid_layer/data/user_profile.dart';
+import 'package:wallbox_logs/mid_layer/data/user_data.dart';
 
 class UserOverview extends StatefulWidget {
   const UserOverview({super.key});

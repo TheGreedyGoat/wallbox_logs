@@ -32,9 +32,6 @@ class UserData {
 
   /// Inserts the process into the processes list, so it is sorted by the starting time
   static void insertProcess(ChargingProcess process) {
-    if (!process.isFinished) {
-      return;
-    }
     final UserData profile =
         tryGetFromID(process.id2) ??
         UserData._create(id: process.id, id2: process.id2);

@@ -8,7 +8,7 @@ void main() async {
   await AssetFileReader.loadFileData(
     'assets/20260414 ACE0398688_Transactions copy.csv',
     (data) {
-      Parser.parseWallBoxFile(data);
+      Parser.parseWallBoxFile2(data);
     },
   );
   // await AssetFileReader.loadFileData(

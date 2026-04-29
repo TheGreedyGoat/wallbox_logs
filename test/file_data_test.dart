@@ -13,5 +13,5 @@ void main() {
 }
 
 void callback(FileData data) {
-  Parser.parseWallBoxFile(data);
+  Parser.parseWallBoxFile2(data);
 }
