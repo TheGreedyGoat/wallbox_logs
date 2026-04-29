@@ -11,12 +11,6 @@ void main() async {
       Parser.parseWallBoxFile2(data);
     },
   );
-  // await AssetFileReader.loadFileData(
-  //   'assets/20260414 ACE0398688_Transactions.csv',
-  //   (data) {
-  //     Parser.parseWallBoxFile(data);
-  //   },
-  // );
 
   runApp(
     MaterialApp(

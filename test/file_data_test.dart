@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/back_layer/asset_file_reader.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
 
-void main() {
+import 'wallbox_log_generator.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  AssetFileReader.loadFileData(
-    'assets/20260414 ACE0398688_Transactions copy.csv',
-    callback,
+  List<FileData> files = WallboxLogGenerator.generateFiles(
+    startDate: DateTime.now(),
+    initialPowerLevel: 2500,
+    maxDuration: Duration(days: 5),
+    numFiles: 3,
   );
+
+  for (var file in files) {
+    await saveTestFile(file);
+  }
 }
 
 void callback(FileData data) {

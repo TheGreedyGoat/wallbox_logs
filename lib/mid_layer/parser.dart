@@ -3,7 +3,7 @@
 import 'package:wallbox_logs/mid_layer/data/charging_process.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
-enum ParseValue { tag, idValue, date, time, powerLevel, id2Value }
+enum ParseValue { tag, idValue, date, powerLevel, id2Value }
 
 class Parser {
   static void parseWallBoxFile2(FileData data) {
