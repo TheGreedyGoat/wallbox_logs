@@ -42,9 +42,6 @@ class _UserOverviewState extends State<UserOverview> {
     return ExpansionTile(
       initiallyExpanded: expand,
 
-      collapsedBackgroundColor: Colors.grey[300],
-      backgroundColor: Colors.grey[300],
-
       title: Text(
         'Karten-ID: ${profile.id2}',
       ),

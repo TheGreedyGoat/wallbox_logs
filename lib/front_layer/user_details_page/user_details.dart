@@ -24,7 +24,7 @@ class UserDetails extends StatelessWidget {
                 color:
                     profile.completedChargingProcesses.indexOf(process) % 2 == 0
                     ? null
-                    : Colors.grey[200],
+                    : Colors.blue[200],
               ),
               children: [
                 Text(

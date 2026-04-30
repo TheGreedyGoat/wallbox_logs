@@ -35,7 +35,7 @@ class ChargingProcess {
     );
     assert(
       start.id2 == id2 && stop.id2 == id2,
-      "ERROR while creating ChargingProcess:\n id2s dont match up:\n* Process: $id\n* start: ${start.id},\n* Stop:${stop.id}",
+      "ERROR while creating ChargingProcess:\n id2s dont match up:\n* Process: $id2\n* start: ${start.id2},\n* Stop:${stop.id2}",
     );
     UserData.insertProcess(this);
   }

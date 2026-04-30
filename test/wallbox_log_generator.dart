@@ -134,7 +134,7 @@ class WallboxLogGenerator {
   }
 
   static String mvLine(DateTime date, double powerLevel) {
-    return 'mv: socket 1, ${date.toIso8601String()} $powerLevel N\n';
+    return 'mv: socket 1, ${date.toString()} $powerLevel N\n';
   }
 
   static String stopLine(DateTime date, double powerLevel, String id) {
@@ -142,16 +142,32 @@ class WallboxLogGenerator {
   }
 }
 
-Future<void> saveTestFile(FileData fileData) async {
+Future<Directory> getGenerationDirectory() async {
   final projectDir = Directory.current.path;
 
-  final Directory testDir = Directory(
+  final Directory genDir = Directory(
     path.join(projectDir, 'test', 'generated_files'),
   );
-  if (!await testDir.exists()) {
-    await testDir.create();
-  }
 
+  if (!await genDir.exists()) {
+    await genDir.create();
+  }
+  return genDir;
+}
+
+Future<void> saveTestFile(FileData fileData) async {
+  var testDir = await getGenerationDirectory();
   final file = File(path.join(testDir.path, fileData.fullName));
   file.writeAsString(fileData.content);
+}
+
+Future<void> saveMultiFiles(List<FileData> files) async {
+  for (var file in files) {
+    await saveTestFile(file);
+  }
+}
+
+Future<void> clearFiles() async {
+  final dir = await getGenerationDirectory();
+  dir.delete(recursive: true);
 }

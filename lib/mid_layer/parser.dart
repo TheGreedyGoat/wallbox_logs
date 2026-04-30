@@ -6,10 +6,10 @@ import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 enum ParseValue { tag, idValue, date, powerLevel, id2Value }
 
 class Parser {
+  static const String startTag = 'txstart2';
+  static const String stopTag = 'txstop2';
+  static const String mvTag = 'mv';
   static void parseWallBoxFile2(FileData data) {
-    const String startTag = 'txstart2';
-    const String stopTag = 'txstop2';
-    const String mvTag = 'mv';
     try {
       assert(
         data.extension == 'csv',
@@ -26,7 +26,6 @@ class Parser {
       int startIndex = 0;
       while (startIndex < dataList.length &&
           _getTag(dataList[startIndex]) != startTag) {
-        print('startIndex');
         startIndex++;
       }
 
@@ -37,6 +36,32 @@ class Parser {
         stopIndex >= 0 && _getTag(dataList[stopIndex]) != stopTag;
         stopIndex--
       ) {}
+
+      if (startIndex != 0) {
+        String firstLine = dataList[0];
+        String stopLine = dataList[startIndex - 1];
+
+        final parsedStopLine = _parseLine(stopLine);
+
+        final stopEvent = ChargingEvent(
+          id: -1,
+          id2: parsedStopLine[ParseValue.id2Value],
+          timeStamp: parsedStopLine[ParseValue.date],
+          powerLevelInKiloWattHours: parsedStopLine[ParseValue.powerLevel],
+        );
+        final parsedFirstLine = firstLine == stopLine
+            ? _parseMainLine(firstLine)
+            : _parseMVLine(firstLine, stopEvent.id2);
+
+        final startEvent = ChargingEvent(
+          id: -1,
+          id2: parsedFirstLine[ParseValue.id2Value],
+          timeStamp: parsedFirstLine[ParseValue.date],
+          powerLevelInKiloWattHours: parsedFirstLine[ParseValue.powerLevel],
+        );
+
+        ChargingProcess.completed(start: startEvent, stop: stopEvent);
+      }
 
       //? core
       for (int i = startIndex; i <= stopIndex; i++) {
@@ -63,11 +88,38 @@ class Parser {
       }
 
       //TODO resolve loose starts/ stops, as soon as we have access to multiple files
-      if (startIndex != 0) {}
       if (stopIndex != dataList.length - 1) {}
     } on Exception catch (e) {
-      print("Error on Wallbox file ${data.fullName}: \n$e");
+      print("Error parsing Wallbox file ${data.fullName}: \n$e");
     }
+  }
+
+  static Map<ParseValue, dynamic> _parseMainLine(String mainLine) {
+    assert(
+      _getTag(mainLine) == startTag || _getTag(mainLine) == stopTag,
+      "Non - Main line was passed to parseMainLine: $mainLine",
+    );
+    return _parseLine(mainLine);
+  }
+
+  static Map<ParseValue, dynamic> _parseMVLine(String line, String id) {
+    assert(
+      _getTag(line) == mvTag,
+      "Non - MV line was passed to parseMVLine: $line",
+    );
+
+    final parsedBlock = _parseDataBlock(line.split(',')[1]);
+    parsedBlock[ParseValue.id2Value] = id;
+    return parsedBlock;
+  }
+
+  static Map<ParseValue, dynamic> _parseDataBlock(String dataBlock) {
+    final splitData = dataBlock.trim().split(' ');
+    return {
+      ParseValue.date: DateTime.parse('${splitData[0]} ${splitData[1]}'),
+      ParseValue.powerLevel: double.parse(splitData[2].replaceAll('kWh', '')),
+      ParseValue.id2Value: splitData[3],
+    };
   }
 
   static void parseFullProcess(String start, String stop) {
@@ -91,7 +143,6 @@ class Parser {
     var filteredList = line.split(',');
     var valueList = ParseValue.values;
     assert(filteredList.length >= valueList.length);
-
     var parsedData = {
       ParseValue.tag: ChargingEvent.typeFromString(filteredList[0]),
       ParseValue.idValue: int.tryParse(filteredList[1]),
