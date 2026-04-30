@@ -5,7 +5,6 @@ import 'package:wallbox_logs/utility.dart';
 /// Instances are created internally to ensure every id is unique.
 class UserData {
   static List<UserData> profiles = List.empty(growable: true);
-  final int id;
   final String id2;
   late final List<ChargingProcess> _completetChargingProcesses;
 
@@ -22,7 +21,6 @@ class UserData {
 
   /// private to ensure only 1 instance per id
   UserData._create({
-    required this.id,
     required this.id2,
   }) {
     assert(tryGetFromID(id2) == null);
@@ -33,8 +31,7 @@ class UserData {
   /// Inserts the process into the processes list, so it is sorted by the starting time
   static void insertProcess(ChargingProcess process) {
     final UserData profile =
-        tryGetFromID(process.id2) ??
-        UserData._create(id: process.id, id2: process.id2);
+        tryGetFromID(process.id2) ?? UserData._create(id2: process.id2);
     // profile._completetChargingProcesses.add(process);
     Utility.insertToList(profile._completetChargingProcesses, process, (a, b) {
       return a.start.timeStamp.compareTo(b.start.timeStamp);
@@ -52,6 +49,6 @@ class UserData {
 
   @override
   String toString() {
-    return 'User with id $id has a total usage of $totalConsumptionKWH kWh';
+    return 'User with id $id2 has a total usage of $totalConsumptionKWH kWh';
   }
 }

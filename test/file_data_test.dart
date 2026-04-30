@@ -7,7 +7,7 @@ import 'wallbox_log_generator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  print(DateTime.parse(DateTime.now().toString()));
+
   await clearFiles();
   List<FileData> files = WallboxLogGenerator.generateFiles(
     startDate: DateTime.now(),

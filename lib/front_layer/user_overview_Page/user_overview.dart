@@ -38,7 +38,6 @@ class _UserOverviewState extends State<UserOverview> {
     int index,
     BuildContext context,
   ) {
-    print('$index, $expand');
     return ExpansionTile(
       initiallyExpanded: expand,
 

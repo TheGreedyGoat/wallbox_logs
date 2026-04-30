@@ -12,10 +12,9 @@ class ChargingProcess {
   final ChargingEvent start;
   late ChargingEvent stop;
 
-  int get id => start.id;
   String get id2 => start.id2;
   DateTime get startDate => start.timeStamp;
-  DateTime? get stopDate => stop.timeStamp;
+  DateTime get stopDate => stop.timeStamp;
 
   int get durationSeconds => stop.timeSeconds - start.timeSeconds;
 
@@ -28,10 +27,6 @@ class ChargingProcess {
     assert(
       durationSeconds >= 0,
       "ERROR while creating ChargingProcess:\n duration $durationSeconds is nonpositive but should be pocRsitive",
-    );
-    assert(
-      start.id == id && stop.id == id,
-      "ERROR while creating ChargingProcess:\n ids dont match up:\n* Process: $id\n* start: ${start.id},\n* Stop:${stop.id}",
     );
     assert(
       start.id2 == id2 && stop.id2 == id2,
@@ -53,7 +48,6 @@ enum ChargingEventType { start, stop, invalid }
 
 /// whenever a charging process was started or stopped
 class ChargingEvent {
-  late final int id;
   late final String id2;
   late final DateTime timeStamp;
   late final double powerLevelKiloWH;
@@ -62,7 +56,6 @@ class ChargingEvent {
   double get powerLevelWh => powerLevelKiloWH * 1000;
 
   ChargingEvent({
-    required this.id,
     required this.id2,
     required this.timeStamp,
     required powerLevelInKiloWattHours,
@@ -87,7 +80,6 @@ class ChargingEvent {
         'Map $map should contain key $key, but it does not.',
       );
     }
-    id = map[ParseValue.idValue];
     id2 = map[ParseValue.id2Value];
     timeStamp = map[ParseValue.date];
     powerLevelKiloWH = map[ParseValue.powerLevel];
