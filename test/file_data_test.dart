@@ -7,15 +7,15 @@ import 'wallbox_log_generator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await clearFiles();
-  List<FileData> files = WallboxLogGenerator.generateFiles(
-    startDate: DateTime.now(),
-    initialPowerLevel: 2500,
-    maxDuration: Duration(days: 10),
-    numFiles: 5,
-  );
-  await saveMultiFiles(files);
+  final files = await loadGeneratedFiles();
+  // await clearFiles();
+  // List<FileData> files = WallboxLogGenerator.generateFiles(
+  //   startDate: DateTime.now(),
+  //   initialPowerLevel: 2500,
+  //   maxDuration: Duration(days: 10),
+  //   numFiles: 5,
+  // );
+  // await saveMultiFiles(files);
   for (var file in files) {
     Parser.parseWallBoxFile2(file);
   }

@@ -155,6 +155,21 @@ Future<Directory> getGenerationDirectory() async {
   return genDir;
 }
 
+//
+Future<List<FileData>> loadGeneratedFiles() async {
+  final dir = await getGenerationDirectory();
+  List<FileData> files = List.empty(growable: true);
+  await for (var entity in dir.list()) {
+    if (entity is File) {
+      String fullName = entity.path.split('/')[0];
+      String content = await entity.readAsString();
+
+      files.add(FileData.fromFullName(fullName: fullName, content: content));
+    }
+  }
+  return files;
+}
+
 Future<void> saveTestFile(FileData fileData) async {
   var testDir = await getGenerationDirectory();
   final file = File(path.join(testDir.path, fileData.fullName));

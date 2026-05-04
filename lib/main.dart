@@ -6,7 +6,7 @@ import 'package:wallbox_logs/mid_layer/parser.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AssetFileReader.loadFileData(
-    'assets/20260430 ACE0398688_transactions_generated_0.csv',
+    'assets/20260414 ACE0398688_Transactions.csv',
     (data) {
       Parser.parseWallBoxFile2(data);
     },

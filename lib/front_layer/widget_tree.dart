@@ -42,48 +42,48 @@ class _WidgetTreeState extends State<WidgetTree> {
       ),
 
       body: mainPages[selectedPage],
-      drawer: Drawer(
-        child: SideBar(
-          selectedPage: selectedPage,
+      drawer: IntrinsicWidth(
+        child: Drawer(
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: SideBar(
+              selectedPage: selectedPage,
+              extended: true,
+              onPop: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _desktop(BuildContext context, int selectedPage) {
-    return Row(
-      children: [
-        Column(
-          crossAxisAlignment: extendSideBar
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: () {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(mainPageTitles[selectedPage]),
+      ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SideBar(
+              selectedPage: selectedPage,
+              extended: extendSideBar,
+              onPop: () {
                 setState(() {
                   extendSideBar = !extendSideBar;
                 });
               },
-              icon: Icon(Icons.list),
             ),
-            Expanded(
-              child: SideBar(
-                selectedPage: selectedPage,
-                extended: extendSideBar,
-              ),
-            ),
-          ],
-        ),
-        Expanded(
-          child: Scaffold(
-            appBar: AppBar(
-              title: Text(mainPageTitles[selectedPage]),
-            ),
-
-            body: mainPages[selectedPage],
           ),
-        ),
-      ],
+          Expanded(
+            child: mainPages[selectedPage],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -48,20 +48,17 @@ enum ChargingEventType { start, stop, invalid }
 
 /// whenever a charging process was started or stopped
 class ChargingEvent {
+  ChargingEvent({
+    required this.id2,
+    required this.timeStamp,
+    required this.powerLevelKiloWH,
+  });
+
   late final String id2;
   late final DateTime timeStamp;
   late final double powerLevelKiloWH;
   int get timeSeconds => (timeStamp.millisecondsSinceEpoch / 1000).floor();
 
-  double get powerLevelWh => powerLevelKiloWH * 1000;
-
-  ChargingEvent({
-    required this.id2,
-    required this.timeStamp,
-    required powerLevelInKiloWattHours,
-  }) {
-    this.powerLevelKiloWH = powerLevelInKiloWattHours;
-  }
   static ChargingEventType typeFromString(String tag) {
     switch (tag) {
       case 'txstart2:':

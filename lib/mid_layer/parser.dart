@@ -83,6 +83,8 @@ class Parser {
   //   #  #  # # #      #    # #    # #####  #      #        #   #
   //   #  #   ## #    # #    # #    # #      #      #        #   #
   //  ### #    #  ####   ####  #    # #      ###### ######   #   ######
+
+  ///For a block that either has no start or end line (eg by being interrubted by an end of file)
   static void _parseIncompleteBlock(
     String line1,
     String line2,
@@ -105,15 +107,6 @@ class Parser {
       start: isAtStartOfFile ? mvEvent : mainEvent,
       stop: isAtStartOfFile ? mainEvent : mvEvent,
     );
-  }
-
-  static Map<ParseValue, dynamic> _parseDataBlock(String dataBlock) {
-    final splitData = dataBlock.trim().split(' ');
-    return {
-      ParseValue.date: DateTime.parse('${splitData[0]} ${splitData[1]}'),
-      ParseValue.powerLevel: double.parse(splitData[2].replaceAll('kWh', '')),
-      ParseValue.id2Value: splitData[3],
-    };
   }
 
   //                                 ######
@@ -153,13 +146,23 @@ class Parser {
   //  #       # #  # # #           #
   //  #       # #   ## #      #    #
   //  ####### # #    # ######  ####
+
+  static Map<ParseValue, dynamic> _parseLineData(String dataBlock) {
+    final splitData = dataBlock.trim().split(' ');
+    return {
+      ParseValue.date: DateTime.parse('${splitData[0]} ${splitData[1]}'),
+      ParseValue.powerLevel: double.parse(splitData[2].replaceAll('kWh', '')),
+      ParseValue.id2Value: splitData[3],
+    };
+  }
+
   static Map<ParseValue, dynamic> _parseMVLine(String line) {
     assert(
       _getTag(line) == mvTag,
       "Non - MV line was passed to parseMVLine: $line",
     );
 
-    final parsedBlock = _parseDataBlock(line.split(',')[1]);
+    final parsedBlock = _parseLineData(line.split(',')[1]);
     parsedBlock[ParseValue.id2Value] = "NONE";
     return parsedBlock;
   }
@@ -169,30 +172,16 @@ class Parser {
       _getTag(line) == startTag || _getTag(line) == stopTag,
       "Non - Main line was passed to parseMainLine: $line",
     );
-    line = line
-        .replaceFirst(' id', '')
-        .replaceFirst(' socket', '')
-        .replaceAll(' ', ',')
-        .replaceAll(',,', ',');
+    String dataBlock = line.split(',')[2];
+    var data = _parseLineData(dataBlock);
 
-    var filteredList = line.split(',');
-    var valueList = ParseValue.values;
-    assert(filteredList.length >= valueList.length);
-    var parsedData = {
-      ParseValue.date: DateTime.parse('${filteredList[3]} ${filteredList[4]}'),
-      ParseValue.powerLevel: double.tryParse(
-        filteredList[5].replaceAll('kWh', ''),
-      ),
-      ParseValue.id2Value: filteredList[6],
-    };
-
-    var status = _validateParsedMap(parsedData);
+    var status = _validateParsedMap(data);
     assert(
       status == 'ok',
       'Validation Failed: $status\ncausing line:\n$line',
     );
 
-    return parsedData;
+    return data;
   }
 
   static String _validateParsedMap(Map<ParseValue, dynamic> parsed) {
