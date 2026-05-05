@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:wallbox_logs/back_layer/database.dart';
-import 'package:wallbox_logs/back_layer/model_repos/database_model.dart';
+import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 import 'package:wallbox_logs/back_layer/model_repos/model_repository.dart';
 
 ///
@@ -21,7 +21,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
     );
     cache[model.id] = model;
 
-    return _updateFile();
+    return updateFile();
   }
 
   @override
@@ -31,7 +31,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
       'Database entry for ${T.toString()} $model does not exist, use create to create it!',
     );
     cache[model.id] = model;
-    await _updateFile();
+    await updateFile();
 
     return model;
   }
@@ -39,13 +39,8 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   @override
   Future<void> delete(String id) async {
     if (cache.remove(id) != null) {
-      await _updateFile();
+      await updateFile();
     }
-  }
-
-  Future<File> _updateFile() async {
-    final file = await MyDatabase.writeFile(fullFileName, jsonEncode(cache));
-    return file;
   }
 
   @override

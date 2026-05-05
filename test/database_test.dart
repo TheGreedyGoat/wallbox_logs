@@ -4,19 +4,30 @@ import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.da
 void main() async {
   SimulationRepo<UserMasterData> repo = SimulationRepo('TestRepo');
   repo.preload();
-
+  await repo.clear();
+  String id = "ABCDEFG";
+  String id2 = "djksandjasnd";
   var michael = UserMasterData(
-    tagID: "ABCDEFG",
+    tagID: id,
     prename: "Michael",
-    surname: "Mueller",
+    surname: "M",
   );
 
   await repo.create(michael);
 
-  print(repo.getById("ABCDEFG"));
+  // print(await repo.getAll());
 
   michael = michael.copyWith(city: "Kassel");
   repo.update(michael);
+  var pauli = UserMasterData(
+    tagID: id2,
+    prename: "Pauli",
+    surname: "Paule",
+  );
 
-  print(repo.getById("ABCDEFG"));
+  repo.create(pauli);
+
+  // print(await repo.getAll());
+  repo.delete(id);
+  // print(await repo.getAll());
 }

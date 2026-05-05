@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:wallbox_logs/back_layer/database.dart';
-import 'package:wallbox_logs/back_layer/model_repos/database_model.dart';
+import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
+import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.dart';
 
 /// basic Repository class
 /// to be implemented for the type of database used
@@ -21,16 +22,29 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<void> delete(String id);
 
   bool exists(String id) => getById(id) != null;
+
   Future<void> preload() async {
     if (isLoaded) return;
     String data = await MyDatabase.readFile(fullFileName);
-    final decoded = jsonDecode(data) as Map;
-    for (var key in decoded.keys) {
-      final value = decoded[key];
-      if (value is T) {
-        cache[key] = value;
-      }
+    print(data);
+    final decoded = jsonDecode(data);
+    for (var json in decoded) {
+      print(json.runtimeType);
     }
-    isLoaded = true;
+  }
+
+  Future<void> clear() async {
+    cache.removeWhere(
+      (key, value) => true,
+    );
+    updateFile();
+  }
+
+  Future<File> updateFile() async {
+    final file = await MyDatabase.writeFile(
+      fullFileName,
+      jsonEncode(cache.values.toList()),
+    );
+    return file;
   }
 }
