@@ -1,124 +1,200 @@
 // ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
 
+import 'package:wallbox_logs/mid_layer/data/charging_process.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
+enum ParseValue { date, powerLevel, id2Value }
+
 class Parser {
-  static void parseWallBoxFile(FileData data) {
-    assert(
-      data.extension == 'csv',
-      '${data.fullName} is not of file type csv!',
-    );
-    var dataList = getDataListFromWallboxFile(data);
-
-    for (int start = 0; start + 1 < dataList.length; start += 2) {
-      int stop = start + 1;
-      var extractedData = parseData(
-        dataList[start].trim(),
-        dataList[stop].trim(),
-      );
-      print('|| VALIDATION |||: ' + extractedData['validation']);
+  static const String startTag = 'txstart2';
+  static const String stopTag = 'txstop2';
+  static const String mvTag = 'mv';
+  static void parseWallBoxFile2(FileData data) {
+    try {
       assert(
-        extractedData['validation'] == "ok",
-        '\nValidation failed on charging process $start:\n' +
-            ' Parsing result:\n' +
-            extractedData.toString(),
+        data.extension == 'csv',
+        '${data.fullName} is not of file type csv!',
       );
+      List<String> dataList = data.content.split('\n').where(
+        (element) {
+          return element.isNotEmpty &&
+              (element.startsWith('mv') || element.startsWith('tx'));
+        },
+      ).toList();
+      //? Find index of first starting tag
+
+      int startIndex = 0;
+      while (startIndex < dataList.length &&
+          _getTag(dataList[startIndex]) != startTag) {
+        startIndex++;
+      }
+
+      //? Find index of last stop tag
+      int stopIndex = dataList.length - 1;
+      for (
+        ;
+        stopIndex >= 0 && _getTag(dataList[stopIndex]) != stopTag;
+        stopIndex--
+      ) {}
+
+      if (startIndex != 0) {
+        String firstLine = dataList.first;
+        String stopLine = dataList[startIndex - 1];
+        _parseIncompleteBlock(firstLine, stopLine, true);
+      }
+
+      //? core
+      for (int i = startIndex; i <= stopIndex; i++) {
+        String tag = _getTag(dataList[i]);
+        assert(
+          tag == startTag,
+          'expected to finde tag $startTag, but found $tag at line $i.',
+        );
+        int j = i + 1;
+        for (; j < stopIndex; j++) {
+          String tagJ = _getTag(dataList[j]);
+          assert(
+            tagJ != startTag,
+            'Invalid order of tags: expected tags $mvTag or $stopTag, but found $startTag at line $j',
+          );
+          if (tagJ == stopTag) {
+            //? parse start and stop
+            _parseFullProcess(dataList[i], dataList[j]);
+            break;
+          }
+        }
+
+        i = j;
+      }
+      if (stopIndex != dataList.length - 1) {
+        String startLine = dataList[stopIndex + 1];
+        String lastLine = dataList.last;
+        _parseIncompleteBlock(startLine, lastLine, false);
+      }
+    } on Exception catch (e) {
+      print("Error parsing Wallbox file ${data.fullName}: \n$e");
     }
   }
 
-  static List<String> getDataListFromWallboxFile(FileData data) {
-    return data.content
-        .split('\n')
-        .where(
-          (element) =>
-              !(element.startsWith('mv:') ||
-                  element.startsWith('#') ||
-                  element.length == 1 ||
-                  element.isEmpty),
-        )
-        .toList();
+  //  ###
+  //   #  #    #  ####   ####  #    # #####  #      ###### ##### ######
+  //   #  ##   # #    # #    # ##  ## #    # #      #        #   #
+  //   #  # #  # #      #    # # ## # #    # #      #####    #   #####
+  //   #  #  # # #      #    # #    # #####  #      #        #   #
+  //   #  #   ## #    # #    # #    # #      #      #        #   #
+  //  ### #    #  ####   ####  #    # #      ###### ######   #   ######
+
+  ///For a block that either has no start or end line (eg by being interrubted by an end of file)
+  static void _parseIncompleteBlock(
+    String line1,
+    String line2,
+    bool isAtStartOfFile,
+  ) {
+    final mainLine = isAtStartOfFile ? line2 : line1;
+    final mvLine = isAtStartOfFile ? line1 : line2;
+    assert(_getTag(mainLine) != mvTag);
+    assert(_getTag(mvLine) == mvTag);
+
+    var mainValues = _parseLine(mainLine);
+    var mvValues = _parseLine(mvLine);
+
+    mvValues[ParseValue.id2Value] = mainValues[ParseValue.id2Value];
+
+    ChargingEvent mainEvent = ChargingEvent.fromMap(mainValues);
+    ChargingEvent mvEvent = ChargingEvent.fromMap(mvValues);
+
+    ChargingProcess.completed(
+      start: isAtStartOfFile ? mvEvent : mainEvent,
+      stop: isAtStartOfFile ? mainEvent : mvEvent,
+    );
   }
 
-  static Map<String, dynamic> parseData(String start, String stop) {
-    String validation = 'ok';
-    int? id;
-    double? usage;
-    DateTime? startTime, stopTime;
+  //                                 ######
+  //  ###### #    # #      #         #     # #####   ####   ####  ######  ####   ####
+  //  #      #    # #      #         #     # #    # #    # #    # #      #      #
+  //  #####  #    # #      #         ######  #    # #    # #      #####   ####   ####
+  //  #      #    # #      #         #       #####  #    # #      #           #      #
+  //  #      #    # #      #         #       #   #  #    # #    # #      #    # #    #
+  //  #       ####  ###### ######    #       #    #  ####   ####  ######  ####   ####
+  static void _parseFullProcess(String start, String stop) {
+    var startParsed = _parseMainLine(start);
+    var stopParsed = _parseMainLine(stop);
+    ChargingProcess.completed(
+      start: ChargingEvent.fromMap(startParsed),
+      stop: ChargingEvent.fromMap(stopParsed),
+    );
+  }
 
-    var startMap = parseLine(start);
-    var stopMap = parseLine(stop);
-    //validate order of start/ stop
-    if (startMap['type'] != 'txstart2' || stopMap['type'] != 'txstop2') {
-      validation =
-          '\nleading tags invalid: \nstart: {${startMap['type']}\nend: ${stopMap['type']}}';
-    }
-    // validate power levels
-    if (validation == 'ok') {
-      double? startLevel = double.tryParse(startMap['level'] ?? 'r');
-      double? stopLevel = double.tryParse(stopMap['level'] ?? 'r');
-      id = int.parse(startMap['id']!);
+  static String _getTag(String line) => line.split(':')[0];
 
-      bool validLevels =
-          startLevel != null && stopLevel != null && startLevel <= stopLevel;
-      usage = (validLevels) ? stopLevel - startLevel : double.nan;
-      validation = validLevels
-          ? 'ok'
-          : 'Invalid Power usage levels:' +
-                ' \nstart:$startLevel' +
-                ' \nstop:$stopLevel';
+  static Map<ParseValue, dynamic> _parseLine(String line) {
+    switch (_getTag(line)) {
+      case startTag:
+      case stopTag:
+        return _parseMainLine(line);
+      case mvTag:
+        return _parseMVLine(line);
+      default:
+        throw (Exception('Invalid line tag of line $line'));
     }
-    // validate timestamps
-    if (validation == 'ok') {
-      String? startStamp = startMap['timeStamp'];
-      String? stopStamp = stopMap['timeStamp'];
-      if (startStamp != null && stopStamp != null) {
-        startTime = DateTime.tryParse(startStamp);
-        stopTime = DateTime.tryParse(stopStamp);
-      }
-      if (startTime == null ||
-          stopTime == null ||
-          stopTime.millisecondsSinceEpoch < startTime.millisecondsSinceEpoch) {
-        validation =
-            'Dates invalid: either null or stopTime <= startTime:\n' +
-            '____________________________________________________\n' +
-            'start: $startTime (from stamp $startStamp)\n' +
-            'stop: $stopTime (from stamp $stopStamp)';
-      }
-    }
+  }
 
+  //  #
+  //  #       # #    # ######  ####
+  //  #       # ##   # #      #
+  //  #       # # #  # #####   ####
+  //  #       # #  # # #           #
+  //  #       # #   ## #      #    #
+  //  ####### # #    # ######  ####
+
+  static Map<ParseValue, dynamic> _parseLineData(String dataBlock) {
+    final splitData = dataBlock.trim().split(' ');
     return {
-      'validation': validation,
-      'id': id,
-      'usage': usage,
-      'startTime': startTime,
-      'stopTime': stopTime,
+      ParseValue.date: DateTime.parse('${splitData[0]} ${splitData[1]}'),
+      ParseValue.powerLevel: double.parse(splitData[2].replaceAll('kWh', '')),
+      ParseValue.id2Value: splitData[3],
     };
   }
 
-  static Map<String, String> parseLine(String line) {
-    final String type;
-    final String id;
-    final String timeStamp;
+  static Map<ParseValue, dynamic> _parseMVLine(String line) {
+    assert(
+      _getTag(line) == mvTag,
+      "Non - MV line was passed to parseMVLine: $line",
+    );
 
-    String level;
+    final parsedBlock = _parseLineData(line.split(',')[1]);
+    parsedBlock[ParseValue.id2Value] = "NONE";
+    return parsedBlock;
+  }
 
-    List<String> splitLine = line.split(',');
+  static Map<ParseValue, dynamic> _parseMainLine(String line) {
+    assert(
+      _getTag(line) == startTag || _getTag(line) == stopTag,
+      "Non - Main line was passed to parseMainLine: $line",
+    );
+    String dataBlock = line.split(',')[2];
+    var data = _parseLineData(dataBlock);
 
-    List<String> head = splitLine[0].split(' ');
-    List<String> details = splitLine.last.trim().split(' ');
+    var status = _validateParsedMap(data);
+    assert(
+      status == 'ok',
+      'Validation Failed: $status\ncausing line:\n$line',
+    );
 
-    type = head[0].replaceAll(':', '');
+    return data;
+  }
 
-    id = head.last;
-    level = details[2].replaceAll('kWh', '');
+  static String _validateParsedMap(Map<ParseValue, dynamic> parsed) {
+    var date = parsed[ParseValue.date];
+    if (date == null) {
+      return 'No date found!';
+    }
 
-    timeStamp = '${details[0]} ${details[1]}';
+    var powerLevel = parsed[ParseValue.powerLevel];
+    if (powerLevel == null) {
+      return 'No Power Level found!';
+    }
 
-    return {
-      "type": type,
-      "id": id,
-      'timeStamp': timeStamp,
-      "level": level,
-    };
+    return 'ok';
   }
 }
