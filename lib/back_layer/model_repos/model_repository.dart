@@ -3,29 +3,52 @@ import 'dart:io';
 
 import 'package:wallbox_logs/back_layer/database.dart';
 import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
-import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.dart';
 
 /// basic Repository class
 /// to be implemented for the type of database used
 abstract class ModelRepository<T extends DatabaseModel> {
+  /// runtime storage for model objects
+  ///
   late final Map<String, T> cache = {};
-  bool isLoaded = false;
-  final String repoName;
-  ModelRepository(this.repoName);
 
+  /// check if DB files are loaded
+  bool isLoaded = false;
+
+  /// Name of Repository, also dictates the corresponding files name as
+  /// [repoName].json
+  final String repoName;
+
+  /// getter for the corresponding file name
   String get fullFileName => '$repoName.json';
 
+  /// basic Repository class
+  /// to be implemented for the type of database used
+  ModelRepository(this.repoName);
+
+  /// Returns a list of all saved model objects
   Future<List<T>> getAll();
+
+  /// Returns an object with the given id if it exists, else null
   T? getById(String id);
+
+  /// Creates a new entry for that model.
+  /// Throws an Exception If another model with the same ID already exists
   Future<File> create(T model);
+
+  /// Replaces an existing object witht the same id as [model]
   Future<T> update(T model);
+
+  /// Deletes the object with the given id if it exists
   Future<void> delete(String id);
 
+  /// Returns true if a Database entry with the given [id] exits
   bool exists(String id) => getById(id) != null;
 
+  /// Overrides the cache with data in database.
+  /// The [isLoaded] property has to be set to ```false```
   Future<void> preload() async {
     if (isLoaded) return;
-    String data = await MyDatabase.readFile(fullFileName);
+    String data = await MyLocalDatabase.readFile(fullFileName);
     print(data);
     final decoded = jsonDecode(data);
     for (var json in decoded) {
@@ -33,6 +56,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
     }
   }
 
+  /// ```!!DANGER!!``` Deletes everything from the cache aswell as the Database
   Future<void> clear() async {
     cache.removeWhere(
       (key, value) => true,
@@ -40,8 +64,9 @@ abstract class ModelRepository<T extends DatabaseModel> {
     updateFile();
   }
 
+  /// Overrides the reop files content with the cache
   Future<File> updateFile() async {
-    final file = await MyDatabase.writeFile(
+    final file = await MyLocalDatabase.writeFile(
       fullFileName,
       jsonEncode(cache.values.toList()),
     );

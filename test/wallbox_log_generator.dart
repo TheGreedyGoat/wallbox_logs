@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 
 class WallboxLogGenerator {
@@ -117,7 +118,7 @@ class WallboxLogGenerator {
       Duration(hours: 1 + Random().nextInt(maxChargingHours)),
     );
 
-    String result = '${startLine(startTime, powerLevel, id)}';
+    String result = startLine(startTime, powerLevel, id);
     result += mvLine(startTime, powerLevel);
     while (startTime.compareTo(stopTime) < 0) {
       powerLevel += 3;

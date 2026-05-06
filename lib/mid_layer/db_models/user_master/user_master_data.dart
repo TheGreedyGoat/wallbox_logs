@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:wallbox_logs/mixins/m_json_serializable.dart';
 import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,18 +8,39 @@ part 'user_master_data.freezed.dart';
 // But if Person was not serializable, we could skip it.
 part 'user_master_data.g.dart';
 
-enum Titles { mrs, mr, div, none }
+/// Ways to refer to a person of different genders
+enum Titles {
+  /// Male
+  mrs,
 
+  /// Female
+  mr,
+
+  /// Diverse
+  div,
+
+  /// No title
+  none,
+}
+
+/// Master Data (Stammdaten) for a wallbox user.
+/// - [tagID] (required) :  the users tag ID (the same that is noted in Wallboy log files)
+/// - [individualPricePerkWh] : How much should this person pay per kWh ? if null a default price will be used
 @freezed
 @JsonSerializable()
-class UserMasterData extends DatabaseModel with _$UserMasterData {
+class UserMasterData extends DatabaseModel
+    with _$UserMasterData, MJsonSerializable<UserMasterData> {
+  /// Master Data (Stammdaten) for a wallbox user.
+  /// - [tagID] (required) :  the users tag ID (the same that is noted in Wallboy log files)
+  /// - [individualPricePerkWh] : How much should this person pay per kWh ? if null a default price will be used
   UserMasterData({
-    this.title = Titles.none,
     required this.tagID,
+
+    this.title = Titles.none,
     this.prename,
     this.surname,
     this.company,
-    this.individualPrice,
+    this.individualPricePerkWh,
     this.email,
     this.phoneNumber,
     this.streetAndNumber,
@@ -27,27 +48,46 @@ class UserMasterData extends DatabaseModel with _$UserMasterData {
     this.city,
   });
 
+  /// creates a [UserMasterData] object from a valid json Map
   factory UserMasterData.fromJson(Map<String, Object?> json) =>
       _$UserMasterDataFromJson(json);
 
-  final Titles title;
-  final String tagID;
-  final String? prename;
-  final String? surname;
-  final String? company;
-  final double? individualPrice;
+  @override
+  UserMasterData fromJson(Map<String, Object?> json) =>
+      UserMasterData.fromJson(json);
 
+  @override
+  Map<String, dynamic> toJson() => _$UserMasterDataToJson(this);
+
+  @override
+  final Titles title;
+  @override
+  final String tagID;
+  @override
+  final String? prename;
+  @override
+  final String? surname;
+  @override
+  final String? company;
+  @override
+  final double? individualPricePerkWh;
+  @override
   final String? email;
+  @override
   final String? phoneNumber;
+  @override
   final String? streetAndNumber;
+  @override
   final String? postCode;
+  @override
   final String? city;
 
   @override
   String get id => tagID;
 
-  String? get address => "$streetAndNumber\n$postCode $city";
-
-  @override
-  Map<String, dynamic> toJson() => _$UserMasterDataToJson(this);
+  /// The
+  String? get address =>
+      (streetAndNumber != null && postCode != null && city != null)
+      ? '$streetAndNumber\n$postCode $city'
+      : null;
 }

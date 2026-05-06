@@ -1,15 +1,30 @@
 // ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
 
-import 'package:wallbox_logs/mid_layer/data/charging_process.dart';
+import 'package:wallbox_logs/mid_layer/data/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
-enum ParseValue { date, powerLevel, id2Value }
+/// Used for ParserMaps
+enum WallBoxParserValue {
+  ///
+  date,
 
-class Parser {
-  static const String startTag = 'txstart2';
-  static const String stopTag = 'txstop2';
-  static const String mvTag = 'mv';
-  static void parseWallBoxFile2(FileData data) {
+  ///
+  powerLevel,
+
+  ///
+  id2Value,
+}
+
+///static class to validate and parse Wallbox files
+class WallBoxParser {
+  static const String _startTag = 'txstart2';
+  static const String _stopTag = 'txstop2';
+  static const String _mvTag = 'mv';
+
+  /// parses the wallbox file and saves the data into a [WallBoxTransaction] object
+  ///
+  /// TO DO: Handle end of file shite
+  static void parseWallBoxFile(FileData data) {
     try {
       assert(
         data.extension == 'csv',
@@ -25,7 +40,7 @@ class Parser {
 
       int startIndex = 0;
       while (startIndex < dataList.length &&
-          _getTag(dataList[startIndex]) != startTag) {
+          _getTag(dataList[startIndex]) != _startTag) {
         startIndex++;
       }
 
@@ -33,7 +48,7 @@ class Parser {
       int stopIndex = dataList.length - 1;
       for (
         ;
-        stopIndex >= 0 && _getTag(dataList[stopIndex]) != stopTag;
+        stopIndex >= 0 && _getTag(dataList[stopIndex]) != _stopTag;
         stopIndex--
       ) {}
 
@@ -47,17 +62,17 @@ class Parser {
       for (int i = startIndex; i <= stopIndex; i++) {
         String tag = _getTag(dataList[i]);
         assert(
-          tag == startTag,
-          'expected to finde tag $startTag, but found $tag at line $i.',
+          tag == _startTag,
+          'expected to finde tag $_startTag, but found $tag at line $i.',
         );
         int j = i + 1;
         for (; j < stopIndex; j++) {
           String tagJ = _getTag(dataList[j]);
           assert(
-            tagJ != startTag,
-            'Invalid order of tags: expected tags $mvTag or $stopTag, but found $startTag at line $j',
+            tagJ != _startTag,
+            'Invalid order of tags: expected tags $_mvTag or $_stopTag, but found $_startTag at line $j',
           );
-          if (tagJ == stopTag) {
+          if (tagJ == _stopTag) {
             //? parse start and stop
             _parseFullProcess(dataList[i], dataList[j]);
             break;
@@ -72,7 +87,7 @@ class Parser {
         _parseIncompleteBlock(startLine, lastLine, false);
       }
     } on Exception catch (e) {
-      print("Error parsing Wallbox file ${data.fullName}: \n$e");
+      print('Error parsing Wallbox file ${data.fullName}: \n$e');
     }
   }
 
@@ -92,18 +107,19 @@ class Parser {
   ) {
     final mainLine = isAtStartOfFile ? line2 : line1;
     final mvLine = isAtStartOfFile ? line1 : line2;
-    assert(_getTag(mainLine) != mvTag);
-    assert(_getTag(mvLine) == mvTag);
+    assert(_getTag(mainLine) != _mvTag);
+    assert(_getTag(mvLine) == _mvTag);
 
     var mainValues = _parseLine(mainLine);
     var mvValues = _parseLine(mvLine);
 
-    mvValues[ParseValue.id2Value] = mainValues[ParseValue.id2Value];
+    mvValues[WallBoxParserValue.id2Value] =
+        mainValues[WallBoxParserValue.id2Value];
 
-    ChargingEvent mainEvent = ChargingEvent.fromMap(mainValues);
-    ChargingEvent mvEvent = ChargingEvent.fromMap(mvValues);
+    ChargingEvent mainEvent = ChargingEvent.fromJSON(mainValues);
+    ChargingEvent mvEvent = ChargingEvent.fromJSON(mvValues);
 
-    ChargingProcess.completed(
+    WallBoxTransaction(
       start: isAtStartOfFile ? mvEvent : mainEvent,
       stop: isAtStartOfFile ? mainEvent : mvEvent,
     );
@@ -119,20 +135,20 @@ class Parser {
   static void _parseFullProcess(String start, String stop) {
     var startParsed = _parseMainLine(start);
     var stopParsed = _parseMainLine(stop);
-    ChargingProcess.completed(
-      start: ChargingEvent.fromMap(startParsed),
-      stop: ChargingEvent.fromMap(stopParsed),
+    WallBoxTransaction(
+      start: ChargingEvent.fromJSON(startParsed),
+      stop: ChargingEvent.fromJSON(stopParsed),
     );
   }
 
   static String _getTag(String line) => line.split(':')[0];
 
-  static Map<ParseValue, dynamic> _parseLine(String line) {
+  static Map<WallBoxParserValue, dynamic> _parseLine(String line) {
     switch (_getTag(line)) {
-      case startTag:
-      case stopTag:
+      case _startTag:
+      case _stopTag:
         return _parseMainLine(line);
-      case mvTag:
+      case _mvTag:
         return _parseMVLine(line);
       default:
         throw (Exception('Invalid line tag of line $line'));
@@ -147,30 +163,34 @@ class Parser {
   //  #       # #   ## #      #    #
   //  ####### # #    # ######  ####
 
-  static Map<ParseValue, dynamic> _parseLineData(String dataBlock) {
+  static Map<WallBoxParserValue, dynamic> _parseLineData(String dataBlock) {
     final splitData = dataBlock.trim().split(' ');
     return {
-      ParseValue.date: DateTime.parse('${splitData[0]} ${splitData[1]}'),
-      ParseValue.powerLevel: double.parse(splitData[2].replaceAll('kWh', '')),
-      ParseValue.id2Value: splitData[3],
+      WallBoxParserValue.date: DateTime.parse(
+        '${splitData[0]} ${splitData[1]}',
+      ),
+      WallBoxParserValue.powerLevel: double.parse(
+        splitData[2].replaceAll('kWh', ''),
+      ),
+      WallBoxParserValue.id2Value: splitData[3],
     };
   }
 
-  static Map<ParseValue, dynamic> _parseMVLine(String line) {
+  static Map<WallBoxParserValue, dynamic> _parseMVLine(String line) {
     assert(
-      _getTag(line) == mvTag,
-      "Non - MV line was passed to parseMVLine: $line",
+      _getTag(line) == _mvTag,
+      'Non - MV line was passed to parseMVLine: $line',
     );
 
     final parsedBlock = _parseLineData(line.split(',')[1]);
-    parsedBlock[ParseValue.id2Value] = "NONE";
+    parsedBlock[WallBoxParserValue.id2Value] = 'NONE';
     return parsedBlock;
   }
 
-  static Map<ParseValue, dynamic> _parseMainLine(String line) {
+  static Map<WallBoxParserValue, dynamic> _parseMainLine(String line) {
     assert(
-      _getTag(line) == startTag || _getTag(line) == stopTag,
-      "Non - Main line was passed to parseMainLine: $line",
+      _getTag(line) == _startTag || _getTag(line) == _stopTag,
+      'Non - Main line was passed to parseMainLine: $line',
     );
     String dataBlock = line.split(',')[2];
     var data = _parseLineData(dataBlock);
@@ -184,13 +204,13 @@ class Parser {
     return data;
   }
 
-  static String _validateParsedMap(Map<ParseValue, dynamic> parsed) {
-    var date = parsed[ParseValue.date];
+  static String _validateParsedMap(Map<WallBoxParserValue, dynamic> parsed) {
+    var date = parsed[WallBoxParserValue.date];
     if (date == null) {
       return 'No date found!';
     }
 
-    var powerLevel = parsed[ParseValue.powerLevel];
+    var powerLevel = parsed[WallBoxParserValue.powerLevel];
     if (powerLevel == null) {
       return 'No Power Level found!';
     }

@@ -1,14 +1,18 @@
-import 'package:wallbox_logs/mid_layer/data/charging_process.dart';
+// ignore_for_file: public_member_api_docs
+
+import 'package:wallbox_logs/mid_layer/data/wall_box_transaction.dart';
 import 'package:wallbox_logs/utility.dart';
 
+/// # ABOUT TO BECOME LEGACY
+/// ---
 /// used to store charging process data sorted by their id.
 /// Instances are created internally to ensure every id is unique.
 class UserData {
   static List<UserData> profiles = List.empty(growable: true);
   final String id2;
-  late final List<ChargingProcess> _completetChargingProcesses;
+  late final List<WallBoxTransaction> _completetChargingProcesses;
 
-  List<ChargingProcess> get completedChargingProcesses =>
+  List<WallBoxTransaction> get completedChargingProcesses =>
       _completetChargingProcesses.toList();
 
   double get totalConsumptionKWH {
@@ -29,9 +33,9 @@ class UserData {
   }
 
   /// Inserts the process into the processes list, so it is sorted by the starting time
-  static void insertProcess(ChargingProcess process) {
+  static void insertProcess(WallBoxTransaction process) {
     final UserData profile =
-        tryGetFromID(process.id2) ?? UserData._create(id2: process.id2);
+        tryGetFromID(process.tagID) ?? UserData._create(id2: process.tagID);
     // profile._completetChargingProcesses.add(process);
     Utility.insertToList(profile._completetChargingProcesses, process, (a, b) {
       return a.start.timeStamp.compareTo(b.start.timeStamp);

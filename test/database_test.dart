@@ -5,24 +5,24 @@ void main() async {
   SimulationRepo<UserMasterData> repo = SimulationRepo('TestRepo');
   repo.preload();
   await repo.clear();
-  String id = "ABCDEFG";
-  String id2 = "djksandjasnd";
+  String id = 'ABCDEFG';
+  String id2 = 'djksandjasnd';
   var michael = UserMasterData(
     tagID: id,
-    prename: "Michael",
-    surname: "M",
+    prename: 'Michael',
+    surname: 'M',
   );
 
   await repo.create(michael);
 
   // print(await repo.getAll());
 
-  michael = michael.copyWith(city: "Kassel");
+  michael = michael.copyWith(city: 'Kassel');
   repo.update(michael);
   var pauli = UserMasterData(
     tagID: id2,
-    prename: "Pauli",
-    surname: "Paule",
+    prename: 'Pauli',
+    surname: 'Paule',
   );
 
   repo.create(pauli);

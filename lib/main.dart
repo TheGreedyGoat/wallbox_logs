@@ -8,7 +8,7 @@ void main() async {
   await AssetFileReader.loadFileData(
     'assets/20260414 ACE0398688_Transactions.csv',
     (data) {
-      Parser.parseWallBoxFile2(data);
+      WallBoxParser.parseWallBoxFile(data);
     },
   );
 
@@ -17,7 +17,9 @@ void main() async {
   );
 }
 
+/// The apps root
 class MyApp extends StatelessWidget {
+  /// The apps root
   const MyApp({
     super.key,
   });

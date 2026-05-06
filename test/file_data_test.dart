@@ -17,12 +17,12 @@ void main() async {
   // );
   // await saveMultiFiles(files);
   for (var file in files) {
-    Parser.parseWallBoxFile2(file);
+    WallBoxParser.parseWallBoxFile(file);
   }
 
   runApp(MyApp());
 }
 
 void callback(FileData data) {
-  Parser.parseWallBoxFile2(data);
+  WallBoxParser.parseWallBoxFile(data);
 }

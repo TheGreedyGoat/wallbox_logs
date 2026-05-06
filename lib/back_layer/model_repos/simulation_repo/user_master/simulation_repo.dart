@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-
-import 'package:wallbox_logs/back_layer/database.dart';
 import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 import 'package:wallbox_logs/back_layer/model_repos/model_repository.dart';
 
@@ -9,6 +6,9 @@ import 'package:wallbox_logs/back_layer/model_repos/model_repository.dart';
 ///Implementation for the simulated local database
 ///
 class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
+  ///
+  ///Implementation for the simulated local database
+  ///- [repoName] : Name of Repository, also dictates the corresponding files name as [repoName].json
   SimulationRepo(super.repoName);
   @override
   T? getById(String id) => cache[id];

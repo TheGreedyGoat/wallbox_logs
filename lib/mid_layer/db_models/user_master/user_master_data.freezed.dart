@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserMasterData {
 
- Titles get title; String get tagID; String? get prename; String? get surname; String? get company; double? get individualPrice; String? get email; String? get phoneNumber; String? get streetAndNumber; String? get postCode; String? get city;
+ Titles get title; String get tagID; String? get prename; String? get surname; String? get company; double? get individualPricePerkWh; String? get email; String? get phoneNumber; String? get streetAndNumber; String? get postCode; String? get city;
 /// Create a copy of UserMasterData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $UserMasterDataCopyWith<UserMasterData> get copyWith => _$UserMasterDataCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserMasterData&&(identical(other.title, title) || other.title == title)&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.prename, prename) || other.prename == prename)&&(identical(other.surname, surname) || other.surname == surname)&&(identical(other.company, company) || other.company == company)&&(identical(other.individualPrice, individualPrice) || other.individualPrice == individualPrice)&&(identical(other.email, email) || other.email == email)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.streetAndNumber, streetAndNumber) || other.streetAndNumber == streetAndNumber)&&(identical(other.postCode, postCode) || other.postCode == postCode)&&(identical(other.city, city) || other.city == city));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserMasterData&&(identical(other.title, title) || other.title == title)&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.prename, prename) || other.prename == prename)&&(identical(other.surname, surname) || other.surname == surname)&&(identical(other.company, company) || other.company == company)&&(identical(other.individualPricePerkWh, individualPricePerkWh) || other.individualPricePerkWh == individualPricePerkWh)&&(identical(other.email, email) || other.email == email)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.streetAndNumber, streetAndNumber) || other.streetAndNumber == streetAndNumber)&&(identical(other.postCode, postCode) || other.postCode == postCode)&&(identical(other.city, city) || other.city == city));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,tagID,prename,surname,company,individualPrice,email,phoneNumber,streetAndNumber,postCode,city);
+int get hashCode => Object.hash(runtimeType,title,tagID,prename,surname,company,individualPricePerkWh,email,phoneNumber,streetAndNumber,postCode,city);
 
 @override
 String toString() {
-  return 'UserMasterData(title: $title, tagID: $tagID, prename: $prename, surname: $surname, company: $company, individualPrice: $individualPrice, email: $email, phoneNumber: $phoneNumber, streetAndNumber: $streetAndNumber, postCode: $postCode, city: $city)';
+  return 'UserMasterData(title: $title, tagID: $tagID, prename: $prename, surname: $surname, company: $company, individualPrice: $individualPricePerkWh, email: $email, phoneNumber: $phoneNumber, streetAndNumber: $streetAndNumber, postCode: $postCode, city: $city)';
 }
 
 
@@ -70,7 +70,7 @@ as Titles,tagID: null == tagID ? _self.tagID : tagID // ignore: cast_nullable_to
 as String,prename: freezed == prename ? _self.prename : prename // ignore: cast_nullable_to_non_nullable
 as String?,surname: freezed == surname ? _self.surname : surname // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
-as String?,individualPrice: freezed == individualPrice ? _self.individualPrice : individualPrice // ignore: cast_nullable_to_non_nullable
+as String?,individualPricePerkWh: freezed == individualPrice ? _self.individualPricePerkWh : individualPrice // ignore: cast_nullable_to_non_nullable
 as double?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,streetAndNumber: freezed == streetAndNumber ? _self.streetAndNumber : streetAndNumber // ignore: cast_nullable_to_non_nullable

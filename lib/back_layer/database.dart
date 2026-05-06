@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
-class MyDatabase {
+/// Implementation for a local database on the device
+class MyLocalDatabase {
   static Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -9,10 +10,12 @@ class MyDatabase {
   }
 
   static Future<File> _localFile(String fullFileName) async {
-    final path = "${await _localPath}/$fullFileName";
+    final path = '${await _localPath}/$fullFileName';
     return File(path);
   }
 
+  /// returns the requested file if it exits
+  /// - [fullFileName] : including the extension
   static Future<String> readFile(String fullFileName) async {
     try {
       final file = await _localFile(fullFileName);
@@ -23,6 +26,7 @@ class MyDatabase {
     }
   }
 
+  /// Writes the [content] to the file and returns it
   static Future<File> writeFile(String fullFileName, String content) async {
     final file = await _localFile(fullFileName);
     return file.writeAsString(content);

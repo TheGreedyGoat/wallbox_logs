@@ -3,14 +3,24 @@ import 'package:wallbox_logs/front_layer/file_upload/file_upload_page.dart';
 import 'package:wallbox_logs/front_layer/sidebar.dart';
 import 'package:wallbox_logs/front_layer/user_overview_Page/user_overview.dart';
 
+/// Pages in man view
 List<Widget> mainPages = [UserOverview(), FileUploadPage()];
+
+/// each pages icons for the [SideBar]s [NavigationRail].
 List<Icon> mainPagesIcons = [Icon(Icons.person), Icon(Icons.upload)];
-List<String> mainPageTitles = ["Übersicht", "Datei hochladen"];
+
+/// each pages title for the [AppBar] & the [SideBar]s [NavigationRail].
+List<String> mainPageTitles = ['Übersicht', 'Datei hochladen'];
+
+/// Stores the current pages index
 ValueNotifier selectedPageNotifier = ValueNotifier(0);
 
+/// The apps root, has a mobile and desktop variant
 class WidgetTree extends StatefulWidget {
+  /// Threshold to switch between
   static const minScreenWidth = 800;
 
+  /// The apps root
   const WidgetTree({super.key});
 
   @override

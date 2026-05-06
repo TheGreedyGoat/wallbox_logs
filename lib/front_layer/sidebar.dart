@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
 
+/// A custom navigation bar
 class SideBar extends StatelessWidget {
+  /// Indicates that the [NavigationRail] should be in the extended state.
   final bool extended;
+
+  /// The current pages index
   final int selectedPage;
+
+  /// callback for the Sidebars extension and retraction
   final VoidCallback onPop;
 
+  /// A custom navigation bar
   const SideBar({
     super.key,
     required this.selectedPage,

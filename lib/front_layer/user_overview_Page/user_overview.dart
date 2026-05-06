@@ -3,7 +3,9 @@ import 'package:wallbox_logs/front_layer/user_details_page/user_details.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
 import 'package:wallbox_logs/mid_layer/data/user_data.dart';
 
+/// Presents all charging data sorted by Users
 class UserOverview extends StatefulWidget {
+  /// Presents all charging data sorted by Users
   const UserOverview({super.key});
   @override
   State<UserOverview> createState() => _UserOverviewState();
