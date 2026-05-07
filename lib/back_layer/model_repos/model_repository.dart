@@ -8,7 +8,6 @@ import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 /// to be implemented for the type of database used
 abstract class ModelRepository<T extends DatabaseModel> {
   /// runtime storage for model objects
-  ///
   late final Map<String, T> cache = {};
 
   /// check if DB files are loaded
@@ -49,14 +48,18 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<void> preload() async {
     if (isLoaded) return;
     String data = await MyLocalDatabase.readFile(fullFileName);
-    print(data);
+
     final decoded = jsonDecode(data);
     for (var json in decoded) {
-      print(json.runtimeType);
+      final model = DatabaseModel.convertFromJson<T>(json);
+      if (model is T) {
+        create(model);
+      }
     }
+    print(cache);
   }
 
-  /// ```!!DANGER!!``` Deletes everything from the cache aswell as the Database
+  /// ```!!DANGER ZONE!!``` Deletes everything from the cache aswell as the Database
   Future<void> clear() async {
     cache.removeWhere(
       (key, value) => true,

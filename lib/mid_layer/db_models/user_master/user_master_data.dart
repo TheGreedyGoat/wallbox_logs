@@ -1,4 +1,3 @@
-import 'package:wallbox_logs/mixins/m_json_serializable.dart';
 import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -24,12 +23,11 @@ enum Titles {
 }
 
 /// Master Data (Stammdaten) for a wallbox user.
-/// - [tagID] (required) :  the users tag ID (the same that is noted in Wallboy log files)
+/// - [tagID] (required) :  the users tag ID (the same that is noted in Wallbox log files)
 /// - [individualPricePerkWh] : How much should this person pay per kWh ? if null a default price will be used
 @freezed
 @JsonSerializable()
-class UserMasterData extends DatabaseModel
-    with _$UserMasterData, MJsonSerializable<UserMasterData> {
+class UserMasterData with _$UserMasterData implements DatabaseModel {
   /// Master Data (Stammdaten) for a wallbox user.
   /// - [tagID] (required) :  the users tag ID (the same that is noted in Wallboy log files)
   /// - [individualPricePerkWh] : How much should this person pay per kWh ? if null a default price will be used
@@ -52,11 +50,7 @@ class UserMasterData extends DatabaseModel
   factory UserMasterData.fromJson(Map<String, Object?> json) =>
       _$UserMasterDataFromJson(json);
 
-  @override
-  UserMasterData fromJson(Map<String, Object?> json) =>
-      UserMasterData.fromJson(json);
-
-  @override
+  /// converts this to a json map
   Map<String, dynamic> toJson() => _$UserMasterDataToJson(this);
 
   @override
@@ -85,7 +79,7 @@ class UserMasterData extends DatabaseModel
   @override
   String get id => tagID;
 
-  /// The
+  /// The user's full formatted address if available
   String? get address =>
       (streetAndNumber != null && postCode != null && city != null)
       ? '$streetAndNumber\n$postCode $city'
