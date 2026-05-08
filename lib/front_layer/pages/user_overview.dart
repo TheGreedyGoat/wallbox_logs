@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/front_layer/user_details_page/user_details.dart';
+import 'package:wallbox_logs/front_layer/pages/user_details.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
 import 'package:wallbox_logs/mid_layer/data/user_data.dart';
 

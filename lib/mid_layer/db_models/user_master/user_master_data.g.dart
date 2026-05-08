@@ -8,7 +8,7 @@ part of 'user_master_data.dart';
 
 UserMasterData _$UserMasterDataFromJson(Map<String, dynamic> json) =>
     UserMasterData(
-      title: $enumDecodeNullable(_$TitlesEnumMap, json['title']) ?? Titles.none,
+      title: $enumDecodeNullable(_$TitlesEnumMap, json['title']) ?? Titles.div,
       tagID: json['tagID'] as String,
       prename: json['prename'] as String?,
       surname: json['surname'] as String?,
@@ -40,5 +40,4 @@ const _$TitlesEnumMap = {
   Titles.mrs: 'mrs',
   Titles.mr: 'mr',
   Titles.div: 'div',
-  Titles.none: 'none',
 };

@@ -1,3 +1,4 @@
+import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -10,16 +11,17 @@ part 'user_master_data.g.dart';
 /// Ways to refer to a person of different genders
 enum Titles {
   /// Male
-  mrs,
+  mrs(label: 'Herr'),
 
   /// Female
-  mr,
+  mr(label: 'Frau'),
 
   /// Diverse
-  div,
+  div(label: 'divers')
+  ;
 
-  /// No title
-  none,
+  final String label;
+  const Titles({required this.label});
 }
 
 /// Master Data (Stammdaten) for a wallbox user.
@@ -34,7 +36,7 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   UserMasterData({
     required this.tagID,
 
-    this.title = Titles.none,
+    this.title = Titles.div,
     this.prename,
     this.surname,
     this.company,
@@ -45,6 +47,21 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
     this.postCode,
     this.city,
   });
+
+  static final SimulationRepo<UserMasterData> repo = SimulationRepo(
+    'user_repo',
+  );
+
+  static List<String> get companies {
+    List<String> companies = List.empty(growable: true);
+    for (var user in repo.cache.values) {
+      if (user.company != null) {
+        companies.add(user.company!);
+      }
+    }
+
+    return companies;
+  }
 
   /// creates a [UserMasterData] object from a valid json Map
   factory UserMasterData.fromJson(Map<String, Object?> json) =>

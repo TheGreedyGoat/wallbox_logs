@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/back_layer/asset_file_reader.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
+import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +14,14 @@ void main() async {
     },
   );
 
+  await windowManager.ensureInitialized();
+  await windowManager.setMinimumSize(Size(800, 800));
+  UserMasterData.repo.create(
+    UserMasterData(tagID: 'ABCDEFG', company: 'cdemy'),
+  );
+  UserMasterData.repo.create(
+    UserMasterData(tagID: 'XYZHN', company: 'Inventarkreisel'),
+  );
   runApp(
     MyApp(),
   );
@@ -27,7 +37,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark(),
+      theme: ThemeData.light(),
 
       home: WidgetTree(),
     );

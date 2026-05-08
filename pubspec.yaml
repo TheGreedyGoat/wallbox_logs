@@ -41,6 +41,8 @@ dependencies:
   json_annotation: ^4.8.1
   path_provider: ^2.1.5
   very_good_analysis: ^10.2.0
+  window_manager: ^0.5.1
+  flutter_typeahead: ^6.0.0
 
 dev_dependencies:
   flutter_test:

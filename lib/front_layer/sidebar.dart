@@ -12,44 +12,52 @@ class SideBar extends StatelessWidget {
   /// callback for the Sidebars extension and retraction
   final VoidCallback onPop;
 
+  final Color? backgroundColor;
+
   /// A custom navigation bar
   const SideBar({
     super.key,
     required this.selectedPage,
     required this.onPop,
     this.extended = false,
+    this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: extended
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: onPop,
-          icon: extended
-              ? const Icon(Icons.arrow_back)
-              : const Icon(Icons.menu),
-        ),
-        Expanded(
-          child: NavigationRail(
-            extended: extended,
-            onDestinationSelected: (value) {
-              selectedPageNotifier.value = value;
-            },
-            destinations: [
-              for (int i = 0; i < mainPages.length; i++)
-                NavigationRailDestination(
-                  icon: mainPagesIcons[i],
-                  label: Text(mainPageTitles[i]),
-                ),
-            ],
-            selectedIndex: selectedPage,
+    return Container(
+      decoration: BoxDecoration(color: backgroundColor),
+      child: Column(
+        crossAxisAlignment: extended
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: onPop,
+            icon: extended
+                ? const Icon(Icons.arrow_back)
+                : const Icon(Icons.arrow_forward),
           ),
-        ),
-      ],
+          Expanded(
+            child: NavigationRail(
+              backgroundColor: backgroundColor,
+              indicatorShape: CircleBorder(),
+              extended: extended,
+              onDestinationSelected: (value) {
+                selectedPageNotifier.value = value;
+              },
+              destinations: [
+                for (int i = 0; i < mainPages.length; i++)
+                  NavigationRailDestination(
+                    icon: mainPagesIcons[i],
+                    label: Text(mainPageTitles[i]),
+                  ),
+              ],
+              selectedIndex: selectedPage,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

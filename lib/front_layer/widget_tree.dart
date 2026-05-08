@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/front_layer/file_upload/file_upload_page.dart';
+import 'package:wallbox_logs/front_layer/pages/file_upload_page.dart';
+import 'package:wallbox_logs/front_layer/pages/user_creation.dart';
 import 'package:wallbox_logs/front_layer/sidebar.dart';
-import 'package:wallbox_logs/front_layer/user_overview_Page/user_overview.dart';
+import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
 
 /// Pages in man view
 List<Widget> mainPages = [UserOverview(), FileUploadPage()];
@@ -34,63 +35,35 @@ class _WidgetTreeState extends State<WidgetTree> {
     return ValueListenableBuilder(
       valueListenable: selectedPageNotifier,
       builder: (context, selectedPage, child) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            return constraints.maxWidth <= WidgetTree.minScreenWidth
-                ? _mobile(context, selectedPage)
-                : _desktop(context, selectedPage);
-          },
+        return _content(
+          context,
+          selectedPage,
         );
       },
     );
   }
 
-  Widget _mobile(BuildContext context, int selectedPage) {
+  Widget _content(BuildContext context, int selectedPage) {
     return Scaffold(
       appBar: AppBar(
         title: Text(mainPageTitles[selectedPage]),
-      ),
-
-      body: mainPages[selectedPage],
-      drawer: IntrinsicWidth(
-        child: Drawer(
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: SideBar(
-              selectedPage: selectedPage,
-              extended: true,
-              onPop: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _desktop(BuildContext context, int selectedPage) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(mainPageTitles[selectedPage]),
+        backgroundColor: Colors.blueGrey[200],
       ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SideBar(
-              selectedPage: selectedPage,
-              extended: extendSideBar,
-              onPop: () {
-                setState(() {
-                  extendSideBar = !extendSideBar;
-                });
-              },
-            ),
+          SideBar(
+            selectedPage: selectedPage,
+            extended: extendSideBar,
+            backgroundColor: Colors.blueGrey[100],
+            onPop: () {
+              setState(() {
+                extendSideBar = !extendSideBar;
+              });
+            },
           ),
           Expanded(
-            child: mainPages[selectedPage],
+            child: UserCreation(), //mainPages[selectedPage],
           ),
         ],
       ),
