@@ -8,6 +8,7 @@ class MyTextFormField extends StatefulWidget {
   final String? initialValue;
   final String label;
   final String? Function(String? value)? customValidator;
+  final void Function(String? value) onSaved;
   final bool isRequired;
   final bool expand;
   final int? maxLength;
@@ -18,6 +19,7 @@ class MyTextFormField extends StatefulWidget {
   final InputType inputType;
   const MyTextFormField({
     required this.label,
+    required this.onSaved,
     this.controller,
     this.focusNode,
     this.autofocus = false,
@@ -66,11 +68,13 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
         controller: controller,
         focusNode: widget.focusNode,
         autofocus: widget.autofocus,
-        onSaved: (newValue) {},
+        onSaved: (newValue) => widget.onSaved(
+          (newValue == null || newValue.isEmpty) ? null : newValue.trim(),
+        ),
         validator: (value) {
           return (isRequired && (value == null || value.isEmpty))
               ? 'erforderlich'
-              : (widget.customValidator != null
+              : (widget.customValidator != null && value != null
                     ? widget.customValidator!(value)
                     : null);
         },

@@ -8,12 +8,13 @@ part of 'user_master_data.dart';
 
 UserMasterData _$UserMasterDataFromJson(Map<String, dynamic> json) =>
     UserMasterData(
-      title: $enumDecodeNullable(_$TitlesEnumMap, json['title']) ?? Titles.div,
       tagID: json['tagID'] as String,
+      title: $enumDecodeNullable(_$TitlesEnumMap, json['title']) ?? Titles.div,
       prename: json['prename'] as String?,
       surname: json['surname'] as String?,
       company: json['company'] as String?,
-      individualPricePerkWh: (json['individualPrice'] as num?)?.toDouble(),
+      individualPricePerkWhInCents:
+          (json['individualPricePerkWhInCents'] as num?)?.toInt(),
       email: json['email'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       streetAndNumber: json['streetAndNumber'] as String?,
@@ -28,7 +29,7 @@ Map<String, dynamic> _$UserMasterDataToJson(UserMasterData instance) =>
       'prename': instance.prename,
       'surname': instance.surname,
       'company': instance.company,
-      'individualPrice': instance.individualPricePerkWh,
+      'individualPricePerkWhInCents': instance.individualPricePerkWhInCents,
       'email': instance.email,
       'phoneNumber': instance.phoneNumber,
       'streetAndNumber': instance.streetAndNumber,
@@ -36,8 +37,4 @@ Map<String, dynamic> _$UserMasterDataToJson(UserMasterData instance) =>
       'city': instance.city,
     };
 
-const _$TitlesEnumMap = {
-  Titles.mrs: 'mrs',
-  Titles.mr: 'mr',
-  Titles.div: 'div',
-};
+const _$TitlesEnumMap = {Titles.mrs: 'mrs', Titles.mr: 'mr', Titles.div: 'div'};

@@ -1,7 +1,8 @@
 // ignore_for_file: prefer_adjacent_string_concatenation, prefer_interpolation_to_compose_strings
 
-import 'package:wallbox_logs/mid_layer/data/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 /// Used for ParserMaps
 enum WallBoxParserValue {
@@ -91,6 +92,14 @@ class WallBoxParser {
     }
   }
 
+  static void _saveTransaction(WallBoxTransaction transaction) {
+    WallBoxTransaction.repo.create(transaction);
+    String tagID = transaction.tagID;
+    if (!UserMasterData.repo.exists(tagID)) {
+      UserMasterData.repo.create(UserMasterData(tagID: tagID));
+    }
+  }
+
   //  ###
   //   #  #    #  ####   ####  #    # #####  #      ###### ##### ######
   //   #  ##   # #    # #    # ##  ## #    # #      #        #   #
@@ -116,12 +125,14 @@ class WallBoxParser {
     mvValues[WallBoxParserValue.id2Value] =
         mainValues[WallBoxParserValue.id2Value];
 
-    ChargingEvent mainEvent = ChargingEvent.fromJSON(mainValues);
-    ChargingEvent mvEvent = ChargingEvent.fromJSON(mvValues);
+    ChargingEvent mainEvent = ChargingEvent.fromEnumMap(mainValues);
+    ChargingEvent mvEvent = ChargingEvent.fromEnumMap(mvValues);
 
-    WallBoxTransaction(
-      start: isAtStartOfFile ? mvEvent : mainEvent,
-      stop: isAtStartOfFile ? mainEvent : mvEvent,
+    _saveTransaction(
+      WallBoxTransaction(
+        start: isAtStartOfFile ? mvEvent : mainEvent,
+        stop: isAtStartOfFile ? mainEvent : mvEvent,
+      ),
     );
   }
 
@@ -135,9 +146,11 @@ class WallBoxParser {
   static void _parseFullProcess(String start, String stop) {
     var startParsed = _parseMainLine(start);
     var stopParsed = _parseMainLine(stop);
-    WallBoxTransaction(
-      start: ChargingEvent.fromJSON(startParsed),
-      stop: ChargingEvent.fromJSON(stopParsed),
+    _saveTransaction(
+      WallBoxTransaction(
+        start: ChargingEvent.fromEnumMap(startParsed),
+        stop: ChargingEvent.fromEnumMap(stopParsed),
+      ),
     );
   }
 

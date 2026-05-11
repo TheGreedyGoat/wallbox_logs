@@ -1,5 +1,5 @@
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
-import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 void main() async {
   SimulationRepo<UserMasterData> repo = SimulationRepo('TestRepo');

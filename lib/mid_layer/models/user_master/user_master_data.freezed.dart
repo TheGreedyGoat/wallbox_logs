@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserMasterData {
 
- Titles get title; String get tagID; String? get prename; String? get surname; String? get company; double? get individualPricePerkWh; String? get email; String? get phoneNumber; String? get streetAndNumber; String? get postCode; String? get city;
+ Titles get title; String get tagID; String? get prename; String? get surname; String? get company; int? get individualPricePerkWhInCents; String? get email; String? get phoneNumber; String? get streetAndNumber; String? get postCode; String? get city;
 /// Create a copy of UserMasterData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $UserMasterDataCopyWith<UserMasterData> get copyWith => _$UserMasterDataCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserMasterData&&(identical(other.title, title) || other.title == title)&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.prename, prename) || other.prename == prename)&&(identical(other.surname, surname) || other.surname == surname)&&(identical(other.company, company) || other.company == company)&&(identical(other.individualPricePerkWh, individualPricePerkWh) || other.individualPricePerkWh == individualPricePerkWh)&&(identical(other.email, email) || other.email == email)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.streetAndNumber, streetAndNumber) || other.streetAndNumber == streetAndNumber)&&(identical(other.postCode, postCode) || other.postCode == postCode)&&(identical(other.city, city) || other.city == city));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserMasterData&&(identical(other.title, title) || other.title == title)&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.prename, prename) || other.prename == prename)&&(identical(other.surname, surname) || other.surname == surname)&&(identical(other.company, company) || other.company == company)&&(identical(other.individualPricePerkWhInCents, individualPricePerkWhInCents) || other.individualPricePerkWhInCents == individualPricePerkWhInCents)&&(identical(other.email, email) || other.email == email)&&(identical(other.phoneNumber, phoneNumber) || other.phoneNumber == phoneNumber)&&(identical(other.streetAndNumber, streetAndNumber) || other.streetAndNumber == streetAndNumber)&&(identical(other.postCode, postCode) || other.postCode == postCode)&&(identical(other.city, city) || other.city == city));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,title,tagID,prename,surname,company,individualPricePerkWh,email,phoneNumber,streetAndNumber,postCode,city);
+int get hashCode => Object.hash(runtimeType,title,tagID,prename,surname,company,individualPricePerkWhInCents,email,phoneNumber,streetAndNumber,postCode,city);
 
 @override
 String toString() {
-  return 'UserMasterData(title: $title, tagID: $tagID, prename: $prename, surname: $surname, company: $company, individualPrice: $individualPricePerkWh, email: $email, phoneNumber: $phoneNumber, streetAndNumber: $streetAndNumber, postCode: $postCode, city: $city)';
+  return 'UserMasterData(title: $title, tagID: $tagID, prename: $prename, surname: $surname, company: $company, individualPricePerkWhInCents: $individualPricePerkWhInCents, email: $email, phoneNumber: $phoneNumber, streetAndNumber: $streetAndNumber, postCode: $postCode, city: $city)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $UserMasterDataCopyWith<$Res>  {
   factory $UserMasterDataCopyWith(UserMasterData value, $Res Function(UserMasterData) _then) = _$UserMasterDataCopyWithImpl;
 @useResult
 $Res call({
- Titles title, String tagID, String? prename, String? surname, String? company, double? individualPrice, String? email, String? phoneNumber, String? streetAndNumber, String? postCode, String? city
+ String tagID, Titles title, String? prename, String? surname, String? company, int? individualPricePerkWhInCents, String? email, String? phoneNumber, String? streetAndNumber, String? postCode, String? city
 });
 
 
@@ -63,15 +63,15 @@ class _$UserMasterDataCopyWithImpl<$Res>
 
 /// Create a copy of UserMasterData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? tagID = null,Object? prename = freezed,Object? surname = freezed,Object? company = freezed,Object? individualPrice = freezed,Object? email = freezed,Object? phoneNumber = freezed,Object? streetAndNumber = freezed,Object? postCode = freezed,Object? city = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tagID = null,Object? title = null,Object? prename = freezed,Object? surname = freezed,Object? company = freezed,Object? individualPricePerkWhInCents = freezed,Object? email = freezed,Object? phoneNumber = freezed,Object? streetAndNumber = freezed,Object? postCode = freezed,Object? city = freezed,}) {
   return _then(UserMasterData(
-title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as Titles,tagID: null == tagID ? _self.tagID : tagID // ignore: cast_nullable_to_non_nullable
-as String,prename: freezed == prename ? _self.prename : prename // ignore: cast_nullable_to_non_nullable
+tagID: null == tagID ? _self.tagID : tagID // ignore: cast_nullable_to_non_nullable
+as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as Titles,prename: freezed == prename ? _self.prename : prename // ignore: cast_nullable_to_non_nullable
 as String?,surname: freezed == surname ? _self.surname : surname // ignore: cast_nullable_to_non_nullable
 as String?,company: freezed == company ? _self.company : company // ignore: cast_nullable_to_non_nullable
-as String?,individualPricePerkWh: freezed == individualPrice ? _self.individualPricePerkWh : individualPrice // ignore: cast_nullable_to_non_nullable
-as double?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,individualPricePerkWhInCents: freezed == individualPricePerkWhInCents ? _self.individualPricePerkWhInCents : individualPricePerkWhInCents // ignore: cast_nullable_to_non_nullable
+as int?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String?,phoneNumber: freezed == phoneNumber ? _self.phoneNumber : phoneNumber // ignore: cast_nullable_to_non_nullable
 as String?,streetAndNumber: freezed == streetAndNumber ? _self.streetAndNumber : streetAndNumber // ignore: cast_nullable_to_non_nullable
 as String?,postCode: freezed == postCode ? _self.postCode : postCode // ignore: cast_nullable_to_non_nullable

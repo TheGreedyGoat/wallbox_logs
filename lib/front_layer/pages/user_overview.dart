@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/front_layer/pages/user_details.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
-import 'package:wallbox_logs/mid_layer/data/user_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 /// Presents all charging data sorted by Users
 class UserOverview extends StatefulWidget {
@@ -13,29 +13,49 @@ class UserOverview extends StatefulWidget {
 
 class _UserOverviewState extends State<UserOverview> {
   int? selectedTile;
+  late final Future<List<UserMasterData>> futureProfiles;
+
+  @override
+  void initState() {
+    super.initState();
+    futureProfiles = UserMasterData.repo.getAll();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: MyListView(
-        children: [
-          for (int i = 0; i < UserData.profiles.length; i++)
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: userListTile(
-                UserData.profiles[i],
-                selectedTile == i,
-                i,
-                context,
-              ),
-            ),
-        ],
+      child: FutureBuilder(
+        future: futureProfiles,
+        builder: (context, snapshot) {
+          final profile = snapshot.data;
+          if (snapshot.connectionState != ConnectionState.done) {
+            return CircularProgressIndicator();
+          } else if (profile == null) {
+            return Text('Etwas ist schief gelaufen');
+          } else {
+            return MyListView(
+              children: [
+                for (int i = 0; i < profile.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: userListTile(
+                      profile[i],
+                      selectedTile == i,
+                      i,
+                      context,
+                    ),
+                  ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
 
   Widget userListTile(
-    UserData profile,
+    UserMasterData profile,
     bool expand,
     int index,
     BuildContext context,
@@ -44,10 +64,10 @@ class _UserOverviewState extends State<UserOverview> {
       initiallyExpanded: expand,
 
       title: Text(
-        'Karten-ID: ${profile.id2}',
+        'Name: ${profile.fullName}, tagID: ${profile.tagID}',
       ),
       subtitle: Text(
-        'Totaler Verbrauch: ${profile.totalConsumptionKWH.toStringAsFixed(3)} kWh',
+        'Totaler Verbrauch: {profiletoStringAsFixed(3)} kWh',
       ),
 
       children: [UserDetails(profile: profile)],

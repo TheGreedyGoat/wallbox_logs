@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:wallbox_logs/back_layer/database.dart';
-import 'package:wallbox_logs/mid_layer/db_models/database_model.dart';
+import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 
 /// basic Repository class
 /// to be implemented for the type of database used
@@ -37,6 +37,16 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// Replaces an existing object witht the same id as [model]
   Future<T> update(T model);
 
+  Future<T> createOrUpdate(T model) async {
+    if (exists(model.repoID)) {
+      update(model);
+    } else {
+      create(model);
+    }
+
+    return model;
+  }
+
   /// Deletes the object with the given id if it exists
   Future<void> delete(String id);
 
@@ -48,7 +58,6 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<void> preload() async {
     if (isLoaded) return;
     String data = await MyLocalDatabase.readFile(fullFileName);
-
     final decoded = jsonDecode(data);
     for (var json in decoded) {
       final model = DatabaseModel.convertFromJson<T>(json);
@@ -69,8 +78,10 @@ abstract class ModelRepository<T extends DatabaseModel> {
 
   /// Overrides the reop files content with the cache
   Future<File> updateFile() async {
+    // print(cache);
     final file = await MyLocalDatabase.writeFile(
       fullFileName,
+
       jsonEncode(cache.values.toList()),
     );
     return file;

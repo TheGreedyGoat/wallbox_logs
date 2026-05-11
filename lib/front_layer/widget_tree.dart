@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/front_layer/pages/file_upload_page.dart';
 import 'package:wallbox_logs/front_layer/pages/user_creation.dart';
 import 'package:wallbox_logs/front_layer/sidebar.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
 
 /// Pages in man view
-List<Widget> mainPages = [UserOverview(), FileUploadPage()];
+List<Widget> mainPages = [UserOverview(), UserCreation()];
 
 /// each pages icons for the [SideBar]s [NavigationRail].
-List<Icon> mainPagesIcons = [Icon(Icons.person), Icon(Icons.upload)];
+List<Icon> mainPagesIcons = [Icon(Icons.person), Icon(Icons.person_add)];
 
 /// each pages title for the [AppBar] & the [SideBar]s [NavigationRail].
-List<String> mainPageTitles = ['Übersicht', 'Datei hochladen'];
+List<String> mainPageTitles = ['Übersicht', 'Nutzerdaten hinzufügen'];
 
 /// Stores the current pages index
 ValueNotifier selectedPageNotifier = ValueNotifier(0);
@@ -51,6 +50,7 @@ class _WidgetTreeState extends State<WidgetTree> {
       ),
       body: Row(
         mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SideBar(
             selectedPage: selectedPage,
@@ -63,7 +63,7 @@ class _WidgetTreeState extends State<WidgetTree> {
             },
           ),
           Expanded(
-            child: UserCreation(), //mainPages[selectedPage],
+            child: mainPages[selectedPage],
           ),
         ],
       ),
