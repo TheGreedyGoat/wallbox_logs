@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/back_layer/asset_file_reader.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
-import 'package:wallbox_logs/mid_layer/db_models/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+  await windowManager.setMinimumSize(Size(800, 800));
+
+  WallBoxTransaction.repo.clear();
   await AssetFileReader.loadFileData(
     'assets/20260414 ACE0398688_Transactions.csv',
     (data) {
@@ -14,8 +19,6 @@ void main() async {
     },
   );
 
-  await windowManager.ensureInitialized();
-  await windowManager.setMinimumSize(Size(800, 800));
   UserMasterData.repo.create(
     UserMasterData(tagID: 'ABCDEFG', company: 'cdemy'),
   );
