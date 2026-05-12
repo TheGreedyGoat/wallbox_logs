@@ -14,7 +14,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   @override
   Future<File> create(T model) async {
     assert(
-      !exists(model.repoID),
+      !hasEntry(model.repoID),
       'Database entry for ${T.toString()} $model already exists, use update to change it!',
     );
     cache[model.repoID] = model;
@@ -25,7 +25,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   @override
   Future<T> update(T model) async {
     assert(
-      exists(model.repoID),
+      hasEntry(model.repoID),
       'Database entry for ${T.toString()} $model does not exist, use create to create it!',
     );
     cache[model.repoID] = model;

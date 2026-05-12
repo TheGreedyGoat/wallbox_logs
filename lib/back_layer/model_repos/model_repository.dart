@@ -38,7 +38,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<T> update(T model);
 
   Future<T> createOrUpdate(T model) async {
-    if (exists(model.repoID)) {
+    if (hasEntry(model.repoID)) {
       update(model);
     } else {
       create(model);
@@ -51,7 +51,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<void> delete(String id);
 
   /// Returns true if a Database entry with the given [id] exits
-  bool exists(String id) => getById(id) != null;
+  bool hasEntry(String id) => getById(id) != null;
 
   /// Overrides the cache with data in database.
   /// The [isLoaded] property has to be set to ```false```

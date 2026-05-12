@@ -4,13 +4,13 @@ import 'package:wallbox_logs/front_layer/sidebar.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
 
 /// Pages in man view
-List<Widget> mainPages = [UserOverview(), UserCreation()];
+final List<Widget> mainPages = [UserOverview(), UserEditing()];
 
 /// each pages icons for the [SideBar]s [NavigationRail].
-List<Icon> mainPagesIcons = [Icon(Icons.person), Icon(Icons.person_add)];
+final List<Icon> mainPagesIcons = [Icon(Icons.person), Icon(Icons.person_add)];
 
 /// each pages title for the [AppBar] & the [SideBar]s [NavigationRail].
-List<String> mainPageTitles = ['Übersicht', 'Nutzerdaten hinzufügen'];
+final List<String> mainPageTitles = ['Übersicht', 'Nutzerdaten hinzufügen'];
 
 /// Stores the current pages index
 ValueNotifier selectedPageNotifier = ValueNotifier(0);

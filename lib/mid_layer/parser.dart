@@ -95,7 +95,7 @@ class WallBoxParser {
   static void _saveTransaction(WallBoxTransaction transaction) {
     WallBoxTransaction.repo.create(transaction);
     String tagID = transaction.tagID;
-    if (!UserMasterData.repo.exists(tagID)) {
+    if (!UserMasterData.repo.hasEntry(tagID)) {
       UserMasterData.repo.create(UserMasterData(tagID: tagID));
     }
   }

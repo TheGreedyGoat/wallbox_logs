@@ -4,15 +4,15 @@ import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
-class UserCreation extends StatefulWidget {
-  final UserMasterData? userMasterData;
-  const UserCreation({super.key, this.userMasterData});
+class UserEditing extends StatefulWidget {
+  final UserMasterData? original;
+  const UserEditing({super.key, this.original});
 
   @override
-  State<UserCreation> createState() => _UserCreationState();
+  State<UserEditing> createState() => _UserEditingState();
 }
 
-class _UserCreationState extends State<UserCreation> {
+class _UserEditingState extends State<UserEditing> {
   late final GlobalKey<FormState> _globalKey;
   late final TextEditingController _companyController;
 
@@ -257,6 +257,7 @@ class _UserCreationState extends State<UserCreation> {
             ])
               Flexible(child: Text(e.toString())),
             Flexible(child: Container()),
+
             Flexible(
               child: FilledButton(
                 onPressed: () async {
@@ -275,20 +276,10 @@ class _UserCreationState extends State<UserCreation> {
     );
   }
 
-  void _showSnackBar(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Center(child: Text('Nutzerdaten wurden $action'))),
-    );
-  }
-
   Future<String> _checkExisting() async {
-    print('saving...');
-    DatabaseModel? check = UserMasterData.repo.getById(tagID!);
+    UserMasterData? check = UserMasterData.repo.getById(tagID!);
     String action = 'nicht gespeichert';
-    // user chose to override
-    if (check != null &&
-        check is UserMasterData &&
-        (await _idExistsDialog(check))!) {
+    if (check != null && (await _idExistsDialog(check))!) {
       UserMasterData.repo.update(
         check.copyWith(
           title: title,
@@ -325,6 +316,17 @@ class _UserCreationState extends State<UserCreation> {
     return action;
   }
 
+  Future<String> _saveUser(UserMasterData user) async {
+    final repo = UserMasterData.repo;
+    if (repo.hasEntry(user.tagID)) {
+      repo.update(user);
+      return 'aktualisiert';
+    } else {
+      repo.create(user);
+      return 'erstellt';
+    }
+  }
+
   Future<bool?> _idExistsDialog(UserMasterData existing) async {
     return await showDialog<bool>(
       context: context,
@@ -358,5 +360,9 @@ class _UserCreationState extends State<UserCreation> {
     );
   }
 
-  // Future<bool> _keepTransactionsDialog
+  void _showSnackBar(String action) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Center(child: Text('Nutzerdaten wurden $action'))),
+    );
+  }
 }
