@@ -32,7 +32,7 @@ class UserListTile extends StatelessWidget {
         },
         icon: Icon(Icons.edit),
       ),
-      title: Text(
+      title: SelectableText(
         'Name: ${profile.fullName}, tagID: ${profile.tagID}',
       ),
       subtitle: Text(

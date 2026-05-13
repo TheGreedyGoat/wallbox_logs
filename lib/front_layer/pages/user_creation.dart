@@ -31,8 +31,24 @@ class _UserEditingState extends State<UserEditing> {
   @override
   void initState() {
     super.initState();
+    if (widget.original != null) {
+      _fillIn(widget.original!);
+    }
     _globalKey = GlobalKey<FormState>();
     _companyController = TextEditingController();
+  }
+
+  void _fillIn(UserMasterData user) {
+    title = user.title;
+    tagID = user.tagID;
+    prename = user.prename;
+    surname = user.surname;
+    streetAndNumber = user.streetAndNumber;
+    postcode = user.postCode;
+    city = user.city;
+    phone = user.phoneNumber;
+    email = user.email;
+    company = user.company;
   }
 
   final List<String> testStrings = UserMasterData.companies;
@@ -67,7 +83,7 @@ class _UserEditingState extends State<UserEditing> {
                         DropdownMenuFormField<Titles>(
                           label: Text('Anrede'),
                           width: 120,
-                          initialSelection: Titles.div,
+                          initialSelection: title,
                           dropdownMenuEntries: Titles.values
                               .map<DropdownMenuEntry<Titles>>(
                                 (e) => DropdownMenuEntry<Titles>(
