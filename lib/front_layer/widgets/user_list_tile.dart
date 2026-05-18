@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/front_layer/pages/user_creation.dart';
+import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
 import 'package:wallbox_logs/front_layer/widgets/user_details.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/models/page_state.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
-import 'package:wallbox_logs/riverpod/widget_tree_notifier.dart';
 
+/// Displays the main informations about he given [profile].
+/// Can be expanded for an overview over corresponing transactions
 class UserListTileConsumer extends ConsumerStatefulWidget {
+  /// The source for the displayed data
   final UserMasterData profile;
-  // final
+
+  /// Displays the main informations about he given [profile].
+  /// Can be expanded for an overview over corresponing transactions
+  /// - [profile]: The source for the displayed data
   const UserListTileConsumer({
     required this.profile,
     super.key,
@@ -27,6 +32,7 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       initiallyExpanded: false,
@@ -37,7 +43,7 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
         onPressed: () {
           ref
               .read(widgetTreeProvider.notifier)
-              .setCustom(
+              .setCustomPage(
                 PageState(
                   page: UserEditing(original: widget.profile),
                   title: 'Bearbeiten',
@@ -55,7 +61,7 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
         'Totaler Verbrauch: {profiletoStringAsFixed(3)} kWh',
       ),
 
-      children: [UserDetails(profile: widget.profile)],
+      children: [UserTransactionsWidget(user: widget.profile)],
       onExpansionChanged: (value) => setState(() {
         isExpanded = value;
       }),

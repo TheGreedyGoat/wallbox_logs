@@ -33,10 +33,15 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
       'ERROR while creating $WallBoxTransaction:\n id2s dont match up:\n* Process: $tagID\n* start: ${start.tagID},\n* Stop:${stop.tagID}',
     );
   }
+
+  /// access function for conversion to JSON
   factory WallBoxTransaction.fromJson(Map<String, Object?> json) =>
       _$WallBoxTransactionFromJson(json);
 
+  /// access function for conversion from JSON
   Map<String, dynamic> toJson() => _$WallBoxTransactionToJson(this);
+
+  /// The Reposiory to save and load [WallBoxTransaction]s to/ from the database
   static final SimulationRepo<WallBoxTransaction> repo =
       SimulationRepo<WallBoxTransaction>('transactions');
 
@@ -67,6 +72,7 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   String get repoID =>
       '$tagID.${startTimeStamp.toIso8601String().replaceAll(':', '-')}';
 
+  /// Returns all Transactions that have the passed [tagID]
   static Future<List<WallBoxTransaction>> allOfTagID(String tagID) async {
     List<WallBoxTransaction> found = List.empty(growable: true);
     List<DatabaseModel> all = await repo.getAll();
@@ -111,9 +117,11 @@ class ChargingEvent with _$ChargingEvent {
     powerLevelKiloWH = map[WallBoxParserValue.powerLevel];
   }
 
+  /// access function for conversion from JSON
   factory ChargingEvent.fromJson(Map<String, dynamic> json) =>
       _$ChargingEventFromJson(json);
 
+  /// access function for conversion to JSON
   Map<String, dynamic> toJson() => _$ChargingEventToJson(this);
 
   /// The tagID wich is used to identifie the user who charged

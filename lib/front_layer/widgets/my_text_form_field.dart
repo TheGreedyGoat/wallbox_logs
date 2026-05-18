@@ -2,21 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wallbox_logs/front_layer/widgets/conditional_wrapper.dart';
 
-enum InputType { text, number }
+/// presets for the FormField
+enum InputType {
+  /// plain text
+  text,
 
+  /// numerics only
+  number,
+}
+
+/// a custom wrapper for a TextFormField to keep a coherent style etc.
 class MyTextFormField extends StatefulWidget {
+  /// The TextFormFields initialValue
   final String? initialValue;
+
+  /// The TextFormFields label
   final String label;
+
+  /// set to add additional validation logic.
+  /// => should return null if value is valid, else an error message
   final String? Function(String? value)? customValidator;
+
+  /// set to add additional logic when saving the form.
   final void Function(String? value) onSaved;
+
+  /// if set to true, the field cannot contain null or an empy String on submitting the form
   final bool isRequired;
-  final bool expand;
-  final int? maxLength;
+
+  /// set to true to wrap the Field in an expanded-Widget
+  final bool wrapWihExpanded;
+
+  /// optionally set a maximum number of characters in this field
+  final int? characterLimit;
+
+  /// ttracks changes in the field
   final TextEditingController? controller;
+
+  /// an optional [FocusNode] object. Needed if the Textformfield is used within a TypeAheadString
   final FocusNode? focusNode;
+
+  /// if true, the field will be focused initially
   final bool autofocus;
 
+  /// preset
   final InputType inputType;
+
+  /// a custom wrapper for a TextFormField to keep a coherent style etc.
   const MyTextFormField({
     required this.label,
     required this.onSaved,
@@ -24,10 +55,10 @@ class MyTextFormField extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.inputType = InputType.text,
-    this.expand = false,
+    this.wrapWihExpanded = false,
     this.isRequired = false,
 
-    this.maxLength,
+    this.characterLimit,
     this.customValidator,
     this.initialValue,
     super.key,
@@ -50,7 +81,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
   @override
   Widget build(BuildContext context) {
     return _field(context).wrapIf(
-      widget.expand,
+      widget.wrapWihExpanded,
       (child) => Expanded(child: child),
     );
   }
@@ -59,11 +90,11 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        maxLength: widget.maxLength,
+        maxLength: widget.characterLimit,
 
         inputFormatters: _getInputFormatters(),
         decoration: InputDecoration(
-          label: Text('${widget.label!}${isRequired ? '*' : ''}'),
+          label: Text('${widget.label}${isRequired ? '*' : ''}'),
         ),
         controller: controller,
         focusNode: widget.focusNode,

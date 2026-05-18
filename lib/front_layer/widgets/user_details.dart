@@ -3,22 +3,25 @@ import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.d
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/utility.dart';
 
-///
-class UserDetails extends StatefulWidget {
-  final UserMasterData profile;
+/// Shows all available informations about the [user]'s transactions
+class UserTransactionsWidget extends StatefulWidget {
+  /// The instance of [UserMasterData] to show corresponding transacion data from
+  final UserMasterData user;
 
-  ///
-  const UserDetails({super.key, required this.profile});
+  /// Shows all available informations about the [user]'s transactions
+  /// - [user] The instance of [UserMasterData] to show corresponding transacion data from
+
+  const UserTransactionsWidget({super.key, required this.user});
 
   @override
-  State<UserDetails> createState() => _UserDetailsState();
+  State<UserTransactionsWidget> createState() => _UserTransactionsWidgetState();
 }
 
-class _UserDetailsState extends State<UserDetails> {
+class _UserTransactionsWidgetState extends State<UserTransactionsWidget> {
   late final Future<List<WallBoxTransaction>> _transactions;
 
-  String get tagID => widget.profile.tagID;
-  UserMasterData get profile => widget.profile;
+  String get tagID => widget.user.tagID;
+  UserMasterData get profile => widget.user;
   @override
   void initState() {
     super.initState();

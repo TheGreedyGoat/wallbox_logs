@@ -37,6 +37,9 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// Replaces an existing object witht the same id as [model]
   Future<T> update(T model);
 
+  /// Updates the entry if it exists or creates it if not
+  ///
+  /// Returns it asynchronously afterwards
   Future<T> createOrUpdate(T model) async {
     if (hasEntry(model.repoID)) {
       update(model);

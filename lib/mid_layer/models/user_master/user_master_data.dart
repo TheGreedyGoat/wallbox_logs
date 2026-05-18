@@ -20,6 +20,7 @@ enum Titles {
   div(label: 'divers')
   ;
 
+  ///a String representation for the title
   final String label;
   const Titles({required this.label});
 }
@@ -48,14 +49,19 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
     this.city,
   });
 
+  /// The Reposiory to save and load [UserMasterData] to/ from the database
   static final SimulationRepo<UserMasterData> repo = SimulationRepo(
     'user_repo',
   );
+
+  /// Placeolder for missing names
   static const unknown = '[unbekannt]';
+
+  /// returns a list containing every company registered in the repository
   static List<String> get companies {
     List<String> companies = List.empty(growable: true);
     for (var user in repo.cache.values) {
-      if (user is UserMasterData && user.company != null) {
+      if (user.company != null && !companies.contains(user.company)) {
         companies.add(user.company!);
       }
     }
@@ -96,6 +102,9 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   @override
   String get repoID => tagID;
 
+  /// - if both set, returns "prename surname".
+  /// - If one is unset, it's replaced with '[unbekannt]'
+  /// - If both unset just returns '[unbekannt]'
   String? get fullName {
     return prename == null && surname == null
         ? unknown

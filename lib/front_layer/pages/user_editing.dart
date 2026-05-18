@@ -3,8 +3,14 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
+/// Main Page for creating a new or editing an existing Wallbox user
 class UserEditing extends StatefulWidget {
+  /// if not null, this profiles data will be inserted into the form.
+  /// Used to edit and override an existing user
   final UserMasterData? original;
+
+  /// Main Page for creating a new or editing an existing Wallbox user
+  /// - [original]: Used to edit and override an existing user
   const UserEditing({super.key, this.original});
 
   @override
@@ -96,7 +102,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Vorname',
                           initialValue: prename,
-                          expand: true,
+                          wrapWihExpanded: true,
                           isRequired: true,
                           onSaved: (value) => setState(
                             () {
@@ -107,7 +113,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Nachname',
                           initialValue: surname,
-                          expand: true,
+                          wrapWihExpanded: true,
                           isRequired: true,
                           onSaved: (value) => setState(
                             () {
@@ -131,15 +137,15 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'PLZ',
                           initialValue: postcode,
-                          expand: true,
+                          wrapWihExpanded: true,
                           inputType: InputType.number,
-                          maxLength: 5,
+                          characterLimit: 5,
                           customValidator: (value) {
-                            if (value != null &&
-                                value.isNotEmpty &&
-                                int.tryParse(value) == null) {
-                              return 'nur Zahlen erlaubt!';
-                            }
+                            return value != null &&
+                                    value.isNotEmpty &&
+                                    int.tryParse(value) == null
+                                ? 'nur Zahlen erlaubt!'
+                                : null;
                           },
                           onSaved: (value) => setState(
                             () {
@@ -150,8 +156,8 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Ort',
                           initialValue: city,
-                          expand: true,
-                          maxLength: 20,
+                          wrapWihExpanded: true,
+                          characterLimit: 20,
                           onSaved: (value) => setState(
                             () {
                               city = value;
@@ -166,7 +172,7 @@ class _UserEditingState extends State<UserEditing> {
                           label: 'Telefon',
                           initialValue: phone,
                           inputType: InputType.number,
-                          expand: true,
+                          wrapWihExpanded: true,
                           onSaved: (value) => setState(
                             () {
                               phone = value;
@@ -177,18 +183,19 @@ class _UserEditingState extends State<UserEditing> {
                           label: 'email',
                           initialValue: email,
                           inputType: InputType.text,
-                          expand: true,
+                          wrapWihExpanded: true,
                           customValidator: (value) {
                             if (value == null || value.isEmpty) {
                               return null;
                             }
-                            final splitAt = value!.split('@');
+                            final splitAt = value.split('@');
                             if (splitAt.length != 2 ||
                                 splitAt[0].isEmpty ||
                                 splitAt[1].isEmpty ||
                                 !splitAt[1].contains('.')) {
                               return 'ungültige Email-Adresse';
                             }
+                            return null;
                           },
                           onSaved: (value) => setState(
                             () {
@@ -236,13 +243,13 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Preis cent/ kWh',
                           inputType: InputType.number,
-                          expand: true,
+                          wrapWihExpanded: true,
                           initialValue: individualPriceInCent.toString(),
                           customValidator: (value) {
                             int? val = int.tryParse(value!);
-                            if (val != null && val <= 0) {
-                              return 'Ungültige Eingabe';
-                            }
+                            return val != null && val <= 0
+                                ? 'Ungültige Eingabe'
+                                : null;
                           },
                           onSaved: (value) => setState(
                             () {
@@ -331,6 +338,7 @@ class _UserEditingState extends State<UserEditing> {
     return action;
   }
 
+  // ignore: unused_element
   Future<String> _saveUser(UserMasterData user) async {
     final repo = UserMasterData.repo;
     if (repo.hasEntry(user.tagID)) {

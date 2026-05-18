@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/front_layer/widgets/user_details.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
 import 'package:wallbox_logs/front_layer/widgets/user_list_tile.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
