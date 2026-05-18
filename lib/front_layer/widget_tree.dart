@@ -86,7 +86,6 @@ class _WidgetTreeState extends State<WidgetTree> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SideBar(
-            selectedPage: selectedPage,
             extended: extendSideBar,
             backgroundColor: Colors.blueGrey[100],
             onPop: () {

@@ -13,7 +13,6 @@ class UserOverview extends StatefulWidget {
 }
 
 class _UserOverviewState extends State<UserOverview> {
-  int? selectedTile;
   late final Future<List<UserMasterData>> futureProfiles;
 
   @override
@@ -40,11 +39,8 @@ class _UserOverviewState extends State<UserOverview> {
                 for (int i = 0; i < profiles.length; i++)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: UserListTile(
+                    child: UserListTileConsumer(
                       profile: profiles[i],
-                      onExpansionChanged: (isExdended) => setState(() {
-                        selectedTile = isExdended ? i : null;
-                      }),
                     ),
                   ),
               ],

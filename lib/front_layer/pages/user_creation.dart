@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
-import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 class UserEditing extends StatefulWidget {

@@ -51,7 +51,7 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   static final SimulationRepo<UserMasterData> repo = SimulationRepo(
     'user_repo',
   );
-
+  static const unknown = '[unbekannt]';
   static List<String> get companies {
     List<String> companies = List.empty(growable: true);
     for (var user in repo.cache.values) {
@@ -97,7 +97,9 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   String get repoID => tagID;
 
   String? get fullName {
-    return '${prename ?? '[unbekannt]'} ${surname ?? '[unbekannt]'}';
+    return prename == null && surname == null
+        ? unknown
+        : '${prename ?? unknown} ${surname ?? unknown}';
   }
 
   /// The user's full formatted address if available
