@@ -1,6 +1,7 @@
 // ignore_for_file: unreachable_switch_default
 
 import 'package:flutter/material.dart';
+import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
 import 'package:wallbox_logs/front_layer/pages/user_creation.dart';
 import 'package:wallbox_logs/front_layer/sidebar.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
@@ -96,7 +97,7 @@ class _WidgetTreeState extends State<WidgetTree> {
             },
           ),
           Expanded(
-            child: mainPages[selectedPage],
+            child: TransactionOverview(), //mainPages[selectedPage],
           ),
         ],
       ),

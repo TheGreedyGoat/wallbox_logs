@@ -28,7 +28,7 @@ class Utility {
 
   /// extracts a nicely readable time-only-String from [date]
   static String niceTimeString(DateTime date, [bool showSeconds = false]) {
-    return '${minDigits(date.hour, 2)}:${minDigits(date.minute, 2)}:${showSeconds ? minDigits(date.second, 2) : ''}';
+    return '${minDigits(date.hour, 2)}:${minDigits(date.minute, 2)}${showSeconds ? ':${minDigits(date.second, 2)}' : ''}';
   }
 
   /// returns the [number] as a String. If it has less than [numDigits] digits, they are filled with leading zeros:

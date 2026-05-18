@@ -12,18 +12,42 @@ void main() async {
   await windowManager.setMinimumSize(Size(800, 800));
 
   WallBoxTransaction.repo.clear();
-  await AssetFileReader.loadFileData(
-    'assets/20260414 ACE0398688_Transactions.csv',
-    (data) {
-      WallBoxParser.parseWallBoxFile(data);
+  UserMasterData.repo.clear();
+  await AssetFileReader.loadAllInFolder(
+    'assets/generated',
+    (p0) {
+      print(p0.fullName);
+      if (p0.extension == 'csv') {
+        WallBoxParser.parseWallBoxFile(p0);
+      }
     },
   );
+  // await AssetFileReader.loadFileData(
+  //   'assets/20260414 ACE0398688_Transactions.csv',
+  //   (data) {
+  //     WallBoxParser.parseWallBoxFile(data);
+  //   },
+  // );
 
-  UserMasterData.repo.create(
-    UserMasterData(tagID: 'ABCDEFG', company: 'cdemy'),
+  UserMasterData.repo.createOrUpdate(
+    UserMasterData(
+      prename: 'Alex',
+      surname: null,
+      tagID: 'ALEX000000',
+      company: 'cdemy',
+    ),
   );
-  UserMasterData.repo.create(
-    UserMasterData(tagID: 'XYZHN', company: 'Inventarkreisel'),
+  UserMasterData.repo.createOrUpdate(
+    UserMasterData(
+      prename: 'Yacup',
+      surname: 'Acar',
+      tagID: 'YACUP9999',
+      company: 'cdemy',
+    ),
+  );
+
+  UserMasterData.repo.createOrUpdate(
+    UserMasterData(tagID: 'ANDREAS000', prename: 'Andreas', surname: 'Höfer'),
   );
   runApp(
     MyApp(),

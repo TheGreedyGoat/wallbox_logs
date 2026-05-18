@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 
@@ -14,6 +16,29 @@ class AssetFileReader {
       callback(FileData.fromFullName(fullName: fullFileName, content: content));
     } catch (e) {
       print("Error on CSV File '$path':\n==============================\n $e");
+    }
+  }
+
+  static Future<void> loadAllInFolder(
+    String folderPath,
+    Function(FileData) callback,
+  ) async {
+    final directory = Directory(folderPath);
+    if (!await directory.exists()) {
+      print('Folder doesnt exist: $folderPath');
+      return;
+    }
+    final files = await directory.list().toList();
+    for (final element in files) {
+      if (element is File) {
+        String fullFileName = element.path.split('\\').last;
+        callback(
+          FileData.fromFullName(
+            fullName: fullFileName,
+            content: await element.readAsString(),
+          ),
+        );
+      }
     }
   }
 }
