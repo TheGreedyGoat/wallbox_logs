@@ -73,6 +73,17 @@ class WidgetTreeNotifier extends Notifier<PageState> {
     ),
   );
 
+  void setUserEditingPageByTagID(String tagID) => _setState(
+    MainPage.editUser.pageState.copyWith(
+      page: UserEditing(
+        original:
+            UserMasterData.repo.getById(tagID) ?? UserMasterData(tagID: tagID),
+      ),
+      title: 'Nutzer bearbeiten',
+      showSideBar: false,
+    ),
+  );
+
   /// getter to the current page
   Widget get pageWidget => state.page;
 

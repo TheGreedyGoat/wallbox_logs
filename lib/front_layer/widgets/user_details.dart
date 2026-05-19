@@ -21,7 +21,6 @@ class _UserTransactionsWidgetState extends State<UserTransactionsWidget> {
   late final Future<List<WallBoxTransaction>> _transactions;
 
   String get tagID => widget.user.tagID;
-  UserMasterData get profile => widget.user;
   @override
   void initState() {
     super.initState();
@@ -42,40 +41,52 @@ class _UserTransactionsWidgetState extends State<UserTransactionsWidget> {
           if (data == null) {
             return Text('Etwas ist schief gelaufen');
           } else {
-            print(data);
-            return Table(
-              children: [
-                TableRow(
-                  decoration: BoxDecoration(
-                    border: BorderDirectional(bottom: BorderSide(width: 1)),
-                  ),
-                  children: [Text('Start'), Text('Ende'), Text('Verbrauch')],
-                ),
-                for (var transaction in data)
-                  TableRow(
-                    decoration: BoxDecoration(
-                      color:
-                          data.indexOf(
-                                    transaction,
-                                  ) %
-                                  2 ==
-                              0
-                          ? null
-                          : Colors.blue[200],
+            return Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceDim,
+                borderRadius: BorderRadius.all(Radius.circular(5)),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Table(
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(
+                        border: BorderDirectional(bottom: BorderSide(width: 1)),
+                      ),
+                      children: [
+                        Text('Start'),
+                        Text('Ende'),
+                        Text('Verbrauch'),
+                      ],
                     ),
-                    children: [
-                      Text(
-                        '${Utility.niceDateString(transaction.startTimeStamp)}, ${Utility.niceTimeString(transaction.startTimeStamp)}',
+                    for (var transaction in data)
+                      TableRow(
+                        decoration: BoxDecoration(
+                          color:
+                              data.indexOf(
+                                        transaction,
+                                      ) %
+                                      2 ==
+                                  0
+                              ? Theme.of(context).colorScheme.surface
+                              : Colors.blue[200],
+                        ),
+                        children: [
+                          Text(
+                            '${Utility.niceDateString(transaction.startTimeStamp)}, ${Utility.niceTimeString(transaction.startTimeStamp)}',
+                          ),
+                          Text(
+                            '${Utility.niceDateString(transaction.stopTimeStamp)}, ${Utility.niceTimeString(transaction.stopTimeStamp)}',
+                          ),
+                          Text(
+                            '${transaction.powerUsageKiloWh.toStringAsFixed(2)} kWh',
+                          ),
+                        ],
                       ),
-                      Text(
-                        '${Utility.niceDateString(transaction.stopTimeStamp)}, ${Utility.niceTimeString(transaction.stopTimeStamp)}',
-                      ),
-                      Text(
-                        '${transaction.powerUsageKiloWh.toStringAsFixed(2)} kWh',
-                      ),
-                    ],
-                  ),
-              ],
+                  ],
+                ),
+              ),
             );
           }
         },

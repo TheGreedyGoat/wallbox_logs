@@ -13,7 +13,7 @@ void main() async {
   await windowManager.setMinimumSize(Size(800, 800));
   await WallBoxTransaction.repo.preload();
   await UserMasterData.repo.preload();
-  // WallBoxTransaction.repo.clear();
+  // await WallBoxTransaction.repo.clear();
   // await AssetFileReader.loadFileData(
   //   'assets/20260414 ACE0398688_Transactions.csv',
   //   (data) {

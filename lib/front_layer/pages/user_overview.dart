@@ -40,6 +40,7 @@ class _UserOverviewState extends State<UserOverview> {
                     padding: const EdgeInsets.all(8.0),
                     child: UserListTileConsumer(
                       profile: profiles[i],
+                      userTagID: profiles[i].tagID,
                     ),
                   ),
               ],

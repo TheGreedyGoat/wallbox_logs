@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wallbox_logs/riverpod/widget_tree_notifier.dart';
 part 'page_state.freezed.dart';
 
-/// Data class for a pages.
+/// Data class for app pages.
 @freezed
 class PageState with _$PageState {
   /// the pages main body
@@ -22,7 +21,7 @@ class PageState with _$PageState {
   @override
   final bool showSideBar;
 
-  /// Data class for a pages.
+  /// Data class for app pages.
   /// - [page]: the pages main body
   /// - [title]: eg displayed in the App- oer SideBar
   /// - [icon]: a corresponding icon. Also shown in SideBar
@@ -33,14 +32,4 @@ class PageState with _$PageState {
     required this.icon,
     this.showSideBar = true,
   });
-
-  // PageState copyWith({
-  //   Widget? Function()? page,
-  //   String? Function()? title,
-  //   Icon? Function()? icon,
-  // }) => PageState(
-  //   page: page != null ? page() : this.page,
-  //   title: title != null ? title() : this.title,
-  //   icon: icon != null ? icon() : this.icon,
-  // );
 }

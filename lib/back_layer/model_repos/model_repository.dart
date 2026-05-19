@@ -68,7 +68,6 @@ abstract class ModelRepository<T extends DatabaseModel> {
         create(model);
       }
     }
-    print(cache);
   }
 
   /// ```!!DANGER ZONE!!``` Deletes everything from the cache aswell as the Database
@@ -84,7 +83,6 @@ abstract class ModelRepository<T extends DatabaseModel> {
     // print(cache);
     final file = await MyLocalDatabase.writeFile(
       fullFileName,
-
       jsonEncode(cache.values.toList()),
     );
     return file;
