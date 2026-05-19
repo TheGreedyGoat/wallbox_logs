@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/models/page_state.dart';
 
 /// The Apps default main pages to navigate between via the [SideBar]
@@ -33,8 +34,8 @@ enum MainPage {
 
 /// Notifier class for the [widgetTreeProvider]
 class WidgetTreeNotifier extends Notifier<PageState> {
-  /// limit on how many pagges schould be cached in [history]
-  static const int historyMax = 20;
+  /// limit on how many pages should be cached in [history]
+  static const int historyMax = 10;
 
   /// saves previously visited pages up to a number of [historyMax]
   final List<PageState> history = List.empty(growable: true);
@@ -64,6 +65,13 @@ class WidgetTreeNotifier extends Notifier<PageState> {
 
   /// set the widget to any PageState
   void setCustomPage(PageState pageState) => _setState(pageState);
+
+  void setUserEditingPage(UserMasterData original) => _setState(
+    MainPage.editUser.pageState.copyWith(
+      title: 'Nutzer bearbeiten',
+      showSideBar: false,
+    ),
+  );
 
   /// getter to the current page
   Widget get pageWidget => state.page;

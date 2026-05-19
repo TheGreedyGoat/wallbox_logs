@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wallbox_logs/riverpod/widget_tree_notifier.dart';
 part 'page_state.freezed.dart';
 
 /// Data class for a pages.
@@ -32,4 +33,14 @@ class PageState with _$PageState {
     required this.icon,
     this.showSideBar = true,
   });
+
+  // PageState copyWith({
+  //   Widget? Function()? page,
+  //   String? Function()? title,
+  //   Icon? Function()? icon,
+  // }) => PageState(
+  //   page: page != null ? page() : this.page,
+  //   title: title != null ? title() : this.title,
+  //   icon: icon != null ? icon() : this.icon,
+  // );
 }

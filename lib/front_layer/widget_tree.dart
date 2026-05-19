@@ -16,11 +16,11 @@ class WidgetTree extends ConsumerWidget {
     final notifier = ref.watch(widgetTreeProvider.notifier);
     return Scaffold(
       appBar: AppBar(
-        leading: !state.showSideBar
-            ? BackButton(
+        leading: state.showSideBar
+            ? state.icon
+            : BackButton(
                 onPressed: () => notifier.back(),
-              )
-            : null,
+              ),
         title: Text(state.title),
         backgroundColor: Colors.blueGrey[200],
       ),

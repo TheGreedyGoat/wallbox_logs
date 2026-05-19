@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
 import 'package:wallbox_logs/front_layer/widgets/user_details.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
-import 'package:wallbox_logs/riverpod/models/page_state.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
 /// Displays the main informations about he given [profile].
@@ -40,18 +38,9 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
         isExpanded ? Icons.arrow_drop_down : Icons.arrow_right_sharp,
       ),
       trailing: IconButton(
-        onPressed: () {
-          ref
-              .read(widgetTreeProvider.notifier)
-              .setCustomPage(
-                PageState(
-                  page: UserEditing(original: widget.profile),
-                  title: 'Bearbeiten',
-                  icon: Icon(Icons.mode_edit_rounded),
-                  showSideBar: false,
-                ),
-              );
-        },
+        onPressed: () => ref
+            .read(widgetTreeProvider.notifier)
+            .setUserEditingPage(widget.profile),
         icon: Icon(Icons.edit),
       ),
       title: SelectableText(
