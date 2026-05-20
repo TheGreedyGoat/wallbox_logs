@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
 import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
@@ -8,10 +9,10 @@ import 'package:wallbox_logs/riverpod/models/page_state.dart';
 /// The Apps default main pages to navigate between via the [SideBar]
 enum MainPage {
   /// shows an overview of all Wallbox users
-  overview(
+  userOverview(
     pageState: PageState(
       page: UserOverview(),
-      title: 'Übersicht',
+      title: 'Nutzer',
       icon: Icon(Icons.person),
     ),
   ),
@@ -22,6 +23,13 @@ enum MainPage {
       page: UserEditing(),
       title: 'Nutzer anlegen',
       icon: Icon(Icons.person_add),
+    ),
+  ),
+  transactionOverview(
+    pageState: PageState(
+      page: TransactionOverview(),
+      title: 'Transaktionen',
+      icon: Icon(Icons.power),
     ),
   )
   ;
@@ -41,7 +49,7 @@ class WidgetTreeNotifier extends Notifier<PageState> {
   final List<PageState> history = List.empty(growable: true);
 
   @override
-  PageState build() => MainPage.overview.pageState;
+  PageState build() => MainPage.userOverview.pageState;
 
   void _setState(PageState pageState) {
     history.add(state);

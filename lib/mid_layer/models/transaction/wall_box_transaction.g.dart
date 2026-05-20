@@ -19,12 +19,12 @@ ChargingEvent _$ChargingEventFromJson(Map<String, dynamic> json) =>
     ChargingEvent(
       tagID: json['tagID'] as String,
       timeStamp: DateTime.parse(json['timeStamp'] as String),
-      powerLevelKiloWH: (json['powerLevelKiloWH'] as num).toDouble(),
+      powerLevelWh: (json['powerLevelWh'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ChargingEventToJson(ChargingEvent instance) =>
     <String, dynamic>{
       'tagID': instance.tagID,
       'timeStamp': instance.timeStamp.toIso8601String(),
-      'powerLevelKiloWH': instance.powerLevelKiloWH,
+      'powerLevelWh': instance.powerLevelWh,
     };

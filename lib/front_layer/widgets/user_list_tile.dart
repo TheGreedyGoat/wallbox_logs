@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/front_layer/widgets/user_details.dart';
+import 'package:wallbox_logs/front_layer/widgets/user_transaction_widget.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 

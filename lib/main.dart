@@ -10,33 +10,17 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  await windowManager.setMinimumSize(Size(800, 800));
-  await WallBoxTransaction.repo.preload();
-  await UserMasterData.repo.preload();
-  // await WallBoxTransaction.repo.clear();
-  // await AssetFileReader.loadFileData(
-  //   'assets/20260414 ACE0398688_Transactions.csv',
-  //   (data) {
-  //     WallBoxParser.parseWallBoxFile(data);
-  //   },
-  // );
-
-  // UserMasterData.repo.update(
-  //   UserMasterData(
-  //     tagID: '050FE8E3210000',
-  //     prename: 'Andreas',
-  //     surname: 'Höfer',
-  //     company: 'cdemy',
-  //   ),
-  // );
-  // UserMasterData.repo.update(
-  //   UserMasterData(
-  //     tagID: '0421102A577481',
-  //     prename: 'Peter',
-  //     surname: 'Zwegert',
-  //     company: 'Inventarkreisel',
-  //   ),
-  // );
+  await windowManager.setMinimumSize(Size(1000, 800));
+  // await WallBoxTransaction.repo.preload();
+  // await UserMasterData.repo.preload();
+  // if (WallBoxTransaction.repo.cache.isEmpty) {
+  //   AssetFileReader.loadFileData(
+  //     'assets/20260414 ACE0398688_Transactions.csv',
+  //     (file) {
+  //       WallBoxParser.parseWallBoxFile(file);
+  //     },
+  //   );
+  // }
   runApp(
     const ProviderScope(child: MyApp()),
   );

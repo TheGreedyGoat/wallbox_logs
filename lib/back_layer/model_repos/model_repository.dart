@@ -25,7 +25,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
   ModelRepository(this.repoName);
 
   /// Returns a list of all saved model objects
-  Future<List<T>> getAll();
+  List<T> getAll();
 
   /// Returns an object with the given id if it exists, else null
   T? getById(String id);
@@ -61,12 +61,17 @@ abstract class ModelRepository<T extends DatabaseModel> {
   Future<void> preload() async {
     if (isLoaded) return;
     String data = await MyLocalDatabase.readFile(fullFileName);
-    final decoded = jsonDecode(data);
-    for (var json in decoded) {
-      final model = DatabaseModel.convertFromJson<T>(json);
-      if (model is T) {
-        create(model);
+    try {
+      final decoded = jsonDecode(data);
+      for (var json in decoded) {
+        final model = DatabaseModel.convertFromJson<T>(json);
+        if (model is T) {
+          create(model);
+        }
       }
+    } catch (e) {
+      print('error');
+      print(e);
     }
   }
 
@@ -80,7 +85,6 @@ abstract class ModelRepository<T extends DatabaseModel> {
 
   /// Overrides the reop files content with the cache
   Future<File> updateFile() async {
-    // print(cache);
     final file = await MyLocalDatabase.writeFile(
       fullFileName,
       jsonEncode(cache.values.toList()),

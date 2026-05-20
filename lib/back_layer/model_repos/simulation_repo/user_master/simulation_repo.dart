@@ -42,7 +42,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   }
 
   @override
-  Future<List<T>> getAll() async {
+  List<T> getAll() {
     return cache.values.toList();
   }
 }

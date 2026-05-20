@@ -12,41 +12,29 @@ class UserOverview extends StatefulWidget {
 }
 
 class _UserOverviewState extends State<UserOverview> {
-  late final Future<List<UserMasterData>> futureProfiles;
+  late final List<UserMasterData> profiles;
 
   @override
   void initState() {
     super.initState();
-    futureProfiles = UserMasterData.repo.getAll();
+    profiles = UserMasterData.repo.getAll();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: FutureBuilder(
-        future: futureProfiles,
-        builder: (context, snapshot) {
-          final profiles = snapshot.data;
-          if (snapshot.connectionState != ConnectionState.done) {
-            return CircularProgressIndicator();
-          } else if (profiles == null) {
-            return Text('Etwas ist schief gelaufen');
-          } else {
-            return MyListView(
-              children: [
-                for (int i = 0; i < profiles.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: UserListTileConsumer(
-                      profile: profiles[i],
-                      userTagID: profiles[i].tagID,
-                    ),
-                  ),
-              ],
-            );
-          }
-        },
+      child: MyListView(
+        children: [
+          for (int i = 0; i < profiles.length; i++)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: UserListTileConsumer(
+                profile: profiles[i],
+                userTagID: profiles[i].tagID,
+              ),
+            ),
+        ],
       ),
     );
   }

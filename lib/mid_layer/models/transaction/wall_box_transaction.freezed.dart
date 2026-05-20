@@ -202,7 +202,7 @@ case _:
 /// @nodoc
 mixin _$ChargingEvent {
 
- String get tagID; DateTime get timeStamp; double get powerLevelKiloWH;
+ String get tagID; DateTime get timeStamp; int get powerLevelWh;
 /// Create a copy of ChargingEvent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -213,16 +213,16 @@ $ChargingEventCopyWith<ChargingEvent> get copyWith => _$ChargingEventCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChargingEvent&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.powerLevelKiloWH, powerLevelKiloWH) || other.powerLevelKiloWH == powerLevelKiloWH));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ChargingEvent&&(identical(other.tagID, tagID) || other.tagID == tagID)&&(identical(other.timeStamp, timeStamp) || other.timeStamp == timeStamp)&&(identical(other.powerLevelWh, powerLevelWh) || other.powerLevelWh == powerLevelWh));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,tagID,timeStamp,powerLevelKiloWH);
+int get hashCode => Object.hash(runtimeType,tagID,timeStamp,powerLevelWh);
 
 @override
 String toString() {
-  return 'ChargingEvent(tagID: $tagID, timeStamp: $timeStamp, powerLevelKiloWH: $powerLevelKiloWH)';
+  return 'ChargingEvent(tagID: $tagID, timeStamp: $timeStamp, powerLevelWh: $powerLevelWh)';
 }
 
 
@@ -233,7 +233,7 @@ abstract mixin class $ChargingEventCopyWith<$Res>  {
   factory $ChargingEventCopyWith(ChargingEvent value, $Res Function(ChargingEvent) _then) = _$ChargingEventCopyWithImpl;
 @useResult
 $Res call({
- String tagID, DateTime timeStamp, double powerLevelKiloWH
+ String tagID, DateTime timeStamp, int powerLevelWh
 });
 
 
@@ -250,12 +250,12 @@ class _$ChargingEventCopyWithImpl<$Res>
 
 /// Create a copy of ChargingEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? tagID = null,Object? timeStamp = null,Object? powerLevelKiloWH = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? tagID = null,Object? timeStamp = null,Object? powerLevelWh = null,}) {
   return _then(ChargingEvent(
 tagID: null == tagID ? _self.tagID : tagID // ignore: cast_nullable_to_non_nullable
 as String,timeStamp: null == timeStamp ? _self.timeStamp : timeStamp // ignore: cast_nullable_to_non_nullable
-as DateTime,powerLevelKiloWH: null == powerLevelKiloWH ? _self.powerLevelKiloWH : powerLevelKiloWH // ignore: cast_nullable_to_non_nullable
-as double,
+as DateTime,powerLevelWh: null == powerLevelWh ? _self.powerLevelWh : powerLevelWh // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

@@ -21,6 +21,9 @@ class Utility {
     list.insert(i, element);
   }
 
+  static String niceFullDateString(DateTime date) =>
+      '${niceDateString(date)}, ${niceTimeString(date)}';
+
   /// extracts a nicely readable only-date- String from [date] eg 02.10.2024
   static String niceDateString(DateTime date) {
     return '${minDigits(date.day, 2)}.${minDigits(date.month, 2)}.${date.year}';
@@ -28,7 +31,7 @@ class Utility {
 
   /// extracts a nicely readable time-only-String from [date]
   static String niceTimeString(DateTime date, [bool showSeconds = false]) {
-    return '${minDigits(date.hour, 2)}:${minDigits(date.minute, 2)}:${showSeconds ? minDigits(date.second, 2) : ''}';
+    return '${minDigits(date.hour, 2)}:${minDigits(date.minute, 2)}${showSeconds ? ':${minDigits(date.second, 2)}' : ''}';
   }
 
   /// returns the [number] as a String. If it has less than [numDigits] digits, they are filled with leading zeros:
