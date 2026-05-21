@@ -11,16 +11,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await windowManager.setMinimumSize(Size(1000, 800));
-  // await WallBoxTransaction.repo.preload();
-  // await UserMasterData.repo.preload();
-  // if (WallBoxTransaction.repo.cache.isEmpty) {
-  //   AssetFileReader.loadFileData(
-  //     'assets/20260414 ACE0398688_Transactions.csv',
-  //     (file) {
-  //       WallBoxParser.parseWallBoxFile(file);
-  //     },
-  //   );
-  // }
+  await WallBoxTransaction.repo.clear();
+  await UserMasterData.repo.clear();
+  if (WallBoxTransaction.repo.cache.isEmpty) {
+    await AssetFileReader.loadFileData(
+      'assets/20260414 ACE0398688_Transactions.csv',
+      (file) {
+        WallBoxParser.parseWallBoxFile(file);
+      },
+    );
+  }
   runApp(
     const ProviderScope(child: MyApp()),
   );
@@ -36,8 +36,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.light(),
+      theme: ThemeData.dark().copyWith(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blueGrey,
+          brightness: Brightness.dark,
+        ),
+      ),
 
+      // darkTheme: ThemeData(
+      //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
+      // ),
       home: WidgetTree(),
     );
   }

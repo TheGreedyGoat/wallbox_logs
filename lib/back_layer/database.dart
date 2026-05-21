@@ -29,6 +29,7 @@ class MyLocalDatabase {
   /// Writes the [content] to the file and returns it
   static Future<File> writeFile(String fullFileName, String content) async {
     final file = await _localFile(fullFileName);
-    return file.writeAsString(content);
+
+    return await file.writeAsString(content);
   }
 }

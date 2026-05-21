@@ -19,6 +19,9 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
   bool extended = false;
   int selectedIndex = 0;
 
+  Color background(BuildContext context) =>
+      widget.backgroundColor ?? Theme.of(context).colorScheme.surfaceDim;
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +30,9 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: widget.backgroundColor),
+      decoration: BoxDecoration(
+        color: background(context),
+      ),
       child: Column(
         crossAxisAlignment: extended
             ? CrossAxisAlignment.end
@@ -45,8 +50,10 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
           ),
           Expanded(
             child: NavigationRail(
-              backgroundColor: widget.backgroundColor,
-              indicatorShape: CircleBorder(),
+              indicatorColor: Theme.of(
+                context,
+              ).colorScheme.primaryContainer,
+              backgroundColor: background(context),
               extended: extended,
               onDestinationSelected: (index) {
                 ref
@@ -59,7 +66,9 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
               destinations: [
                 for (final p in MainPage.values)
                   NavigationRailDestination(
-                    icon: p.pageState.icon,
+                    icon: Container(
+                      child: p.pageState.icon,
+                    ),
                     label: Text(p.pageState.title),
                   ),
               ],

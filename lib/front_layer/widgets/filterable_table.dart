@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 
 class FilterableTable extends StatefulWidget {
   const FilterableTable({
@@ -20,10 +18,6 @@ class FilterableTable extends StatefulWidget {
 
 class _FilterableTableState extends State<FilterableTable> {
   late final List<TextEditingController> filterControllers;
-  late final List<bool> hovers;
-
-  int get numRows => widget.data[0].length;
-  int? _hoveredRowIndex;
 
   @override
   void initState() {
@@ -35,7 +29,6 @@ class _FilterableTableState extends State<FilterableTable> {
           (e) => TextEditingController(text: ''),
         )
         .toList();
-    hovers = [for (int i = 0; i < numRows; i++) false];
   }
 
   String? _validateLists() {
@@ -57,42 +50,55 @@ class _FilterableTableState extends State<FilterableTable> {
 
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      columnSpacing: 0,
-      headingRowHeight: 100,
-
-      columns: widget.headers
-          .map(
-            (title) => DataColumn(
-              label: IntrinsicWidth(child: Text(title)),
-              // ?widget.filterWidgets[widget.headers.indexOf(title)],
-            ),
-          )
-          .toList(),
-      rows: [
-        DataRow(
-          cells: widget.filterWidgets
-              .map(
-                (e) => DataCell(
-                  Padding(
-                    padding: EdgeInsetsGeometry.all(3.0),
-                    child: e ?? Container(),
-                  ),
+    return IntrinsicWidth(
+      child: DataTable(
+        columnSpacing: 0,
+        headingRowColor: WidgetStatePropertyAll(Colors.amber),
+        headingRowHeight: 100,
+        columns: widget.headers
+            .map(
+              (title) => DataColumn(
+                label: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                    SizedBox(
+                      width:
+                          (MediaQuery.of(context).size.width - 300) /
+                          widget.headers.length,
+                      child: SizedBox(
+                        height: 30,
+                        child:
+                            widget.filterWidgets[widget.headers.indexOf(
+                              title,
+                            )] ??
+                            Container(),
+                      ),
+                    ),
+                  ],
                 ),
-              )
-              .toList(),
-        ),
-
-        ...widget.data.map(
-          (row) => DataRow(
-            cells: row
-                .map(
-                  (cell) => DataCell(Text(cell)),
-                )
-                .toList(),
+              ),
+            )
+            .toList(),
+        rows: [
+          ...widget.data.map(
+            (row) => DataRow(
+              cells: row
+                  .map(
+                    (cell) => DataCell(Text(cell)),
+                  )
+                  .toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
