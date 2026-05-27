@@ -71,7 +71,37 @@ class _UserEditingState extends State<UserEditing> {
               child: Form(
                 key: _globalKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 88888888888                     8888888 8888888b.
+                    //     888                           888   888  "Y88b
+                    //     888                           888   888    888
+                    //     888   8888b.   .d88b.         888   888    888
+                    //     888      "88b d88P"88b        888   888    888
+                    //     888  .d888888 888  888 888888 888   888    888
+                    //     888  888  888 Y88b 888        888   888  .d88P
+                    //     888  "Y888888  "Y88888      8888888 8888888P"
+                    //                        888
+                    //                   Y8b d88P
+                    //                    "Y88P"
+                    Text(
+                      'Erforderlich',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    SizedBox(
+                      height: 0,
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     MyTextFormField(
                       label: 'Tag-ID',
                       initialValue: tagID,
@@ -82,7 +112,15 @@ class _UserEditingState extends State<UserEditing> {
                       ),
                       isRequired: true,
                     ),
-                    // Anrede, Name
+
+                    // 888b    888
+                    // 8888b   888
+                    // 88888b  888
+                    // 888Y88b 888  8888b.  88888b.d88b.   .d88b.
+                    // 888 Y88b888     "88b 888 "888 "88b d8P  Y8b
+                    // 888  Y88888 .d888888 888  888  888 88888888
+                    // 888   Y8888 888  888 888  888  888 Y8b.
+                    // 888    Y888 "Y888888 888  888  888  "Y8888
                     Row(
                       children: [
                         DropdownMenuFormField<Titles>(
@@ -122,6 +160,33 @@ class _UserEditingState extends State<UserEditing> {
                           ),
                         ),
                       ],
+                    ),
+
+                    //        d8888      888
+                    //       d88888      888
+                    //      d88P888      888
+                    //     d88P 888  .d88888 888d888  .d88b.  .d8888b  .d8888b
+                    //    d88P  888 d88" 888 888P"   d8P  Y8b 88K      88K
+                    //   d88P   888 888  888 888     88888888 "Y8888b. "Y8888b.
+                    //  d8888888888 Y88b 888 888     Y8b.          X88      X88
+                    // d88P     888  "Y88888 888      "Y8888   88888P'  88888P'
+                    Text(
+                      'Adresse',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    SizedBox(
+                      height: 0,
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     MyTextFormField(
                       label: 'Straße & Hausnummer',
@@ -166,6 +231,33 @@ class _UserEditingState extends State<UserEditing> {
                         ),
                       ],
                     ),
+
+                    //  .d8888b.                    888                      888
+                    // d88P  Y88b                   888                      888
+                    // 888    888                   888                      888
+                    // 888         .d88b.  88888b.  888888  8888b.   .d8888b 888888
+                    // 888        d88""88b 888 "88b 888        "88b d88P"    888
+                    // 888    888 888  888 888  888 888    .d888888 888      888
+                    // Y88b  d88P Y88..88P 888  888 Y88b.  888  888 Y88b.    Y88b.
+                    //  "Y8888P"   "Y88P"  888  888  "Y888 "Y888888  "Y8888P  "Y888
+                    Text(
+                      'Kontakt',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    SizedBox(
+                      height: 0,
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     Row(
                       children: [
                         MyTextFormField(
@@ -204,6 +296,33 @@ class _UserEditingState extends State<UserEditing> {
                           ),
                         ),
                       ],
+                    ),
+
+                    //          888    888
+                    //          888    888
+                    //          888    888
+                    //  .d88b.  888888 88888b.   .d88b.  888d888
+                    // d88""88b 888    888 "88b d8P  Y8b 888P"
+                    // 888  888 888    888  888 88888888 888
+                    // Y88..88P Y88b.  888  888 Y8b.     888
+                    //  "Y88P"   "Y888 888  888  "Y8888  888
+                    Text(
+                      'Sonstiges',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    SizedBox(
+                      height: 0,
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 2.0,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     Row(
                       children: [
@@ -264,20 +383,6 @@ class _UserEditingState extends State<UserEditing> {
               ),
             ),
 
-            for (var e in [
-              tagID,
-              title,
-              prename,
-              surname,
-              streetAndNumber,
-              postcode,
-              city,
-              phone,
-              email,
-              company,
-              individualPriceInCent,
-            ])
-              Flexible(child: Text(e.toString())),
             Flexible(child: Container()),
 
             Flexible(
@@ -298,6 +403,17 @@ class _UserEditingState extends State<UserEditing> {
     );
   }
 
+  // 888               888
+  // 888               888
+  // 888               888
+  // 88888b.   .d88b.  888 88888b.   .d88b.  888d888 .d8888b
+  // 888 "88b d8P  Y8b 888 888 "88b d8P  Y8b 888P"   88K
+  // 888  888 88888888 888 888  888 88888888 888     "Y8888b.
+  // 888  888 Y8b.     888 888 d88P Y8b.     888          X88
+  // 888  888  "Y8888  888 88888P"   "Y8888  888      88888P'
+  //                       888
+  //                       888
+  //                       888
   Future<String> _checkExisting() async {
     UserMasterData? check = UserMasterData.repo.getById(tagID!);
     String action = 'nicht gespeichert';

@@ -27,12 +27,9 @@ class _ContainsFilterWidgetState<T>
     super.initState();
     Future(
       () {
-        print('ContainsFilterWidget:');
         ref.read(transactionFilterProvider.notifier).setCheckCallback(
           widget.identifier,
           (filterValue, value) {
-            print('filterValue: $filterValue');
-            print('value: $value');
             return value.toString().contains(filterValue.toString());
           },
         );

@@ -11,7 +11,3 @@ final widgetTreeProvider = NotifierProvider(
 final transactionFilterProvider = NotifierProvider(
   () => TableFilterNotifier<WallBoxTransaction>(),
 );
-
-final filterTestProvider = NotifierProvider(
-  () => TableFilterNotifier<List<int>>(),
-);

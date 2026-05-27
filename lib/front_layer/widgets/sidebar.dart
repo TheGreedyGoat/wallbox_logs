@@ -4,20 +4,19 @@ import 'package:wallbox_logs/riverpod/providers.dart';
 import 'package:wallbox_logs/riverpod/widget_tree_notifier.dart';
 
 /// A custom navigation bar
-class SideBarRP extends ConsumerStatefulWidget {
+class SideBar extends ConsumerStatefulWidget {
   /// optional custom background color
   final Color? backgroundColor;
 
   /// A custom navigation bar
-  const SideBarRP({this.backgroundColor, super.key});
+  const SideBar({this.backgroundColor, super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _SideBarRPState();
 }
 
-class _SideBarRPState extends ConsumerState<SideBarRP> {
+class _SideBarRPState extends ConsumerState<SideBar> {
   bool extended = false;
-  int selectedIndex = 0;
 
   Color background(BuildContext context) =>
       widget.backgroundColor ?? Theme.of(context).colorScheme.surfaceDim;
@@ -59,9 +58,9 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
                 ref
                     .read(widgetTreeProvider.notifier)
                     .setMainPage(MainPage.values[index]);
-                setState(() {
-                  selectedIndex = index;
-                });
+                // setState(() {
+                //   selectedIndex = index;
+                // });
               },
               destinations: [
                 for (final p in MainPage.values)
@@ -72,7 +71,13 @@ class _SideBarRPState extends ConsumerState<SideBarRP> {
                     label: Text(p.pageState.title),
                   ),
               ],
-              selectedIndex: selectedIndex,
+              selectedIndex: MainPage.values.indexOf(
+                MainPage.values.firstWhere(
+                  (element) =>
+                      element.pageState.title ==
+                      ref.watch(widgetTreeProvider).title,
+                ),
+              ),
             ),
           ),
         ],

@@ -15,7 +15,7 @@ import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 class TransactionOverview extends ConsumerWidget {
   const TransactionOverview({super.key});
 
-  final List<String> headers = const ['Tag-ID', 'Name', 'Verbrauch'];
+  final List<String> headers = const ['Tag-ID', 'Name', 'Datum', 'Verbrauch'];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,6 +33,7 @@ class TransactionOverview extends ConsumerWidget {
             return [
               transaction.tagID,
               transaction.user?.fullName ?? '[unbekannt]',
+              transaction.startTimeDisplay(false),
               transaction.powerUsageKWhDisplay,
             ];
           },
@@ -63,6 +64,10 @@ class TransactionOverview extends ConsumerWidget {
       headers[2]: DataFilter(
         filterValue: '',
         getValue: (transaction) => transaction.powerUsageKWhDisplay,
+      ),
+      headers[3]: DataFilter(
+        filterValue: '',
+        getValue: (transaction) => transaction.startTimeStamp,
       ),
     });
   }

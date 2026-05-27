@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
-import 'package:wallbox_logs/front_layer/sidebar.dart';
+import 'package:wallbox_logs/front_layer/widgets/sidebar.dart';
 import 'package:wallbox_logs/front_layer/widgets/filterable_table.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
@@ -34,7 +34,7 @@ class WidgetTree extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (state.showSideBar) SideBarRP(),
+            if (state.showSideBar) SideBar(),
             Expanded(
               child: state.page,
             ),

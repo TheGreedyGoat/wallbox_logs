@@ -89,26 +89,49 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
   Widget _field(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        maxLength: widget.characterLimit,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.primary,
+              Theme.of(context).colorScheme.secondaryContainer,
+            ],
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          boxShadow: [BoxShadow(blurRadius: 10)],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(3.0),
+          child: TextFormField(
+            maxLength: widget.characterLimit,
 
-        inputFormatters: _getInputFormatters(),
-        decoration: InputDecoration(
-          label: Text('${widget.label}${isRequired ? '*' : ''}'),
+            inputFormatters: _getInputFormatters(),
+            decoration: InputDecoration(
+              label: Text(
+                '${widget.label}${isRequired ? '*' : ''}',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onInverseSurface,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            controller: controller,
+            focusNode: widget.focusNode,
+            autofocus: widget.autofocus,
+            onSaved: (newValue) => widget.onSaved(
+              (newValue == null || newValue.isEmpty) ? null : newValue.trim(),
+            ),
+            validator: (value) {
+              return (isRequired && (value == null || value.isEmpty))
+                  ? 'erforderlich'
+                  : (widget.customValidator != null && value != null
+                        ? widget.customValidator!(value)
+                        : null);
+            },
+          ),
         ),
-        controller: controller,
-        focusNode: widget.focusNode,
-        autofocus: widget.autofocus,
-        onSaved: (newValue) => widget.onSaved(
-          (newValue == null || newValue.isEmpty) ? null : newValue.trim(),
-        ),
-        validator: (value) {
-          return (isRequired && (value == null || value.isEmpty))
-              ? 'erforderlich'
-              : (widget.customValidator != null && value != null
-                    ? widget.customValidator!(value)
-                    : null);
-        },
       ),
     );
   }
