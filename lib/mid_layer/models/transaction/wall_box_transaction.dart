@@ -80,6 +80,8 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
 
   UserMasterData? get user => UserMasterData.repo.getById(tagID);
 
+  String get username => user?.fullName ?? '[unbekannt]';
+
   // int get costsInCents => (user?.individualPricePerkWhInCents ?? 100) * powerUsageKiloWh;
 
   @override

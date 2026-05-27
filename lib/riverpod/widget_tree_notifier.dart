@@ -49,7 +49,7 @@ class WidgetTreeNotifier extends Notifier<PageState> {
   final List<PageState> history = List.empty(growable: true);
 
   @override
-  PageState build() => MainPage.userOverview.pageState;
+  PageState build() => MainPage.transactionOverview.pageState;
 
   void _setState(PageState pageState) {
     history.add(state);

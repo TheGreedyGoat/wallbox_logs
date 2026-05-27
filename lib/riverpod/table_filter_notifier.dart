@@ -1,45 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/riverpod/models/table_filter_state.dart';
-
-typedef DataFilter<T> = bool Function(T);
+import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
+import 'package:wallbox_logs/riverpod/models/data_filter_state.dart';
 
 class TableFilterNotifier<T> extends Notifier<DataFilterState<T>> {
   TableFilterNotifier();
 
   @override
   DataFilterState<T> build() {
-    return DataFilterState(activeFilters: {});
+    return DataFilterState<T>(activeFilters: <String, DataFilter<T>>{});
   }
 
-  void setAllFilters(Map<String, DataFilter<T>> filters) =>
-      state = state.copyWith(filters: filters);
-
-  void setFilter(String key, DataFilter<T> filter) {
-    final newFilters = Map<String, DataFilter<T>>.from(state.activeFilters);
-    newFilters[key] = filter;
-    setAllFilters(newFilters);
+  void setupFilters(Map<String, DataFilter<T>> filters) {
+    if (state.activeFilters.isNotEmpty) return;
+    state = state.copyWith(filters: filters);
   }
 
-  void removeFilter(String key) {
-    final newFilters = Map<String, DataFilter<T>>.from(state.activeFilters);
-    newFilters.remove(key);
-    setAllFilters(newFilters);
+  _setFilter(String key, DataFilter<T> f) {
+    final updatedFilters = {...state.activeFilters};
+    updatedFilters[key] = f;
+    state = state.copyWith(filters: updatedFilters);
   }
 
-  /// returns a list of all elements in [original] that pass all filters of the current state
-  List<T> filter(List<T> original) {
-    return original
-        .where(
-          (element) => state.activeFilters.keys.fold(
-            true,
-            (previousValue, key) =>
-                previousValue &&
-                (state.activeFilters[key]?.call(element) ?? true),
-          ),
-        )
-        .toList();
+  void setFilterValue(String key, dynamic value) {
+    final filter = state.activeFilters[key];
+    if (filter != null) {
+      _setFilter(key, filter.copyWith(filterValue: value));
+      return;
+    }
+    print('No filter of $key found');
   }
 
-  List<String> filterAsStrings(List<T> original) =>
-      filter(original).map((e) => e.toString()).toList();
+  void setCheckCallback(String key, FilterCallback check) {
+    final filter = state.activeFilters[key];
+    if (filter != null) {
+      _setFilter(key, filter.copyWith(check: check));
+      return;
+    }
+    print('No filter of $key found');
+  }
+
+  DataFilter<T>? getFilter(String key) {
+    return state.activeFilters[key];
+  }
 }
