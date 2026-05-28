@@ -54,4 +54,7 @@ class Utility {
 
     return result;
   }
+
+  static int euroToCents(double euros) => (euros * 100).floor();
+  static double centsToEuros(int cents) => cents.toDouble() / 100;
 }

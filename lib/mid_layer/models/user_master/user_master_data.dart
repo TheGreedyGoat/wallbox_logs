@@ -1,3 +1,4 @@
+import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -107,6 +108,11 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   final String? postCode;
   @override
   final String? city;
+
+  int get pricePerkWh =>
+      individualPricePerkWhInCents ??
+      AppData.instance?.defaultPricePerkWhInCents ??
+      100;
 
   @override
   String get repoID => tagID;

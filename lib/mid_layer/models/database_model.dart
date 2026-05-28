@@ -1,3 +1,4 @@
+import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
@@ -19,6 +20,8 @@ abstract class DatabaseModel {
         return UserMasterData.fromJson(json);
       case const (WallBoxTransaction):
         return WallBoxTransaction.fromJson(json);
+      case const (AppData):
+        return AppData.fromJson(json);
       default:
         throw (Exception(
           'No convertFormJson implementation for DatabaseModel subclass $T',

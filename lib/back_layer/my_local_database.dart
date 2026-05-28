@@ -22,7 +22,7 @@ class MyLocalDatabase {
       final content = await file.readAsString();
       return content;
     } catch (e) {
-      throw Exception(e.toString());
+      return '';
     }
   }
 

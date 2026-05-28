@@ -62,7 +62,8 @@ class WidgetTreeNotifier extends Notifier<PageState> {
   /// Return to the previously visited page, if available
   void back() {
     if (history.isNotEmpty) {
-      _setState(history.removeLast());
+      history.removeLast();
+      state = history.last;
     }
   }
 

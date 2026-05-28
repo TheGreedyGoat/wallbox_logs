@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PageState {
 
- Widget get page; String get title; Icon get icon; bool get showSideBar;
+ Widget get page; String get title; Icon get icon; bool get showSideBar; Widget? get floatingActionButton;
 /// Create a copy of PageState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PageStateCopyWith<PageState> get copyWith => _$PageStateCopyWithImpl<PageState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageState&&(identical(other.page, page) || other.page == page)&&(identical(other.title, title) || other.title == title)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.showSideBar, showSideBar) || other.showSideBar == showSideBar));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageState&&(identical(other.page, page) || other.page == page)&&(identical(other.title, title) || other.title == title)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.showSideBar, showSideBar) || other.showSideBar == showSideBar)&&(identical(other.floatingActionButton, floatingActionButton) || other.floatingActionButton == floatingActionButton));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,page,title,icon,showSideBar);
+int get hashCode => Object.hash(runtimeType,page,title,icon,showSideBar,floatingActionButton);
 
 @override
 String toString() {
-  return 'PageState(page: $page, title: $title, icon: $icon, showSideBar: $showSideBar)';
+  return 'PageState(page: $page, title: $title, icon: $icon, showSideBar: $showSideBar, floatingActionButton: $floatingActionButton)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $PageStateCopyWith<$Res>  {
   factory $PageStateCopyWith(PageState value, $Res Function(PageState) _then) = _$PageStateCopyWithImpl;
 @useResult
 $Res call({
- Widget page, String title, Icon icon, bool showSideBar
+ Widget page, String title, Icon icon, Widget? floatingActionButton, bool showSideBar
 });
 
 
@@ -62,12 +62,13 @@ class _$PageStateCopyWithImpl<$Res>
 
 /// Create a copy of PageState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? page = null,Object? title = null,Object? icon = null,Object? showSideBar = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? page = null,Object? title = null,Object? icon = null,Object? floatingActionButton = freezed,Object? showSideBar = null,}) {
   return _then(PageState(
 page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
 as Widget,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
-as Icon,showSideBar: null == showSideBar ? _self.showSideBar : showSideBar // ignore: cast_nullable_to_non_nullable
+as Icon,floatingActionButton: freezed == floatingActionButton ? _self.floatingActionButton : floatingActionButton // ignore: cast_nullable_to_non_nullable
+as Widget?,showSideBar: null == showSideBar ? _self.showSideBar : showSideBar // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

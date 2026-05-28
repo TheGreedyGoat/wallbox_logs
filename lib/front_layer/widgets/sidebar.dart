@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/pages/app_settings.dart';
+import 'package:wallbox_logs/riverpod/models/page_state.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 import 'package:wallbox_logs/riverpod/widget_tree_notifier.dart';
 
@@ -78,6 +80,30 @@ class _SideBarRPState extends ConsumerState<SideBar> {
                       ref.watch(widgetTreeProvider).title,
                 ),
               ),
+              trailing: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(widgetTreeProvider.notifier)
+                        .setCustomPage(
+                          PageState(
+                            page: AppSettingsPage(),
+                            title: 'AppSettings',
+                            icon: Icon(Icons.settings),
+                            showSideBar: false,
+                          ),
+                        );
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.settings),
+                      if (extended) Text('Einstellungen'),
+                    ],
+                  ),
+                ),
+              ),
+              trailingAtBottom: true,
             ),
           ),
         ],

@@ -203,7 +203,7 @@ class _UserEditingState extends State<UserEditing> {
                           label: 'PLZ',
                           initialValue: postcode,
                           wrapWihExpanded: true,
-                          inputType: InputType.number,
+                          inputType: InputType.integer,
                           characterLimit: 5,
                           customValidator: (value) {
                             return value != null &&
@@ -263,7 +263,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Telefon',
                           initialValue: phone,
-                          inputType: InputType.number,
+                          inputType: InputType.integer,
                           wrapWihExpanded: true,
                           onSaved: (value) => setState(
                             () {
@@ -361,7 +361,7 @@ class _UserEditingState extends State<UserEditing> {
 
                         MyTextFormField(
                           label: 'Preis cent/ kWh',
-                          inputType: InputType.number,
+                          inputType: InputType.integer,
                           wrapWihExpanded: true,
                           initialValue: individualPriceInCent.toString(),
                           customValidator: (value) {

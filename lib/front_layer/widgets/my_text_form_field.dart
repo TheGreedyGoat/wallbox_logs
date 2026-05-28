@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:text_input_formatter/text_input_formatter.dart';
 import 'package:wallbox_logs/front_layer/widgets/conditional_wrapper.dart';
 
 /// presets for the FormField
@@ -7,8 +10,11 @@ enum InputType {
   /// plain text
   text,
 
-  /// numerics only
-  number,
+  /// integers only
+  integer,
+
+  // double
+  double,
 }
 
 /// a custom wrapper for a TextFormField to keep a coherent style etc.
@@ -18,6 +24,8 @@ class MyTextFormField extends StatefulWidget {
 
   /// The TextFormFields label
   final String label;
+
+  final bool markEdited;
 
   /// set to add additional validation logic.
   /// => should return null if value is valid, else an error message
@@ -35,7 +43,7 @@ class MyTextFormField extends StatefulWidget {
   /// optionally set a maximum number of characters in this field
   final int? characterLimit;
 
-  /// ttracks changes in the field
+  /// tracks changes in the field
   final TextEditingController? controller;
 
   /// an optional [FocusNode] object. Needed if the Textformfield is used within a TypeAheadString
@@ -59,6 +67,7 @@ class MyTextFormField extends StatefulWidget {
     this.isRequired = false,
 
     this.characterLimit,
+    this.markEdited = true,
     this.customValidator,
     this.initialValue,
     super.key,
@@ -71,11 +80,14 @@ class MyTextFormField extends StatefulWidget {
 class _MyTextFormFieldState extends State<MyTextFormField> {
   bool get isRequired => widget.isRequired;
   late final TextEditingController controller;
+  late final TextInputFormatter? _formatter;
+  bool hasChanged = false;
   @override
   void initState() {
     super.initState();
     controller =
         widget.controller ?? TextEditingController(text: widget.initialValue);
+    _formatter = _getInputFormatter();
   }
 
   @override
@@ -87,63 +99,77 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
   }
 
   Widget _field(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.secondaryContainer,
-            ],
-          ),
-          borderRadius: BorderRadius.all(Radius.circular(5)),
-          boxShadow: [BoxShadow(blurRadius: 10)],
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondaryContainer,
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(3.0),
-          child: TextFormField(
-            maxLength: widget.characterLimit,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        border: widget.markEdited && hasChanged
+            ? Border.all(color: Colors.red, width: 2.0)
+            : null,
+        boxShadow: [BoxShadow(blurRadius: 10)],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: TextFormField(
+          maxLength: widget.characterLimit,
 
-            inputFormatters: _getInputFormatters(),
-            decoration: InputDecoration(
-              label: Text(
-                '${widget.label}${isRequired ? '*' : ''}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onInverseSurface,
-                  fontWeight: FontWeight.bold,
-                ),
+          inputFormatters: _formatter != null ? [_formatter] : null,
+          decoration: InputDecoration(
+            label: Text(
+              '${widget.label}${isRequired ? '*' : ''}',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onInverseSurface,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            controller: controller,
-            focusNode: widget.focusNode,
-            autofocus: widget.autofocus,
-            onSaved: (newValue) => widget.onSaved(
-              (newValue == null || newValue.isEmpty) ? null : newValue.trim(),
-            ),
-            validator: (value) {
-              return (isRequired && (value == null || value.isEmpty))
-                  ? 'erforderlich'
-                  : (widget.customValidator != null && value != null
-                        ? widget.customValidator!(value)
-                        : null);
-            },
           ),
+          controller: controller,
+          focusNode: widget.focusNode,
+          autofocus: widget.autofocus,
+          onChanged: (value) {
+            setState(() {
+              hasChanged = true;
+            });
+          },
+          onSaved: (newValue) {
+            widget.onSaved(
+              (newValue == null || newValue.isEmpty) ? null : newValue.trim(),
+            );
+            setState(() {
+              hasChanged = false;
+            });
+          },
+          validator: (value) {
+            return (isRequired && (value == null || value.isEmpty))
+                ? 'erforderlich'
+                : (widget.customValidator != null && value != null
+                      ? widget.customValidator!(value)
+                      : null);
+          },
         ),
       ),
     );
   }
 
-  List<TextInputFormatter>? _getInputFormatters() {
+  TextInputFormatter? _getInputFormatter() {
     switch (widget.inputType) {
       case InputType.text:
         return null;
-      case InputType.number:
-        return [
-          FilteringTextInputFormatter.digitsOnly,
-        ];
+      case InputType.integer:
+        return FilteringTextInputFormatter.digitsOnly;
+      case InputType.double:
+        return NumericFormatter(
+          allowFraction: true,
+          fractionDigits: 2,
+          thousandSeparator: ' ',
+        );
     }
   }
 }

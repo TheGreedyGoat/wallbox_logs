@@ -21,6 +21,8 @@ class PageState with _$PageState {
   @override
   final bool showSideBar;
 
+  final Widget? floatingActionButton;
+
   /// Data class for app pages.
   /// - [page]: the pages main body
   /// - [title]: eg displayed in the App- oer SideBar
@@ -30,6 +32,7 @@ class PageState with _$PageState {
     required this.page,
     required this.title,
     required this.icon,
+    this.floatingActionButton,
     this.showSideBar = true,
   });
 }

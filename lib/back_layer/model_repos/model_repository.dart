@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:wallbox_logs/back_layer/database.dart';
+import 'package:wallbox_logs/back_layer/my_local_database.dart';
 import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 
 /// basic Repository class
 /// to be implemented for the type of database used
 abstract class ModelRepository<T extends DatabaseModel> {
   /// runtime storage for model objects
-  late final Map<String, T> cache = {};
+  final Map<String, T> cache = {};
+  bool queueIsWorking = false;
+  final List<T> writingQueue = List.empty(growable: true);
 
   /// check if DB files are loaded
   bool isLoaded = false;
@@ -32,19 +33,34 @@ abstract class ModelRepository<T extends DatabaseModel> {
 
   /// Creates a new entry for that model.
   /// Throws an Exception If another model with the same ID already exists
-  Future<File> create(T model);
+  Future<T> create(T model);
 
   /// Replaces an existing object witht the same id as [model]
   Future<T> update(T model);
+
+  Future<void> enqeueCacheValue(T model) async {
+    writingQueue.add(model);
+    _resolveQueue();
+  }
+
+  Future<void> _resolveQueue() async {
+    if (queueIsWorking) return;
+    while (writingQueue.isNotEmpty) {
+      final model = writingQueue.removeAt(0);
+      cache[model.repoID] = model;
+    }
+    await updateFile();
+    queueIsWorking = false;
+  }
 
   /// Updates the entry if it exists or creates it if not
   ///
   /// Returns it asynchronously afterwards
   Future<T> createOrUpdate(T model) async {
     if (hasEntry(model.repoID)) {
-      update(model);
+      await update(model);
     } else {
-      create(model);
+      await create(model);
     }
 
     return model;

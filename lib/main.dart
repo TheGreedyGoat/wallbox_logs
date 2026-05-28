@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/back_layer/asset_file_reader.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
@@ -11,13 +12,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await windowManager.setMinimumSize(Size(1000, 800));
-  await WallBoxTransaction.repo.clear();
-  await UserMasterData.repo.clear();
+
+  await WallBoxTransaction.repo.preload();
+  await UserMasterData.repo.preload();
+
   if (WallBoxTransaction.repo.cache.isEmpty) {
     await AssetFileReader.loadFileData(
       'assets/20260414 ACE0398688_Transactions.csv',
-      (file) {
-        WallBoxParser.parseWallBoxFile(file);
+      (file) async {
+        await WallBoxParser.parseWallBoxFile(file);
       },
     );
   }

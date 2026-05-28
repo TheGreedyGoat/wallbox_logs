@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
@@ -27,7 +28,7 @@ class _ContainsFilterWidgetState<T>
     super.initState();
     Future(
       () {
-        ref.read(transactionFilterProvider.notifier).setCheckCallback(
+        notifier.setCheckCallback(
           widget.identifier,
           (filterValue, value) {
             return value.toString().contains(filterValue.toString());
@@ -40,6 +41,7 @@ class _ContainsFilterWidgetState<T>
   @override
   Widget build(BuildContext context) {
     return TextField(
+      // label: 'Filtern',
       onChanged: (value) => setState(() {
         notifier.setFilterValue(widget.identifier, value);
       }),

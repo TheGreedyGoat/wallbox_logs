@@ -25,7 +25,7 @@ class WallBoxParser {
   /// parses the wallbox file and saves the data into a [WallBoxTransaction] object
   ///
   /// TO DO: Handle end of file shite
-  static void parseWallBoxFile(FileData data) {
+  static Future<void> parseWallBoxFile(FileData data) async {
     try {
       assert(
         data.extension == 'csv',
@@ -92,11 +92,11 @@ class WallBoxParser {
     }
   }
 
-  static void _saveTransaction(WallBoxTransaction transaction) {
-    WallBoxTransaction.repo.create(transaction);
+  static Future<void> _saveTransaction(WallBoxTransaction transaction) async {
+    await WallBoxTransaction.repo.create(transaction);
     String tagID = transaction.tagID;
     if (!UserMasterData.repo.hasEntry(tagID)) {
-      UserMasterData.repo.create(UserMasterData(tagID: tagID));
+      await UserMasterData.repo.create(UserMasterData(tagID: tagID));
     }
   }
 
@@ -109,11 +109,11 @@ class WallBoxParser {
   //  ### #    #  ####   ####  #    # #      ###### ######   #   ######
 
   ///For a block that either has no start or end line (eg by being interrubted by an end of file)
-  static void _parseIncompleteBlock(
+  static Future<void> _parseIncompleteBlock(
     String line1,
     String line2,
     bool isAtStartOfFile,
-  ) {
+  ) async {
     final mainLine = isAtStartOfFile ? line2 : line1;
     final mvLine = isAtStartOfFile ? line1 : line2;
     assert(_getTag(mainLine) != _mvTag);
@@ -128,7 +128,7 @@ class WallBoxParser {
     ChargingEvent mainEvent = ChargingEvent.fromEnumMap(mainValues);
     ChargingEvent mvEvent = ChargingEvent.fromEnumMap(mvValues);
 
-    _saveTransaction(
+    await _saveTransaction(
       WallBoxTransaction(
         start: isAtStartOfFile ? mvEvent : mainEvent,
         stop: isAtStartOfFile ? mainEvent : mvEvent,
@@ -143,10 +143,10 @@ class WallBoxParser {
   //  #      #    # #      #         #       #####  #    # #      #           #      #
   //  #      #    # #      #         #       #   #  #    # #    # #      #    # #    #
   //  #       ####  ###### ######    #       #    #  ####   ####  ######  ####   ####
-  static void _parseFullProcess(String start, String stop) {
+  static Future<void> _parseFullProcess(String start, String stop) async {
     var startParsed = _parseMainLine(start);
     var stopParsed = _parseMainLine(stop);
-    _saveTransaction(
+    await _saveTransaction(
       WallBoxTransaction(
         start: ChargingEvent.fromEnumMap(startParsed),
         stop: ChargingEvent.fromEnumMap(stopParsed),

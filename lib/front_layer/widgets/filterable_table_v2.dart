@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:wallbox_logs/front_layer/widgets/filterable_table.dart';
 
 class FilterableTableV2 extends StatelessWidget {
   FilterableTableV2({
@@ -19,7 +18,6 @@ class FilterableTableV2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 1000,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -112,6 +110,9 @@ class FilterableTableV2 extends StatelessWidget {
             ),
             SizedBox(
               height: 10,
+              child: Container(
+                color: Colors.black,
+              ),
             ),
           ],
         ),

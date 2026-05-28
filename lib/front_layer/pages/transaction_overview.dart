@@ -1,9 +1,8 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/contains_filter_widget.dart';
-import 'package:wallbox_logs/front_layer/widgets/filterable_table.dart';
+import 'package:wallbox_logs/front_layer/widgets/filter_widgets/number_range_filter_widget.dart';
 import 'package:wallbox_logs/front_layer/widgets/filterable_table_v2.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
@@ -16,7 +15,6 @@ class TransactionOverview extends ConsumerWidget {
   const TransactionOverview({super.key});
 
   final List<String> headers = const ['Tag-ID', 'Name', 'Datum', 'Verbrauch'];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final list = WallBoxTransaction.repo.getAll();
@@ -26,25 +24,31 @@ class TransactionOverview extends ConsumerWidget {
     );
 
     return Container(
-      child: FilterableTableV2(
-        headers: headers,
-        data: ref.watch(transactionFilterProvider).filter(list).map(
-          (transaction) {
-            return [
-              transaction.tagID,
-              transaction.user?.fullName ?? '[unbekannt]',
-              transaction.startTimeDisplay(false),
-              transaction.powerUsageKWhDisplay,
-            ];
-          },
-        ).toList(),
-        filterWidgets: [
-          for (int i = 0; i < headers.length; i++)
-            ContainsFilterWidget(
-              identifier: headers[i],
-              notifier: notifier,
-            ),
-        ],
+      child: Form(
+        child: FilterableTableV2(
+          headers: headers,
+          data: ref.watch(transactionFilterProvider).filter(list).map(
+            (transaction) {
+              return [
+                transaction.tagID,
+                transaction.user?.fullName ?? '[unbekannt]',
+                transaction.startTimeDisplay(false),
+                transaction.powerUsageKWhDisplay,
+              ];
+            },
+          ).toList(),
+          filterWidgets: [
+            ContainsFilterWidget(identifier: headers[0], notifier: notifier),
+            ContainsFilterWidget(identifier: headers[1], notifier: notifier),
+            ContainsFilterWidget(identifier: headers[2], notifier: notifier),
+            ContainsFilterWidget(identifier: headers[3], notifier: notifier),
+            // for (int i = 0; i < headers.length; i++)
+            //   ContainsFilterWidget(
+            //     identifier: headers[i],
+            //     notifier: notifier,
+            //   ),
+          ],
+        ),
       ),
     );
   }
@@ -61,13 +65,14 @@ class TransactionOverview extends ConsumerWidget {
         filterValue: '',
         getValue: (transaction) => transaction.username,
       ),
-      headers[2]: DataFilter(
-        filterValue: '',
-        getValue: (transaction) => transaction.powerUsageKWhDisplay,
-      ),
-      headers[3]: DataFilter(
+
+      '${headers[2]}': DataFilter(
         filterValue: '',
         getValue: (transaction) => transaction.startTimeStamp,
+      ),
+      '${headers[3]}': DataFilter(
+        filterValue: '',
+        getValue: (transaction) => transaction.powerUsageKWhDisplay,
       ),
     });
   }
