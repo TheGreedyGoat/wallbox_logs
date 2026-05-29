@@ -10,8 +10,30 @@ final widgetTreeProvider = NotifierProvider(
 );
 
 final transactionFilterProvider = NotifierProvider(
-  () => TableFilterNotifier<WallBoxTransaction>(),
+  () => TableFilterNotifier(numFilters: 5, getRaw: _buildRawTable),
 );
+
+List<List<dynamic>> _buildRawTable() {
+  final raw = WallBoxTransaction.repo
+      .getAll()
+      .map(
+        (t) => _extractData(t),
+      )
+      .toList();
+
+  return raw;
+}
+
+List<dynamic> _extractData(WallBoxTransaction t) {
+  final user = t.user;
+  return [
+    t.tagID,
+    user.fullName,
+    t.startTimeStamp,
+    t.powerUsageKWhDisplay,
+    t.cost,
+  ];
+}
 
 final appDataProvider = NotifierProvider(
   () => AppDataNotifier(),

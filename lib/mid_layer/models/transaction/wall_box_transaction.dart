@@ -78,9 +78,11 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   String get powerUsageKWhDisplay =>
       '${(powerUsageWh.toDouble() / 1000).toStringAsFixed(2)} kWh';
 
-  UserMasterData? get user => UserMasterData.repo.getById(tagID);
+  UserMasterData get user => UserMasterData.repo.getById(tagID)!;
 
-  String get username => user?.fullName ?? '[unbekannt]';
+  String get username => user.fullName;
+
+  int get cost => (user.pricePerkWh * powerUsageWh / 1000).floor();
 
   // int get costsInCents => (user?.individualPricePerkWhInCents ?? 100) * powerUsageKiloWh;
 

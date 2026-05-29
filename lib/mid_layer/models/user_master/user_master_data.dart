@@ -120,7 +120,7 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   /// - if both set, returns "prename surname".
   /// - If one is unset, it's replaced with '[unbekannt]'
   /// - If both unset just returns '[unbekannt]'
-  String? get fullName {
+  String get fullName {
     return prename == null && surname == null
         ? unknown
         : '${prename ?? unknown} ${surname ?? unknown}';

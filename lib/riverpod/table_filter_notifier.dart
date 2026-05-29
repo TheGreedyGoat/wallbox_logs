@@ -2,44 +2,59 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
 import 'package:wallbox_logs/riverpod/models/data_filter_state.dart';
 
-class TableFilterNotifier<T> extends Notifier<DataFilterState<T>> {
-  TableFilterNotifier();
+class TableFilterNotifier extends Notifier<DataFilterState> {
+  TableFilterNotifier({required this.numFilters, required this.getRaw});
+
+  final int numFilters;
+  final List<List<dynamic>> Function() getRaw;
 
   @override
-  DataFilterState<T> build() {
-    return DataFilterState<T>(activeFilters: <String, DataFilter<T>>{});
+  DataFilterState build() {
+    return DataFilterState(
+      filters: [
+        for (int i = 0; i < numFilters; i++) DataFilter(filterValue: null),
+      ],
+      rawTable: getRaw(),
+    );
   }
 
-  void setupFilters(Map<String, DataFilter<T>> filters) {
-    if (state.activeFilters.isNotEmpty) return;
+  void setFilters(List<DataFilter> filters) {
     state = state.copyWith(filters: filters);
   }
 
-  _setFilter(String key, DataFilter<T> f) {
-    final updatedFilters = {...state.activeFilters};
-    updatedFilters[key] = f;
-    state = state.copyWith(filters: updatedFilters);
+  void updateRaw() => state = state.copyWith(rawTable: getRaw());
+
+  set rawTable(List<List<dynamic>> raw) {
+    state = state.copyWith(
+      rawTable: raw,
+      filters: raw[0]
+          .map(
+            (e) => DataFilter(filterValue: e),
+          )
+          .toList(),
+    );
   }
 
-  void setFilterValue(String key, dynamic value) {
-    final filter = state.activeFilters[key];
-    if (filter != null) {
-      _setFilter(key, filter.copyWith(filterValue: value));
-      return;
-    }
-    print('No filter of $key found');
+  void setFilterValue(int index, dynamic value) {
+    assert(_checkIndex(index), 'out of filterbounds');
+    final nextFilters = [
+      for (int i = 0; i < state.filters.length; i++)
+        state.filters[i].copyWith(filterValue: index == i ? value : null),
+    ];
+
+    setFilters(nextFilters);
   }
 
-  void setCheckCallback(String key, FilterCallback check) {
-    final filter = state.activeFilters[key];
-    if (filter != null) {
-      _setFilter(key, filter.copyWith(check: check));
-      return;
-    }
-    print('No filter of $key found');
+  void setFilterInversion(int index, bool value) {
+    assert(_checkIndex(index), 'out of filterbounds');
+    final nextFilters = [
+      for (int i = 0; i < state.filters.length; i++)
+        state.filters[i].copyWith(isInverted: index == i ? value : null),
+    ];
+    setFilters(nextFilters);
   }
 
-  DataFilter<T>? getFilter(String key) {
-    return state.activeFilters[key];
-  }
+  List<List<dynamic>> getFiltered() => state.filtered;
+
+  bool _checkIndex(int index) => index >= 0 && index < state.filters.length;
 }

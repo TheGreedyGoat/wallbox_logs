@@ -1,32 +1,55 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
 import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 
-class DataFilterState<T> {
-  DataFilterState({required this.activeFilters});
-  final Map<String, DataFilter<T>> activeFilters;
-  @override
-  bool operator ==(Object other) =>
-      other is DataFilterState<T> && other.activeFilters == activeFilters;
+@immutable
+class DataFilterState {
+  DataFilterState({required this.filters, required this.rawTable});
 
-  @override
-  int get hashCode => activeFilters.hashCode;
+  final List<List<dynamic>> rawTable;
+  final List<DataFilter> filters;
 
-  DataFilterState<T> copyWith({
-    Map<String, DataFilter<T>>? filters,
-  }) => DataFilterState(activeFilters: filters ?? {...activeFilters});
+  List<List<dynamic>> get filtered => rawTable
+      .where(
+        (e) => _filterItem(e),
+      )
+      .toList();
 
-  List<T> filter(List<T> original) {
-    final result = original.where(
-      (T tObject) {
-        return activeFilters.values.fold(
-          true,
-          (previousValue, filter) {
-            return previousValue && filter.filter(tObject);
-          },
-        );
-      },
-    ).toList();
-    print('${original.length}, ${result.length}');
-    return result;
+  bool _filterItem(List<dynamic> toCheck) {
+    assert(
+      toCheck.length == filters.length,
+      'Error while filtering: passed data list does not share length with filterValues: \n----filterValues: $filters (Length ${filters.length}\n----toCheck: $toCheck (Length ${toCheck.length})',
+    );
+
+    for (int i = 0; i < toCheck.length; i++) {
+      if (!filters[i].passesFilter(toCheck[i])) {
+        print('failed');
+        return false;
+      }
+    }
+    print('passed');
+    return true;
   }
+
+  @override
+  operator ==(Object other) =>
+      other is DataFilterState && other.filters == filters;
+
+  @override
+  int get hashCode => filters.hashCode ^ filters.length;
+
+  DataFilterState copyWith({
+    List<DataFilter>? filters,
+    List<List<dynamic>>? rawTable,
+  }) => DataFilterState(
+    filters:
+        filters ??
+        this.filters
+            .map(
+              (filter) => filter.copyWith(),
+            )
+            .toList(),
+    rawTable: rawTable ?? this.rawTable,
+  );
 }

@@ -14,66 +14,45 @@ import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 class TransactionOverview extends ConsumerWidget {
   const TransactionOverview({super.key});
 
-  final List<String> headers = const ['Tag-ID', 'Name', 'Datum', 'Verbrauch'];
+  final List<String> headers = const [
+    'Tag-ID',
+    'Name',
+    'Datum',
+    'Verbrauch',
+    'Kosten',
+  ];
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final list = WallBoxTransaction.repo.getAll();
-    final notifier = ref.watch(transactionFilterProvider.notifier);
-    Future(
-      () => _setupFilterCallbacks(ref),
-    );
-
     return Container(
       child: Form(
         child: FilterableTableV2(
           headers: headers,
-          data: ref.watch(transactionFilterProvider).filter(list).map(
-            (transaction) {
-              return [
-                transaction.tagID,
-                transaction.user?.fullName ?? '[unbekannt]',
-                transaction.startTimeDisplay(false),
-                transaction.powerUsageKWhDisplay,
-              ];
-            },
-          ).toList(),
+          provider: transactionFilterProvider,
           filterWidgets: [
-            ContainsFilterWidget(identifier: headers[0], notifier: notifier),
-            ContainsFilterWidget(identifier: headers[1], notifier: notifier),
-            ContainsFilterWidget(identifier: headers[2], notifier: notifier),
-            ContainsFilterWidget(identifier: headers[3], notifier: notifier),
-            // for (int i = 0; i < headers.length; i++)
-            //   ContainsFilterWidget(
-            //     identifier: headers[i],
-            //     notifier: notifier,
-            //   ),
+            ContainsFilterWidget(
+              identifier: 0,
+              provider: transactionFilterProvider,
+            ),
+            ContainsFilterWidget(
+              identifier: 1,
+              provider: transactionFilterProvider,
+            ),
+            ContainsFilterWidget(
+              identifier: 2,
+              provider: transactionFilterProvider,
+            ),
+            ContainsFilterWidget(
+              identifier: 3,
+              provider: transactionFilterProvider,
+            ),
+            ContainsFilterWidget(
+              identifier: 3,
+              provider: transactionFilterProvider,
+            ),
           ],
         ),
       ),
     );
-  }
-
-  void _setupFilterCallbacks(
-    WidgetRef ref,
-  ) {
-    ref.read(transactionFilterProvider.notifier).setupFilters({
-      headers[0]: DataFilter(
-        filterValue: '',
-        getValue: (transaction) => transaction.tagID,
-      ),
-      headers[1]: DataFilter(
-        filterValue: '',
-        getValue: (transaction) => transaction.username,
-      ),
-
-      '${headers[2]}': DataFilter(
-        filterValue: '',
-        getValue: (transaction) => transaction.startTimeStamp,
-      ),
-      '${headers[3]}': DataFilter(
-        filterValue: '',
-        getValue: (transaction) => transaction.powerUsageKWhDisplay,
-      ),
-    });
   }
 }

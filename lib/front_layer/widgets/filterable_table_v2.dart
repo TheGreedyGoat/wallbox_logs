@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/diagnostics.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
+import 'package:wallbox_logs/riverpod/models/data_filter_state.dart';
+import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 
-class FilterableTableV2 extends StatelessWidget {
+class FilterableTableV2 extends ConsumerStatefulWidget {
   FilterableTableV2({
     required this.headers,
-    required this.data,
     required this.filterWidgets,
+    required this.provider,
+
     this.columnWidth,
     super.key,
   });
+
+  final NotifierProvider<TableFilterNotifier, DataFilterState> provider;
   final double? columnWidth;
   final List<Widget?> filterWidgets;
   final List<String> headers;
-  final List<List<String>> data;
   final double filterBarHeight = 40;
+
+  @override
+  ConsumerState<FilterableTableV2> createState() => _FilterableTableV2State();
+}
+
+class _FilterableTableV2State extends ConsumerState<FilterableTableV2> {
+  NotifierProvider<TableFilterNotifier, DataFilterState> get provider =>
+      widget.provider;
+  List<Widget?> get filterWidgets => widget.filterWidgets;
+  List<String> get headers => widget.headers;
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +109,14 @@ class FilterableTableV2 extends StatelessWidget {
                           ),
                         )
                         .toList(),
-                    rows: data
+                    rows: ref
+                        .watch(provider.notifier)
+                        .getFiltered()
                         .map(
-                          (row) => DataRow(
-                            cells: row
+                          (item) => DataRow(
+                            cells: item
                                 .map(
-                                  (cellText) => DataCell(Text(cellText)),
+                                  (e) => DataCell(Text(e.toString())),
                                 )
                                 .toList(),
                           ),
