@@ -2,59 +2,70 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
 import 'package:wallbox_logs/riverpod/models/data_filter_state.dart';
 
-class TableFilterNotifier extends Notifier<DataFilterState> {
+class TableFilterNotifier extends Notifier<TransactionFilterTableState> {
   TableFilterNotifier({required this.numFilters, required this.getRaw});
 
   final int numFilters;
   final List<List<dynamic>> Function() getRaw;
 
   @override
-  DataFilterState build() {
-    return DataFilterState(
-      filters: [
-        for (int i = 0; i < numFilters; i++) DataFilter(filterValue: null),
-      ],
-      rawTable: getRaw(),
-    );
+  TransactionFilterTableState build() {
+    return TransactionFilterTableState();
   }
 
-  void setFilters(List<DataFilter> filters) {
-    state = state.copyWith(filters: filters);
-  }
-
-  void updateRaw() => state = state.copyWith(rawTable: getRaw());
-
-  set rawTable(List<List<dynamic>> raw) {
+  void setFilterName(String? value) {
     state = state.copyWith(
-      rawTable: raw,
-      filters: raw[0]
-          .map(
-            (e) => DataFilter(filterValue: e),
-          )
-          .toList(),
+      filterName: value == null
+          ? () => null
+          : () => DataFilter(filterValue: value),
     );
   }
 
-  void setFilterValue(int index, dynamic value) {
-    assert(_checkIndex(index), 'out of filterbounds');
-    final nextFilters = [
-      for (int i = 0; i < state.filters.length; i++)
-        state.filters[i].copyWith(filterValue: index == i ? value : null),
-    ];
-
-    setFilters(nextFilters);
+  void setFilterTagID(String? value) {
+    state = state.copyWith(
+      filterId: value == null
+          ? () => null
+          : () => DataFilter(filterValue: value),
+    );
   }
 
-  void setFilterInversion(int index, bool value) {
-    assert(_checkIndex(index), 'out of filterbounds');
-    final nextFilters = [
-      for (int i = 0; i < state.filters.length; i++)
-        state.filters[i].copyWith(isInverted: index == i ? value : null),
-    ];
-    setFilters(nextFilters);
+  void setFilterConsumFrom(String? value) {
+    final parsed = int.tryParse(value ?? '');
+    state = state.copyWith(
+      filterConsFrom: parsed == null
+          ? () => null
+          : () => DataFilter(filterValue: parsed),
+    );
   }
 
-  List<List<dynamic>> getFiltered() => state.filtered;
+  void setFilterConsumTo(String? value) {
+    final parsed = int.tryParse(value ?? '');
+    state = state.copyWith(
+      filterConsTo: parsed == null
+          ? () => null
+          : () => DataFilter(filterValue: parsed, isInverted: true),
+    );
+  }
 
-  bool _checkIndex(int index) => index >= 0 && index < state.filters.length;
+  void setFilterCostFrom(String? value) {
+    final parsed = double.tryParse(value ?? '');
+    print('parsed: $parsed');
+    state = state.copyWith(
+      filterConsFrom: parsed == null
+          ? () => null
+          : () => DataFilter(filterValue: (parsed * 1000).floor()),
+    );
+  }
+
+  void setFilterCostTo(String? value) {
+    final parsed = int.tryParse(value ?? '');
+    state = state.copyWith(
+      filterConsTo: parsed == null
+          ? () => null
+          : () => DataFilter(
+              filterValue: (parsed * 1000).floor(),
+              isInverted: true,
+            ),
+    );
+  }
 }

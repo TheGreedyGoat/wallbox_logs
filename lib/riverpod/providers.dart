@@ -31,7 +31,7 @@ List<dynamic> _extractData(WallBoxTransaction t) {
     user.fullName,
     t.startTimeStamp,
     t.powerUsageKWhDisplay,
-    t.cost,
+    t.costInCents,
   ];
 }
 

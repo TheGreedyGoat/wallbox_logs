@@ -15,7 +15,8 @@ class FilterableTableV2 extends ConsumerStatefulWidget {
     super.key,
   });
 
-  final NotifierProvider<TableFilterNotifier, DataFilterState> provider;
+  final NotifierProvider<TableFilterNotifier, TransactionFilterTableState>
+  provider;
   final double? columnWidth;
   final List<Widget?> filterWidgets;
   final List<String> headers;
@@ -26,8 +27,8 @@ class FilterableTableV2 extends ConsumerStatefulWidget {
 }
 
 class _FilterableTableV2State extends ConsumerState<FilterableTableV2> {
-  NotifierProvider<TableFilterNotifier, DataFilterState> get provider =>
-      widget.provider;
+  NotifierProvider<TableFilterNotifier, TransactionFilterTableState>
+  get provider => widget.provider;
   List<Widget?> get filterWidgets => widget.filterWidgets;
   List<String> get headers => widget.headers;
 
@@ -70,7 +71,12 @@ class _FilterableTableV2State extends ConsumerState<FilterableTableV2> {
                   DataRow(
                     cells: filterWidgets
                         .map(
-                          (e) => DataCell(e ?? Container()),
+                          (e) => DataCell(
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: e ?? Container(),
+                            ),
+                          ),
                         )
                         .toList(),
                   ),
@@ -110,15 +116,21 @@ class _FilterableTableV2State extends ConsumerState<FilterableTableV2> {
                         )
                         .toList(),
                     rows: ref
-                        .watch(provider.notifier)
-                        .getFiltered()
+                        .watch(provider)
+                        .filtered
                         .map(
                           (item) => DataRow(
-                            cells: item
-                                .map(
-                                  (e) => DataCell(Text(e.toString())),
-                                )
-                                .toList(),
+                            cells: [
+                              DataCell(Text(item.tagID.toString())),
+                              DataCell(Text(item.username)),
+                              DataCell(
+                                Text(item.startTimeDisplay()),
+                              ),
+                              DataCell(
+                                Text(item.powerUsageKWhDisplay),
+                              ),
+                              DataCell(Text(item.costsDisplay)),
+                            ],
                           ),
                         )
                         .toList(),

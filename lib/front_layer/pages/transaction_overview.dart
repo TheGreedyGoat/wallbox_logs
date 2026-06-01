@@ -30,25 +30,43 @@ class TransactionOverview extends ConsumerWidget {
           headers: headers,
           provider: transactionFilterProvider,
           filterWidgets: [
+            //tag-ID
             ContainsFilterWidget(
               identifier: 0,
               provider: transactionFilterProvider,
+              onChanged: (value) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setFilterTagID(value),
             ),
+            //Name
             ContainsFilterWidget(
               identifier: 1,
               provider: transactionFilterProvider,
+              onChanged: (value) {
+                final filterNotifier = ref.read(
+                  transactionFilterProvider.notifier,
+                );
+                filterNotifier.setFilterName(
+                  value,
+                );
+              },
             ),
-            ContainsFilterWidget(
-              identifier: 2,
-              provider: transactionFilterProvider,
+            null,
+            NumberRangeFilterWidget(
+              onFromChanged: (value) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setFilterConsumFrom(value),
+              onToChanged: (value) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setFilterConsumTo(value),
             ),
-            ContainsFilterWidget(
-              identifier: 3,
-              provider: transactionFilterProvider,
-            ),
-            ContainsFilterWidget(
-              identifier: 3,
-              provider: transactionFilterProvider,
+            NumberRangeFilterWidget(
+              onFromChanged: (value) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setFilterCostFrom(value),
+              onToChanged: (value) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setFilterCostTo(value),
             ),
           ],
         ),

@@ -1,26 +1,30 @@
-class DataFilter {
+// [tagID, ame, datum...]
+// [ , , ]
+
+class DataFilter<T> {
   const DataFilter({required this.filterValue, this.isInverted = false});
-  final dynamic filterValue;
+  final T filterValue;
   final bool isInverted;
 
-  bool passesFilter(dynamic value) {
-    print(filterValue);
-    if (filterValue == null) return true;
+  bool passesFilter(T value) {
+    print('filterValue: $filterValue, value: $value, isInverted: $isInverted');
     assert(
       value.runtimeType == filterValue.runtimeType,
       'Error while filtering: types dont mach up: Value: $value (${value.runtimeType}), Filter: $filterValue(${filterValue.runtimeType})',
     );
 
     bool result = true;
-    switch (value.runtimeType) {
+    switch (T) {
       case const (String):
-        result = (filterValue as String).contains(value as String);
+        result = (value as String).contains(filterValue as String);
       case const (int):
-        result = (value as int) < (filterValue as int);
+        result = (value as int) >= (filterValue as int);
       case const (double):
-        result = (value as double) < (filterValue as double);
-      case const (DateTime):
-        result = (value as DateTime).isAfter(filterValue as DateTime);
+        result = (value as double) >= (filterValue as double);
+      case const (DataFilterDatum):
+        result = (filterValue as DataFilterDatum).passesFilter(
+          value as DateTime,
+        );
       case const (bool):
         result = value == filterValue;
       default:
@@ -42,4 +46,19 @@ class DataFilter {
   @override
   int get hashCode =>
       (filterValue ?? 'null').hashCode ^ isInverted.toString().hashCode;
+}
+
+abstract class DataFilterDatum {
+  bool passesFilter(DateTime value);
+}
+
+class DataFilterDatumMonat implements DataFilterDatum {
+  final int jahr;
+  final int monat;
+
+  DataFilterDatumMonat(this.jahr, this.monat);
+
+  bool passesFilter(DateTime value) {
+    return value.year == jahr && value.month == monat;
+  }
 }

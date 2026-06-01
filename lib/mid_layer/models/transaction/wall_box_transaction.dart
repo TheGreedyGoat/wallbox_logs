@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/mid_layer/models/database_model.dart';
@@ -73,7 +75,7 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   int get durationSeconds => stop.timeSeconds - start.timeSeconds;
 
   /// How much Power was consumed during this [WallBoxTransaction]?
-  int get powerUsageWh => (stop.powerLevelWh - start.powerLevelWh);
+  int get powerUsageWh => max(stop.powerLevelWh - start.powerLevelWh, 0);
 
   String get powerUsageKWhDisplay =>
       '${(powerUsageWh.toDouble() / 1000).toStringAsFixed(2)} kWh';
@@ -82,7 +84,10 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
 
   String get username => user.fullName;
 
-  int get cost => (user.pricePerkWh * powerUsageWh / 1000).floor();
+  int get costInCents => (user.pricePerkWh * powerUsageWh / 1000).round();
+
+  String get costsDisplay =>
+      '${(costInCents.toDouble() / 100).toStringAsFixed(2)} €';
 
   // int get costsInCents => (user?.individualPricePerkWhInCents ?? 100) * powerUsageKiloWh;
 
