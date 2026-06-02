@@ -1,50 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
-import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/riverpod/providers.dart';
-import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 
-class ContainsFilterWidget<T> extends ConsumerStatefulWidget {
-  const ContainsFilterWidget({
+class ContainsFilterWidget extends ConsumerWidget {
+  ContainsFilterWidget({
     required this.identifier,
-    required this.notifier,
+    required this.onChanged,
     super.key,
   });
   final String identifier;
-  final TableFilterNotifier<T> notifier;
+  final void Function(String value) onChanged;
 
+  TextEditingController _controller = TextEditingController();
   @override
-  ConsumerState<ContainsFilterWidget> createState() =>
-      _ContainsFilterWidgetState();
-}
-
-class _ContainsFilterWidgetState<T>
-    extends ConsumerState<ContainsFilterWidget> {
-  TableFilterNotifier get notifier => widget.notifier;
-
-  @override
-  void initState() {
-    super.initState();
-    Future(
-      () {
-        notifier.setCheckCallback(
-          widget.identifier,
-          (filterValue, value) {
-            return value.toString().contains(filterValue.toString());
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return TextField(
-      // label: 'Filtern',
-      onChanged: (value) => setState(() {
-        notifier.setFilterValue(widget.identifier, value);
-      }),
+      onChanged: (value) {
+        onChanged(value.trim());
+      },
     );
   }
 }

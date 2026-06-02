@@ -6,7 +6,10 @@ class AppData extends DatabaseModel {
   static const _repoID = 'app_data';
   static const priceKey = 'defaultPrice';
   final int defaultPricePerkWhInCents;
+
   static AppData? get instance => repo.cache.values.firstOrNull;
+  static int get defaultPriceInCents =>
+      instance?.defaultPricePerkWhInCents ?? 100;
   AppData({this.defaultPricePerkWhInCents = 100});
 
   AppData copyWith({int? defaultPricePerkWHInCents}) => AppData(

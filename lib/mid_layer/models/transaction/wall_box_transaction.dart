@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/mid_layer/models/database_model.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
@@ -34,6 +35,9 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
       start.tagID == tagID && stop.tagID == tagID,
       'ERROR while creating $WallBoxTransaction:\n id2s dont match up:\n* Process: $tagID\n* start: ${start.tagID},\n* Stop:${stop.tagID}',
     );
+    if (!UserMasterData.repo.hasEntry(tagID)) {
+      UserMasterData.repo.create(UserMasterData(tagID: tagID));
+    }
   }
 
   /// access function for conversion to JSON
@@ -64,9 +68,10 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   /// Getter for when did the transaction end
   DateTime get stopTimeStamp => stop.timeStamp;
 
-  String startTimeDisplay([bool includeTime = true]) =>
+  String startTimeDisplay([bool includeTime = false]) =>
       start.timeStampDisplay(includeTime);
-  String stopTimeDisplay([bool includeTime = true]) =>
+
+  String stopTimeDisplay([bool includeTime = false]) =>
       stop.timeStampDisplay(includeTime);
 
   /// The total time the [WallBoxTransaction] took
@@ -75,12 +80,22 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   /// How much Power was consumed during this [WallBoxTransaction]?
   int get powerUsageWh => (stop.powerLevelWh - start.powerLevelWh);
 
+  double get powerUsageKiloWh {
+    return powerUsageWh / 1000;
+  }
+
+  int get costsInCent => (user.pricePerkWhInCents * powerUsageKiloWh).round();
+  // ((user.pricePerkWhInCents?? AppData.defaultPriceInCents) * powerUsageKiloWh).round;
+
   String get powerUsageKWhDisplay =>
-      '${(powerUsageWh.toDouble() / 1000).toStringAsFixed(2)} kWh';
+      '${(powerUsageKiloWh).toStringAsFixed(2)} kWh';
 
-  UserMasterData? get user => UserMasterData.repo.getById(tagID);
+  UserMasterData get user => UserMasterData.repo.getById(tagID)!;
 
-  String get username => user?.fullName ?? '[unbekannt]';
+  String get username => user.fullName ?? '[unbekannt]';
+
+  String get costsDisplay =>
+      '${(costsInCent.toDouble() / 100).toStringAsFixed(2)} €';
 
   // int get costsInCents => (user?.individualPricePerkWhInCents ?? 100) * powerUsageKiloWh;
 

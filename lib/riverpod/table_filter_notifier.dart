@@ -1,45 +1,66 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
-import 'package:wallbox_logs/riverpod/models/data_filter_state.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/riverpod/models/transaction_filter_state.dart';
 
-class TableFilterNotifier<T> extends Notifier<DataFilterState<T>> {
+class TableFilterNotifier<T> extends Notifier<TransactionFilterState> {
   TableFilterNotifier();
 
   @override
-  DataFilterState<T> build() {
-    return DataFilterState<T>(activeFilters: <String, DataFilter<T>>{});
+  TransactionFilterState build() {
+    return TransactionFilterState();
   }
 
-  void setupFilters(Map<String, DataFilter<T>> filters) {
-    if (state.activeFilters.isNotEmpty) return;
-    state = state.copyWith(filters: filters);
+  void setIDFilter(String? value) {
+    state = state.copyWith(
+      getIDFilter: () => value == null ? null : DataFilter(filterValue: value),
+    );
   }
 
-  _setFilter(String key, DataFilter<T> f) {
-    final updatedFilters = {...state.activeFilters};
-    updatedFilters[key] = f;
-    state = state.copyWith(filters: updatedFilters);
+  void setNameFilter(String? value) {
+    state = state.copyWith(
+      getNameFilter: () =>
+          value == null ? null : DataFilter(filterValue: value),
+    );
   }
 
-  void setFilterValue(String key, dynamic value) {
-    final filter = state.activeFilters[key];
-    if (filter != null) {
-      _setFilter(key, filter.copyWith(filterValue: value));
-      return;
-    }
-    print('No filter of $key found');
+  void setConsumptionFromFilter(String? value) {
+    double? parsed = double.tryParse(value?.replaceAll(',', '.') ?? '');
+    state = state.copyWith(
+      getConsumptionFromFilter: () => parsed == null
+          ? null
+          : DataFilter(filterValue: (parsed * 1000).floor()),
+    );
   }
 
-  void setCheckCallback(String key, FilterCallback check) {
-    final filter = state.activeFilters[key];
-    if (filter != null) {
-      _setFilter(key, filter.copyWith(check: check));
-      return;
-    }
-    print('No filter of $key found');
+  void setConsumptionToFilter(String? value) {
+    double? parsed = double.tryParse(value?.replaceAll(',', '.') ?? '');
+    state = state.copyWith(
+      getConsumptionToFilter: () => parsed == null
+          ? null
+          : DataFilter(filterValue: (parsed * 1000).floor(), isInverted: true),
+    );
   }
 
-  DataFilter<T>? getFilter(String key) {
-    return state.activeFilters[key];
+  void setCostFromFilter(String? value) {
+    double? parsed = double.tryParse(value?.replaceAll(',', '.') ?? '');
+    state = state.copyWith(
+      getCostFromFilter: () => parsed == null
+          ? null
+          : DataFilter(filterValue: (parsed * 100).floor()),
+    );
+  }
+
+  void setCostToFilter(String? value) {
+    double? parsed = double.tryParse(value?.replaceAll(',', '.') ?? '');
+    state = state.copyWith(
+      getCostToFilter: () => parsed == null
+          ? null
+          : DataFilter(filterValue: (parsed * 100).floor(), isInverted: true),
+    );
+  }
+
+  void clear() {
+    state = build();
   }
 }

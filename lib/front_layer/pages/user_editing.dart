@@ -40,7 +40,7 @@ class _UserEditingState extends State<UserEditing> {
       _fillIn(widget.original!);
     }
     _globalKey = GlobalKey<FormState>();
-    _companyController = TextEditingController();
+    _companyController = TextEditingController(text: company);
   }
 
   void _fillIn(UserMasterData user) {
@@ -54,6 +54,7 @@ class _UserEditingState extends State<UserEditing> {
     phone = user.phoneNumber;
     email = user.email;
     company = user.company;
+    individualPriceInCent = user.individualPricePerkWhInCents;
   }
 
   final List<String> testStrings = UserMasterData.companies;
@@ -123,24 +124,30 @@ class _UserEditingState extends State<UserEditing> {
                     // 888    Y888 "Y888888 888  888  888  "Y8888
                     Row(
                       children: [
-                        DropdownMenuFormField<Titles>(
-                          label: Text('Anrede'),
-                          width: 120,
-                          initialSelection: title,
-                          dropdownMenuEntries: Titles.values
-                              .map<DropdownMenuEntry<Titles>>(
-                                (e) => DropdownMenuEntry<Titles>(
-                                  value: e,
-                                  label: e.label,
-                                ),
-                              )
-                              .toList(),
+                        SizedBox(
+                          width: 100,
+                          child: DropdownButtonFormField<Titles>(
+                            // label: Text('Anrede'),
+                            // width: 120,
+                            // initialSelection: title,
+                            // enableSearch: false,
+                            items: Titles.values
+                                .map<DropdownMenuItem<Titles>>(
+                                  (e) => DropdownMenuItem<Titles>(
+                                    value: e,
+                                    child: Text(e.label),
+                                    // label: e.label,
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {},
+                          ),
                         ),
 
                         MyTextFormField(
                           label: 'Vorname',
                           initialValue: prename,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           isRequired: true,
                           onSaved: (value) => setState(
                             () {
@@ -151,7 +158,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Nachname',
                           initialValue: surname,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           isRequired: true,
                           onSaved: (value) => setState(
                             () {
@@ -202,7 +209,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'PLZ',
                           initialValue: postcode,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           inputType: InputType.integer,
                           characterLimit: 5,
                           customValidator: (value) {
@@ -221,7 +228,7 @@ class _UserEditingState extends State<UserEditing> {
                         MyTextFormField(
                           label: 'Ort',
                           initialValue: city,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           characterLimit: 20,
                           onSaved: (value) => setState(
                             () {
@@ -264,7 +271,7 @@ class _UserEditingState extends State<UserEditing> {
                           label: 'Telefon',
                           initialValue: phone,
                           inputType: InputType.integer,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           onSaved: (value) => setState(
                             () {
                               phone = value;
@@ -275,7 +282,7 @@ class _UserEditingState extends State<UserEditing> {
                           label: 'email',
                           initialValue: email,
                           inputType: InputType.text,
-                          wrapWihExpanded: true,
+                          wrapWithExpanded: true,
                           customValidator: (value) {
                             if (value == null || value.isEmpty) {
                               return null;
@@ -359,11 +366,19 @@ class _UserEditingState extends State<UserEditing> {
                           ),
                         ),
 
+                        // label: 'Tag-ID',
+                        // initialValue: tagID,
+                        // onSaved: (value) => setState(
+                        //   () {
+                        //     tagID = value;
+                        //   },
+                        // ),
+                        // isRequired: true,
                         MyTextFormField(
                           label: 'Preis cent/ kWh',
                           inputType: InputType.integer,
-                          wrapWihExpanded: true,
-                          initialValue: individualPriceInCent.toString(),
+                          wrapWithExpanded: true,
+                          initialValue: individualPriceInCent?.toString(),
                           customValidator: (value) {
                             int? val = int.tryParse(value!);
                             return val != null && val <= 0
@@ -372,7 +387,7 @@ class _UserEditingState extends State<UserEditing> {
                           },
                           onSaved: (value) => setState(
                             () {
-                              individualPriceInCent = int.tryParse(value!);
+                              individualPriceInCent = int.tryParse(value ?? '');
                             },
                           ),
                         ),
@@ -392,6 +407,7 @@ class _UserEditingState extends State<UserEditing> {
                     _globalKey.currentState!.save();
                     String action = await _checkExisting();
                     _showSnackBar(action);
+                    print(UserMasterData.repo.getById(tagID ?? ''));
                   }
                 },
                 child: Text('Submit'),
@@ -417,6 +433,7 @@ class _UserEditingState extends State<UserEditing> {
   Future<String> _checkExisting() async {
     UserMasterData? check = UserMasterData.repo.getById(tagID!);
     String action = 'nicht gespeichert';
+    print(individualPriceInCent);
     if (check != null && (await _idExistsDialog(check))!) {
       UserMasterData.repo.update(
         check.copyWith(

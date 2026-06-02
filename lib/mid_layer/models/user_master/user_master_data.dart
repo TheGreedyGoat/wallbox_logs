@@ -109,10 +109,8 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   @override
   final String? city;
 
-  int get pricePerkWh =>
-      individualPricePerkWhInCents ??
-      AppData.instance?.defaultPricePerkWhInCents ??
-      100;
+  int get pricePerkWhInCents =>
+      individualPricePerkWhInCents ?? AppData.defaultPriceInCents;
 
   @override
   String get repoID => tagID;

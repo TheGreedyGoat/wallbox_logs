@@ -11,10 +11,26 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  await windowManager.setMinimumSize(Size(1000, 800));
+  await windowManager.setMinimumSize(Size(1500, 800));
 
-  await WallBoxTransaction.repo.preload();
-  await UserMasterData.repo.preload();
+  await preload();
+  runApp(
+    const ProviderScope(child: MyApp()),
+  );
+}
+
+Future<void> preload() async {
+  try {
+    await UserMasterData.repo.preload();
+  } catch (e) {
+    UserMasterData.repo.clear();
+  }
+
+  try {
+    await WallBoxTransaction.repo.preload();
+  } catch (e) {
+    WallBoxTransaction.repo.clear();
+  }
 
   if (WallBoxTransaction.repo.cache.isEmpty) {
     await AssetFileReader.loadFileData(
@@ -24,9 +40,13 @@ void main() async {
       },
     );
   }
-  runApp(
-    const ProviderScope(child: MyApp()),
-  );
+
+  if (WallBoxTransaction.repo.cache.isEmpty) {}
+  for (final transaction in WallBoxTransaction.repo.getAll()) {
+    if (transaction.powerUsageWh == 0) {
+      WallBoxTransaction.repo.delete(transaction.tagID);
+    }
+  }
 }
 
 /// The apps root

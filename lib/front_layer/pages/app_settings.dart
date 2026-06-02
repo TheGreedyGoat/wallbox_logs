@@ -26,6 +26,7 @@ class _AppSettingsPageState extends ConsumerState<AppSettingsPage> {
             .read(widgetTreeProvider)
             .copyWith(
               floatingActionButton: FloatingActionButton(
+                child: Icon(Icons.save),
                 onPressed: () {
                   if (_globalKey.currentState!.validate()) {
                     _globalKey.currentState!.save();

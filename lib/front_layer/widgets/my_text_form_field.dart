@@ -38,7 +38,7 @@ class MyTextFormField extends StatefulWidget {
   final bool isRequired;
 
   /// set to true to wrap the Field in an expanded-Widget
-  final bool wrapWihExpanded;
+  final bool wrapWithExpanded;
 
   /// optionally set a maximum number of characters in this field
   final int? characterLimit;
@@ -63,7 +63,7 @@ class MyTextFormField extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.inputType = InputType.text,
-    this.wrapWihExpanded = false,
+    this.wrapWithExpanded = false,
     this.isRequired = false,
 
     this.characterLimit,
@@ -88,12 +88,14 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
     controller =
         widget.controller ?? TextEditingController(text: widget.initialValue);
     _formatter = _getInputFormatter();
+
+    print('initial: ${widget.initialValue}');
   }
 
   @override
   Widget build(BuildContext context) {
     return _field(context).wrapIf(
-      widget.wrapWihExpanded,
+      widget.wrapWithExpanded,
       (child) => Expanded(child: child),
     );
   }
