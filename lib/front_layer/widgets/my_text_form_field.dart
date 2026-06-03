@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:text_input_formatter/text_input_formatter.dart';
 import 'package:wallbox_logs/front_layer/widgets/conditional_wrapper.dart';
+import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 
 /// presets for the FormField
 enum InputType {
@@ -101,22 +102,9 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
   }
 
   Widget _field(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.secondaryContainer,
-          ],
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(5)),
-        border: widget.markEdited && hasChanged
-            ? Border.all(color: Colors.red, width: 2.0)
-            : null,
-        boxShadow: [BoxShadow(blurRadius: 10)],
-      ),
+    return InputFieldDecoration(
+      markEdited: widget.markEdited,
+      hasChanged: hasChanged,
       child: Padding(
         padding: const EdgeInsets.all(3.0),
         child: TextFormField(
@@ -124,6 +112,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
 
           inputFormatters: _formatter != null ? [_formatter] : null,
           decoration: InputDecoration(
+            border: UnderlineInputBorder(borderSide: BorderSide.none),
             label: Text(
               '${widget.label}${isRequired ? '*' : ''}',
               style: TextStyle(

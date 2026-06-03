@@ -59,7 +59,13 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
           Container(
             color: Theme.of(context).colorScheme.surfaceContainer,
             child: DataTable(
-              border: TableBorder.all(color: Colors.white),
+              dataRowColor: WidgetStatePropertyAll(
+                Theme.of(context).colorScheme.primaryContainer,
+              ),
+              headingRowColor: WidgetStatePropertyAll(
+                Theme.of(context).colorScheme.primaryContainer.withAlpha(100),
+              ),
+              // border: TableBorder.all(color: Colors.white),
               dataRowMinHeight: showFilters ? widget.filterBarHeight : 5,
               dataRowMaxHeight: showFilters ? widget.filterBarHeight : 10,
               columnSpacing: 10,
@@ -120,10 +126,7 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
                         .map(
                           (filterW) => DataCell(
                             showFilters
-                                ? Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: filterW ?? Container(),
-                                  )
+                                ? filterW ?? Container()
                                 : SizedBox(
                                     height: 10,
                                   ),

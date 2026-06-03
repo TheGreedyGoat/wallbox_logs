@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 
 class DateFilterWidget extends ConsumerStatefulWidget {
   const DateFilterWidget({required this.onChanged, super.key});
@@ -20,45 +21,37 @@ class _DateFilterWidgetState extends ConsumerState<DateFilterWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Container(
-          padding: EdgeInsets.only(right: 8.0),
-          // color: Theme.of(context).colorScheme.primaryContainer,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(100)),
-            color: Theme.of(context).colorScheme.primaryContainer,
-          ),
-          child: DropdownButton<DateFilterSelections>(
-            // menuWidth: 200,
-            value: mode,
-            items: [
-              for (final s in DateFilterSelections.values) ...[
-                if (s == DateFilterSelections.january)
-                  _subHeader('Monat', context),
-                if (s == DateFilterSelections.quarter1)
-                  _subHeader('Quartal', context),
-                DropdownMenuItem(
-                  value: s,
-                  child: SizedBox(
-                    width: 150,
-                    child: ListTile(
-                      title: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Text(
-                          s.display,
-                        ),
+        DropdownButton<DateFilterSelections>(
+          // menuWidth: 200,
+          value: mode,
+          items: [
+            for (final s in DateFilterSelections.values) ...[
+              if (s == DateFilterSelections.january)
+                _subHeader('Monat', context),
+              if (s == DateFilterSelections.quarter1)
+                _subHeader('Quartal', context),
+              DropdownMenuItem(
+                value: s,
+                child: SizedBox(
+                  width: 150,
+                  child: ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(
+                        s.display,
                       ),
                     ),
                   ),
                 ),
-              ],
+              ),
             ],
-            onChanged: (value) {
-              setState(() {
-                this.mode = value ?? this.mode;
-                _update();
-              });
-            },
-          ),
+          ],
+          onChanged: (value) {
+            setState(() {
+              this.mode = value ?? this.mode;
+              _update();
+            });
+          },
         ),
         SizedBox(
           width: 10,
