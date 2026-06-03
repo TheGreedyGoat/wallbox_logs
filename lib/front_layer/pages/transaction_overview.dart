@@ -20,12 +20,19 @@ class TransactionOverview extends ConsumerWidget {
   ];
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final list = WallBoxTransaction.repo.getAll();
     final state = ref.watch(transactionFilterProvider);
 
     return Container(
       child: Form(
         child: FilterableTableV2(
+          onSortChanged: (index, invert) {
+            print(
+              'TransactionOverview tries setting filter for ${[headers[index]]}. Inversion: $invert',
+            );
+            ref
+                .read(transactionFilterProvider.notifier)
+                .setSorting(index, invert);
+          },
           onFilterRefresh: ref.read(transactionFilterProvider.notifier).clear,
           headers: headers,
           data: state.getFilteredForDisplay(),
@@ -47,7 +54,11 @@ class TransactionOverview extends ConsumerWidget {
               },
             ),
             // Date
-            DateFilterWidget(),
+            DateFilterWidget(
+              onChanged: (year, mode) => ref
+                  .read(transactionFilterProvider.notifier)
+                  .setDateFilter(year, mode),
+            ),
             // consumption
             NumberRangeFilterWidget(
               onFromChanged: (value) => ref

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/widgets/filter_widgets/date_filter_widget.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/riverpod/models/transaction_filter_state.dart';
@@ -21,6 +22,16 @@ class TableFilterNotifier<T> extends Notifier<TransactionFilterState> {
     state = state.copyWith(
       getNameFilter: () =>
           value == null ? null : DataFilter(filterValue: value),
+    );
+  }
+
+  void setDateFilter(String? year, DateFilterSelections mode) {
+    int? yearNum = int.tryParse(year ?? '');
+    state = state.copyWith(
+      getDateFilter: () => yearNum == null
+          //
+          ? null
+          : DataFilterDate.fromValues(yearNum, mode),
     );
   }
 
@@ -57,6 +68,13 @@ class TableFilterNotifier<T> extends Notifier<TransactionFilterState> {
       getCostToFilter: () => parsed == null
           ? null
           : DataFilter(filterValue: (parsed * 100).floor(), isInverted: true),
+    );
+  }
+
+  void setSorting(int? sortIndex, bool isInverted) {
+    state = state.copyWith(
+      getSorting: () => sortIndex != null ? Sorting.values[sortIndex] : null,
+      invertSorting: isInverted,
     );
   }
 

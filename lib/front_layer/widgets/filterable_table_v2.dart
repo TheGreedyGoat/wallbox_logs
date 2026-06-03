@@ -8,7 +8,11 @@ class FilterableTableV2 extends StatefulWidget {
     required this.headers,
     required this.data,
     required this.filterWidgets,
+
+    required this.onSortChanged,
+
     this.onFilterRefresh,
+
     this.columnWidth,
     super.key,
   });
@@ -18,7 +22,10 @@ class FilterableTableV2 extends StatefulWidget {
   final List<String> headers;
   final List<List<String>> data;
   final double filterBarHeight = 70;
+
   final void Function()? onFilterRefresh;
+
+  final void Function(int index, bool invert) onSortChanged;
 
   @override
   State<FilterableTableV2> createState() => _FilterableTableV2State();
@@ -28,6 +35,9 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
   List<String> get headers => widget.headers;
   List<List<String>> get data => widget.data;
   List<Widget?> get filterWidgets => widget.filterWidgets;
+
+  int? selectedHead;
+  bool invertSorting = false;
 
   bool showFilters = true;
   @override
@@ -55,24 +65,41 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
               columnSpacing: 10,
               horizontalMargin: 0,
               columns: [
-                ...headers
-                    .map(
-                      (headline) => DataColumn(
-                        columnWidth: FlexColumnWidth(),
-                        label: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            headline,
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface,
-                            ),
+                ...headers.map(
+                  (headline) => DataColumn(
+                    columnWidth: FlexColumnWidth(),
+                    label: IntrinsicWidth(
+                      child: ListTile(
+                        title: Text(headline),
+                        leading: IconButton(
+                          isSelected: selectedHead == headers.indexOf(headline),
+                          onPressed: () {
+                            setState(() {
+                              invertSorting =
+                                  selectedHead == headers.indexOf(headline) &&
+                                  !invertSorting;
+                              selectedHead = headers.indexOf(headline);
+                              widget.onSortChanged(
+                                selectedHead!,
+                                invertSorting,
+                              );
+                              print(
+                                'Button request to sort by $headline, ${invertSorting ? 'BU' : 'TD'}',
+                              );
+                            });
+                          },
+                          icon: Icon(
+                            selectedHead == headers.indexOf(headline)
+                                ? (invertSorting
+                                      ? Icons.arrow_drop_up
+                                      : Icons.arrow_drop_down)
+                                : Icons.sort,
                           ),
                         ),
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ),
+                ),
                 DataColumn(
                   label: IconButton(
                     icon: Icon(
