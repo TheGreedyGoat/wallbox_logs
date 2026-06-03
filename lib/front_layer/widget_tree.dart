@@ -35,7 +35,23 @@ class WidgetTree extends ConsumerWidget {
           children: [
             if (state.showSideBar) SideBar(),
             Expanded(
-              child: state.page,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).colorScheme.shadow,
+                        blurRadius: 8,
+                      ),
+                    ],
+                  ),
+                  child: state.page,
+                ),
+              ),
             ),
           ],
         ),
