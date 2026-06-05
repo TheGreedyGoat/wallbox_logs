@@ -56,6 +56,8 @@ class MyTextFormField extends StatefulWidget {
   /// preset
   final InputType inputType;
 
+  final EdgeInsetsGeometry? margin;
+
   /// a custom wrapper for a TextFormField to keep a coherent style etc.
   const MyTextFormField({
     required this.label,
@@ -66,7 +68,7 @@ class MyTextFormField extends StatefulWidget {
     this.inputType = InputType.text,
     this.wrapWithExpanded = false,
     this.isRequired = false,
-
+    this.margin,
     this.characterLimit,
     this.markEdited = true,
     this.customValidator,
@@ -145,6 +147,12 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
                       : null);
           },
         ),
+      ),
+    ).wrapIf(
+      widget.margin != null,
+      (child) => Padding(
+        padding: widget.margin!,
+        child: child,
       ),
     );
   }

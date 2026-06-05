@@ -5,19 +5,22 @@ class InputFieldDecoration extends StatelessWidget {
     required this.child,
     this.markEdited = false,
     this.hasChanged = false,
+    this.backgroundColor,
     super.key,
   });
   final Widget child;
   final bool markEdited, hasChanged;
+  Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       padding: EdgeInsets.only(left: 8.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.elliptical(15, 10)),
-        color: Theme.of(context).colorScheme.inverseSurface.withAlpha(100),
+        borderRadius: BorderRadius.all(Radius.circular(5)),
+        color:
+            backgroundColor ??
+            Theme.of(context).colorScheme.inverseSurface.withAlpha(100),
         border: markEdited && hasChanged
             ? Border.all(color: Colors.red, width: 2.0)
             : null,

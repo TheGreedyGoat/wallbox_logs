@@ -8,16 +8,11 @@ class FilterableTableV2 extends StatefulWidget {
     required this.headers,
     required this.data,
     required this.filterWidgets,
-
     required this.onSortChanged,
-
     this.onFilterRefresh,
-
-    this.columnWidth,
     super.key,
   });
 
-  final double? columnWidth;
   final List<Widget?> filterWidgets;
   final List<String> headers;
   final List<List<String>> data;
@@ -59,6 +54,8 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
           Container(
             color: Theme.of(context).colorScheme.surfaceContainer,
             child: DataTable(
+              border: TableBorder(verticalInside: BorderSide()),
+              showBottomBorder: true,
               dataRowColor: WidgetStatePropertyAll(
                 Theme.of(context).colorScheme.primaryContainer,
               ),
@@ -88,9 +85,6 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
                               widget.onSortChanged(
                                 selectedHead!,
                                 invertSorting,
-                              );
-                              print(
-                                'Button request to sort by $headline, ${invertSorting ? 'BU' : 'TD'}',
                               );
                             });
                           },
@@ -166,31 +160,44 @@ class _FilterableTableV2State extends State<FilterableTableV2> {
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
                 return DataTable(
+                  border: TableBorder(verticalInside: BorderSide()),
+                  // border: TableBorder.symmetric(
+                  //   inside: BorderSide(),
+                  // ),
                   headingRowHeight: 0,
 
-                  columnSpacing: 0,
+                  columnSpacing: 10,
                   horizontalMargin: 0,
-                  columns: headers
-                      .map(
-                        (e) => DataColumn(
-                          columnWidth: FlexColumnWidth(),
-                          label: Container(),
-                        ),
-                      )
-                      .toList(),
+                  columns: [
+                    ...headers.map(
+                      (e) => DataColumn(
+                        columnWidth: FlexColumnWidth(),
+                        label: Container(),
+                      ),
+                    ),
+                    DataColumn(label: Container()),
+                  ],
                   rows: data
                       .map(
                         (row) => DataRow(
-                          cells: row
-                              .map(
-                                (cellText) => DataCell(
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: SelectableText(cellText),
-                                  ),
+                          cells: [
+                            ...row.map(
+                              (cellText) => DataCell(
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SelectableText(cellText),
                                 ),
-                              )
-                              .toList(),
+                              ),
+                            ),
+                            DataCell(
+                              Center(
+                                child: Checkbox(
+                                  value: false,
+                                  onChanged: (value) {},
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       )
                       .toList(),

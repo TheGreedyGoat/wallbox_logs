@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/widgets/filter_widgets/my_text_field.dart';
 import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 
 class DateFilterWidget extends ConsumerStatefulWidget {
@@ -57,11 +58,8 @@ class _DateFilterWidgetState extends ConsumerState<DateFilterWidget> {
           width: 10,
         ),
         Expanded(
-          child: TextField(
-            decoration: InputDecoration(label: Text('Jahr')),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'\d+')),
-            ],
+          child: MyTextField(
+            label: 'Jahr',
             onChanged: (value) => setState(() {
               year = value;
               _update();

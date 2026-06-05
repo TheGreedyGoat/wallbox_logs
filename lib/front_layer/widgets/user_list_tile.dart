@@ -39,7 +39,7 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
         borderRadius: BorderRadius.all(Radius.circular(10)),
         gradient: LinearGradient(
           colors: [
-            Colors.grey,
+            Theme.of(context).colorScheme.primaryContainer,
             const Color.fromARGB(255, 190, 190, 190),
             const Color.fromARGB(255, 190, 190, 190),
           ],
@@ -54,12 +54,6 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
         leading: Icon(
           isExpanded ? Icons.arrow_drop_down : Icons.arrow_right_sharp,
         ),
-        trailing: IconButton(
-          onPressed: () => ref
-              .read(widgetTreeProvider.notifier)
-              .setUserEditingPageByTagID(widget.userTagID),
-          icon: Icon(Icons.edit),
-        ),
         title: SelectableText.rich(
           TextSpan(
             children: [
@@ -72,10 +66,17 @@ class _UserListTileConsumerState extends ConsumerState<UserListTileConsumer> {
           ),
         ),
         subtitle: Text(
-          'Totaler Verbrauch: {profiletoStringAsFixed(3)} kWh',
+          'Totaler Verbrauch: ${widget.profile.fullPowerUsageDisplay}',
         ),
 
-        children: [UserTransactionsWidget(user: widget.profile)],
+        trailing: IconButton(
+          onPressed: () => ref
+              .read(widgetTreeProvider.notifier)
+              .setUserEditingPageByTagID(widget.userTagID),
+          icon: Icon(Icons.edit),
+        ),
+
+        children: [UserTransactionsWidget(userTagID: widget.profile.tagID)],
         onExpansionChanged: (value) => setState(() {
           isExpanded = value;
         }),

@@ -1,10 +1,13 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
+import 'package:wallbox_logs/riverpod/providers.dart';
 
 /// Main Page for creating a new or editing an existing Wallbox user
-class UserEditing extends StatefulWidget {
+class UserEditing extends ConsumerStatefulWidget {
   /// if not null, this profiles data will be inserted into the form.
   /// Used to edit and override an existing user
   final UserMasterData? original;
@@ -14,10 +17,10 @@ class UserEditing extends StatefulWidget {
   const UserEditing({super.key, this.original});
 
   @override
-  State<UserEditing> createState() => _UserEditingState();
+  ConsumerState<UserEditing> createState() => _UserEditingState();
 }
 
-class _UserEditingState extends State<UserEditing> {
+class _UserEditingState extends ConsumerState<UserEditing> {
   late final GlobalKey<FormState> _globalKey;
   late final TextEditingController _companyController;
 
@@ -41,6 +44,27 @@ class _UserEditingState extends State<UserEditing> {
     }
     _globalKey = GlobalKey<FormState>();
     _companyController = TextEditingController(text: company);
+    Future(
+      () => ref
+          .read(widgetTreeProvider.notifier)
+          .setCustomPage(
+            ref
+                .read(widgetTreeProvider)
+                .copyWith(
+                  floatingActionButton: FloatingActionButton(
+                    child: Icon(Icons.save),
+                    onPressed: () async {
+                      if (_globalKey.currentState!.validate()) {
+                        _globalKey.currentState!.save();
+                        String action = await _checkExisting();
+                        _showSnackBar(action);
+                        print(UserMasterData.repo.getById(tagID ?? ''));
+                      }
+                    },
+                  ),
+                ),
+          ),
+    );
   }
 
   void _fillIn(UserMasterData user) {
@@ -60,6 +84,42 @@ class _UserEditingState extends State<UserEditing> {
   final List<String> testStrings = UserMasterData.companies;
   @override
   Widget build(BuildContext context) {
+    final double verticalFieldMagin = 10;
+    final double horizontalMargin = 5.0;
+
+    Widget _spacerH() => SizedBox(
+      width: horizontalMargin,
+    );
+
+    Widget _spacerV() => SizedBox(
+      height: verticalFieldMagin,
+    );
+
+    Widget _sectionHead(String label) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        SizedBox(
+          height: 0,
+          width: double.infinity,
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  width: 2.0,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ),
+        ),
+        _spacerV(),
+      ],
+    );
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
@@ -74,76 +134,42 @@ class _UserEditingState extends State<UserEditing> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // 88888888888                     8888888 8888888b.
-                    //     888                           888   888  "Y88b
-                    //     888                           888   888    888
-                    //     888   8888b.   .d88b.         888   888    888
-                    //     888      "88b d88P"88b        888   888    888
-                    //     888  .d888888 888  888 888888 888   888    888
-                    //     888  888  888 Y88b 888        888   888  .d88P
-                    //     888  "Y888888  "Y88888      8888888 8888888P"
-                    //                        888
-                    //                   Y8b d88P
-                    //                    "Y88P"
-                    Text(
-                      'Erforderlich',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(
-                      height: 0,
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 2.0,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    MyTextFormField(
-                      label: 'Tag-ID',
-                      initialValue: tagID,
-                      onSaved: (value) => setState(
-                        () {
-                          tagID = value;
-                        },
-                      ),
-                      isRequired: true,
-                    ),
-
-                    // 888b    888
-                    // 8888b   888
-                    // 88888b  888
-                    // 888Y88b 888  8888b.  88888b.d88b.   .d88b.
-                    // 888 Y88b888     "88b 888 "888 "88b d8P  Y8b
-                    // 888  Y88888 .d888888 888  888  888 88888888
-                    // 888   Y8888 888  888 888  888  888 Y8b.
-                    // 888    Y888 "Y888888 888  888  888  "Y8888
+                    // 8888888b.
+                    // 888   Y88b
+                    // 888    888
+                    // 888   d88P .d88b.   .d88888 888  888
+                    // 8888888P" d8P  Y8b d88" 888 888  888
+                    // 888 T88b  88888888 888  888 888  888
+                    // 888  T88b Y8b.     Y88b 888 Y88b 888
+                    // 888   T88b "Y8888   "Y88888  "Y88888
+                    //                         888
+                    //                         888
+                    //                         888
+                    _sectionHead('Erforderlich'),
                     Row(
                       children: [
                         SizedBox(
                           width: 100,
-                          child: DropdownButtonFormField<Titles>(
-                            // label: Text('Anrede'),
-                            // width: 120,
-                            // initialSelection: title,
-                            // enableSearch: false,
-                            items: Titles.values
-                                .map<DropdownMenuItem<Titles>>(
-                                  (e) => DropdownMenuItem<Titles>(
-                                    value: e,
-                                    child: Text(e.label),
-                                    // label: e.label,
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {},
+                          child: InputFieldDecoration(
+                            child: DropdownButtonFormField<Titles>(
+                              hint: Text('Anrede'),
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                              ),
+                              items: Titles.values
+                                  .map<DropdownMenuItem<Titles>>(
+                                    (e) => DropdownMenuItem<Titles>(
+                                      value: e,
+                                      child: Text(e.label),
+                                      // label: e.label,
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) {},
+                            ),
                           ),
                         ),
-
+                        _spacerH(),
                         MyTextFormField(
                           label: 'Vorname',
                           initialValue: prename,
@@ -155,6 +181,7 @@ class _UserEditingState extends State<UserEditing> {
                             },
                           ),
                         ),
+                        _spacerH(),
                         MyTextFormField(
                           label: 'Nachname',
                           initialValue: surname,
@@ -165,6 +192,18 @@ class _UserEditingState extends State<UserEditing> {
                               surname = value;
                             },
                           ),
+                        ),
+                        _spacerH(),
+                        MyTextFormField(
+                          label: 'Tag-ID',
+                          initialValue: tagID,
+                          onSaved: (value) => setState(
+                            () {
+                              tagID = value;
+                            },
+                          ),
+                          isRequired: true,
+                          wrapWithExpanded: true,
                         ),
                       ],
                     ),
@@ -177,24 +216,7 @@ class _UserEditingState extends State<UserEditing> {
                     //   d88P   888 888  888 888     88888888 "Y8888b. "Y8888b.
                     //  d8888888888 Y88b 888 888     Y8b.          X88      X88
                     // d88P     888  "Y88888 888      "Y8888   88888P'  88888P'
-                    Text(
-                      'Adresse',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(
-                      height: 0,
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 2.0,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _sectionHead('Adresse'),
                     MyTextFormField(
                       label: 'Straße & Hausnummer',
                       initialValue: streetAndNumber,
@@ -204,6 +226,7 @@ class _UserEditingState extends State<UserEditing> {
                         });
                       },
                     ),
+                    _spacerV(),
                     Row(
                       children: [
                         MyTextFormField(
@@ -225,6 +248,7 @@ class _UserEditingState extends State<UserEditing> {
                             },
                           ),
                         ),
+                        _spacerH(),
                         MyTextFormField(
                           label: 'Ort',
                           initialValue: city,
@@ -236,8 +260,10 @@ class _UserEditingState extends State<UserEditing> {
                             },
                           ),
                         ),
+                        _spacerH(),
                       ],
                     ),
+                    _spacerV(),
 
                     //  .d8888b.                    888                      888
                     // d88P  Y88b                   888                      888
@@ -247,24 +273,7 @@ class _UserEditingState extends State<UserEditing> {
                     // 888    888 888  888 888  888 888    .d888888 888      888
                     // Y88b  d88P Y88..88P 888  888 Y88b.  888  888 Y88b.    Y88b.
                     //  "Y8888P"   "Y88P"  888  888  "Y888 "Y888888  "Y8888P  "Y888
-                    Text(
-                      'Kontakt',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(
-                      height: 0,
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 2.0,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _sectionHead('Kontakt'),
                     Row(
                       children: [
                         MyTextFormField(
@@ -278,6 +287,7 @@ class _UserEditingState extends State<UserEditing> {
                             },
                           ),
                         ),
+                        _spacerH(),
                         MyTextFormField(
                           label: 'email',
                           initialValue: email,
@@ -304,7 +314,7 @@ class _UserEditingState extends State<UserEditing> {
                         ),
                       ],
                     ),
-
+                    _spacerV(),
                     //          888    888
                     //          888    888
                     //          888    888
@@ -313,24 +323,7 @@ class _UserEditingState extends State<UserEditing> {
                     // 888  888 888    888  888 88888888 888
                     // Y88..88P Y88b.  888  888 Y8b.     888
                     //  "Y88P"   "Y888 888  888  "Y8888  888
-                    Text(
-                      'Sonstiges',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(
-                      height: 0,
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              width: 2.0,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _sectionHead('Sonstiges'),
                     Row(
                       children: [
                         Expanded(
@@ -365,15 +358,7 @@ class _UserEditingState extends State<UserEditing> {
                             suggestionsCallback: (search) => testStrings,
                           ),
                         ),
-
-                        // label: 'Tag-ID',
-                        // initialValue: tagID,
-                        // onSaved: (value) => setState(
-                        //   () {
-                        //     tagID = value;
-                        //   },
-                        // ),
-                        // isRequired: true,
+                        _spacerH(),
                         MyTextFormField(
                           label: 'Preis cent/ kWh',
                           inputType: InputType.integer,
@@ -395,22 +380,6 @@ class _UserEditingState extends State<UserEditing> {
                     ),
                   ],
                 ),
-              ),
-            ),
-
-            Flexible(child: Container()),
-
-            Flexible(
-              child: FilledButton(
-                onPressed: () async {
-                  if (_globalKey.currentState!.validate()) {
-                    _globalKey.currentState!.save();
-                    String action = await _checkExisting();
-                    _showSnackBar(action);
-                    print(UserMasterData.repo.getById(tagID ?? ''));
-                  }
-                },
-                child: Text('Submit'),
               ),
             ),
           ],

@@ -81,10 +81,21 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   List<WallBoxTransaction> get transactions =>
       WallBoxTransaction.allOfTagID(tagID);
 
-  int get fullPowerUsage => transactions.fold<int>(
+  int get fullPowerUsageWh => transactions.fold<int>(
     0,
-    (previousValue, element) => previousValue + element.powerUsageWh,
+    (previousValue, transaction) => previousValue + transaction.powerUsageWh,
   );
+
+  String get fullPowerUsageDisplay =>
+      '${(fullPowerUsageWh.toDouble() / 1000).toStringAsFixed(2)} kWh';
+
+  int get fullCostsInCent => transactions.fold(
+    0,
+    (previousValue, transaction) => previousValue + transaction.costsInCent,
+  );
+
+  String get fullCostsDisplay =>
+      '${(fullCostsInCent.toDouble() / 200).toStringAsFixed(2)} €';
 
   @override
   final Titles title;
@@ -111,6 +122,9 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
 
   int get pricePerkWhInCents =>
       individualPricePerkWhInCents ?? AppData.defaultPriceInCents;
+
+  String get pricePerkWhDisplay =>
+      '${(pricePerkWhInCents.toDouble() / 100).toStringAsFixed(2)} €';
 
   @override
   String get repoID => tagID;

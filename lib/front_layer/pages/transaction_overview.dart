@@ -60,23 +60,27 @@ class TransactionOverview extends ConsumerWidget {
                   .setDateFilter(year, mode),
             ),
             // consumption
-            NumberRangeFilterWidget(
-              onFromChanged: (value) => ref
-                  .read(transactionFilterProvider.notifier)
-                  .setConsumptionFromFilter(value),
-              onToChanged: (value) => ref
-                  .read(transactionFilterProvider.notifier)
-                  .setConsumptionToFilter(value),
+            Center(
+              child: NumberRangeFilterWidget(
+                onFromChanged: (value) => ref
+                    .read(transactionFilterProvider.notifier)
+                    .setConsumptionFromFilter(value),
+                onToChanged: (value) => ref
+                    .read(transactionFilterProvider.notifier)
+                    .setConsumptionToFilter(value),
+              ),
             ),
 
             //cost
-            NumberRangeFilterWidget(
-              onFromChanged: (value) => ref
-                  .read(transactionFilterProvider.notifier)
-                  .setCostFromFilter(value),
-              onToChanged: (value) => ref
-                  .read(transactionFilterProvider.notifier)
-                  .setCostToFilter(value),
+            Center(
+              child: NumberRangeFilterWidget(
+                onFromChanged: (value) => ref
+                    .read(transactionFilterProvider.notifier)
+                    .setCostFromFilter(value),
+                onToChanged: (value) => ref
+                    .read(transactionFilterProvider.notifier)
+                    .setCostToFilter(value),
+              ),
             ),
           ],
         ),
