@@ -6,17 +6,24 @@ import 'package:wallbox_logs/front_layer/widget_tree.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
+import 'package:wallbox_logs/mid_layer/wall_box_parser_2.0.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  await windowManager.setMinimumSize(Size(1500, 800));
-
-  await preload();
-  runApp(
-    const ProviderScope(child: MyApp()),
+  await AssetFileReader.loadFileData(
+    'assets/20260414 ACE0398688_Transactions.csv',
+    (file) async {
+      print(WallBoxLog(file.content));
+    },
   );
+  // await windowManager.ensureInitialized();
+  // await windowManager.setMinimumSize(Size(1500, 800));
+
+  // await preload();
+  // runApp(
+  //   const ProviderScope(child: MyApp()),
+  // );
 }
 
 Future<void> preload() async {

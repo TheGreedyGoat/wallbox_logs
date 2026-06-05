@@ -21,7 +21,7 @@ class Utility {
     list.insert(i, element);
   }
 
-  static RegExp doubleInputRegExp(int fractions) =>
+  static RegExp doubleInputRegExp(int fractions, [bool addPrefix = true]) =>
       RegExp(r'^\d+[.,]?\d{0,#}|^$'.replaceAll('#', fractions.toString()));
 
   static String niceFullDateString(DateTime date) =>
