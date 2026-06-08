@@ -60,4 +60,34 @@ class Utility {
 
   static int euroToCents(double euros) => (euros * 100).floor();
   static double centsToEuros(int cents) => cents.toDouble() / 100;
+
+  static String costsDisplay(int cents) =>
+      '${centsToEuros(cents).toStringAsFixed(2)} €';
+
+  static const List<String> _monthNames = [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember',
+  ];
+
+  static String monthName(int month) {
+    while (month < 1) month += 12;
+    while (month > 12) month -= 12;
+    return _monthNames[month - 1];
+  }
+}
+
+void printList(List list) {
+  for (final e in list) {
+    print('$e \n');
+  }
 }

@@ -26,6 +26,7 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   WallBoxTransaction({
     required this.start,
     required this.stop,
+    this.isPaid = false,
   }) {
     assert(
       durationSeconds >= 0,
@@ -39,6 +40,8 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
       UserMasterData.repo.create(UserMasterData(tagID: tagID));
     }
   }
+
+  final bool isPaid;
 
   /// access function for conversion to JSON
   factory WallBoxTransaction.fromJson(Map<String, Object?> json) =>
@@ -85,7 +88,6 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
   }
 
   int get costsInCent => (user.pricePerkWhInCents * powerUsageKiloWh).round();
-  // ((user.pricePerkWhInCents?? AppData.defaultPriceInCents) * powerUsageKiloWh).round;
 
   String get powerUsageKWhDisplay =>
       '${(powerUsageKiloWh).toStringAsFixed(2)} kWh';

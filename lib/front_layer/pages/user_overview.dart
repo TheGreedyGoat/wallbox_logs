@@ -29,7 +29,7 @@ class _UserOverviewState extends State<UserOverview> {
           for (int i = 0; i < profiles.length; i++)
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: UserListTileConsumer(
+              child: UserListTile(
                 profile: profiles[i],
                 userTagID: profiles[i].tagID,
               ),

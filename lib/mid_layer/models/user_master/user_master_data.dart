@@ -81,6 +81,24 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   List<WallBoxTransaction> get transactions =>
       WallBoxTransaction.allOfTagID(tagID);
 
+  Map<DateTime, List<WallBoxTransaction>> transactionsByMonth([
+    bool includePaid = false,
+  ]) {
+    final all = transactions;
+    Map<DateTime, List<WallBoxTransaction>> result = {};
+    for (int i = 0; i < all.length; i++) {
+      final currentTransaction = all[i];
+      if (!includePaid && currentTransaction.isPaid) continue;
+      final currentDate = currentTransaction.startTimeStamp;
+      final DateTime keyDate = DateTime(currentDate.year, currentDate.month);
+
+      if (!result.containsKey(keyDate))
+        result[keyDate] = List.empty(growable: true);
+      result[keyDate]!.add(currentTransaction);
+    }
+    return result;
+  }
+
   int get fullPowerUsageWh => transactions.fold<int>(
     0,
     (previousValue, transaction) => previousValue + transaction.powerUsageWh,
@@ -95,7 +113,7 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   );
 
   String get fullCostsDisplay =>
-      '${(fullCostsInCent.toDouble() / 200).toStringAsFixed(2)} €';
+      '${(fullCostsInCent.toDouble() / 100).toStringAsFixed(2)} €';
 
   @override
   final Titles title;

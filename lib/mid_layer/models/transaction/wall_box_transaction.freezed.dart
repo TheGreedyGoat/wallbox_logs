@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WallBoxTransaction {
 
- ChargingEvent get start; ChargingEvent get stop; set stop(ChargingEvent value);
+ bool get isPaid; ChargingEvent get start; ChargingEvent get stop; set stop(ChargingEvent value);
 /// Create a copy of WallBoxTransaction
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $WallBoxTransactionCopyWith<WallBoxTransaction> get copyWith => _$WallBoxTransac
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WallBoxTransaction&&(identical(other.start, start) || other.start == start)&&(identical(other.stop, stop) || other.stop == stop));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WallBoxTransaction&&(identical(other.isPaid, isPaid) || other.isPaid == isPaid)&&(identical(other.start, start) || other.start == start)&&(identical(other.stop, stop) || other.stop == stop));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,start,stop);
+int get hashCode => Object.hash(runtimeType,isPaid,start,stop);
 
 @override
 String toString() {
-  return 'WallBoxTransaction(start: $start, stop: $stop)';
+  return 'WallBoxTransaction(isPaid: $isPaid, start: $start, stop: $stop)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $WallBoxTransactionCopyWith<$Res>  {
   factory $WallBoxTransactionCopyWith(WallBoxTransaction value, $Res Function(WallBoxTransaction) _then) = _$WallBoxTransactionCopyWithImpl;
 @useResult
 $Res call({
- ChargingEvent start, ChargingEvent stop
+ ChargingEvent start, ChargingEvent stop, bool isPaid
 });
 
 
@@ -63,11 +63,12 @@ class _$WallBoxTransactionCopyWithImpl<$Res>
 
 /// Create a copy of WallBoxTransaction
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? start = null,Object? stop = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? start = null,Object? stop = null,Object? isPaid = null,}) {
   return _then(WallBoxTransaction(
 start: null == start ? _self.start : start // ignore: cast_nullable_to_non_nullable
 as ChargingEvent,stop: null == stop ? _self.stop : stop // ignore: cast_nullable_to_non_nullable
-as ChargingEvent,
+as ChargingEvent,isPaid: null == isPaid ? _self.isPaid : isPaid // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

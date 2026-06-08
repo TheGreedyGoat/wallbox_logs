@@ -2,14 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/date_filter_widget.dart';
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/riverpod/models/transaction_filter_state.dart';
+import 'package:wallbox_logs/riverpod/models/transaction_table_state.dart';
 
-class TableFilterNotifier<T> extends Notifier<TransactionFilterState> {
-  TableFilterNotifier();
+class TransactionTableNotifierNotifier<T>
+    extends Notifier<TransactionTableState> {
+  TransactionTableNotifierNotifier();
 
   @override
-  TransactionFilterState build() {
-    return TransactionFilterState();
+  TransactionTableState build() {
+    return TransactionTableState();
   }
 
   void setIDFilter(String? value) {
@@ -78,7 +79,13 @@ class TableFilterNotifier<T> extends Notifier<TransactionFilterState> {
     );
   }
 
+  void setIncludePaid(bool value) => state = state.copyWith(includePaid: value);
+
   void clear() {
     state = build();
+  }
+
+  void refresh() {
+    state = state.copyWith();
   }
 }

@@ -10,8 +10,8 @@ enum Sorting {
   cost,
 }
 
-class TransactionFilterState {
-  TransactionFilterState({
+class TransactionTableState {
+  TransactionTableState({
     this.filterTagID,
     this.filterName,
 
@@ -23,8 +23,12 @@ class TransactionFilterState {
     this.filterCostFrom,
     this.filterCostTo,
 
+    this.includePaid = false,
+
     this.sorting,
     this.invertSorting = false,
+
+    this.xyz = false,
   });
 
   final DataFilter<String>? filterTagID;
@@ -38,16 +42,21 @@ class TransactionFilterState {
   final DataFilter<int>? filterCostFrom;
   final DataFilter<int>? filterCostTo;
 
+  final bool includePaid;
+
   final Sorting? sorting;
   final bool invertSorting;
 
+  final bool xyz;
+
   List<WallBoxTransaction> getFiltered() {
     final raw = WallBoxTransaction.repo.getAll();
-    final List<WallBoxTransaction> filtered = List.empty(growable: true);
-
+    late final List<WallBoxTransaction> filtered;
+    filtered = List.empty(growable: true);
     for (int i = 0; i < raw.length; i++) {
       final currentTransaction = raw[i];
-      if ((filterTagID?.check(currentTransaction.tagID) ?? true) &&
+      if ((includePaid || !currentTransaction.isPaid) &&
+          (filterTagID?.check(currentTransaction.tagID) ?? true) &&
           (filterName?.check(currentTransaction.username) ?? true) &&
           (filterDate?.checkDate(currentTransaction.startTimeStamp) ?? true) &&
           (filterConsumptionFrom?.check(currentTransaction.powerUsageWh) ??
@@ -56,7 +65,6 @@ class TransactionFilterState {
         filtered.add(currentTransaction);
       }
     }
-
     return _sort(filtered);
   }
 
@@ -101,9 +109,12 @@ class TransactionFilterState {
 
   @override
   bool operator ==(Object other) =>
-      other is TransactionFilterState && other.hashCode == hashCode;
+      other is TransactionTableState &&
+      other.xyz == xyz &&
+      other.hashCode == hashCode;
   @override
   int get hashCode => Object.hash(
+    'taFilterstate',
     filterTagID,
     filterName,
     filterDate,
@@ -111,9 +122,10 @@ class TransactionFilterState {
     filterCostFrom,
     sorting,
     invertSorting,
+    includePaid,
   );
 
-  TransactionFilterState copyWith({
+  TransactionTableState copyWith({
     DataFilter<String>? Function()? getIDFilter,
 
     DataFilter<String>? Function()? getNameFilter,
@@ -125,10 +137,11 @@ class TransactionFilterState {
 
     DataFilter<int>? Function()? getCostFromFilter,
     DataFilter<int>? Function()? getCostToFilter,
+    bool? includePaid,
 
     Sorting? Function()? getSorting,
     bool? invertSorting,
-  }) => TransactionFilterState(
+  }) => TransactionTableState(
     filterTagID: getIDFilter == null ? filterTagID : getIDFilter(),
     filterName: getNameFilter == null ? filterName : getNameFilter(),
     filterDate: getDateFilter == null ? filterDate : getDateFilter(),
@@ -138,8 +151,10 @@ class TransactionFilterState {
     filterCostFrom: getCostFromFilter == null
         ? filterCostFrom
         : getCostFromFilter(),
+    includePaid: includePaid ?? this.includePaid,
     sorting: getSorting == null ? sorting : getSorting(),
     invertSorting: invertSorting ?? this.invertSorting,
+    xyz: !this.xyz,
   );
 
   @override

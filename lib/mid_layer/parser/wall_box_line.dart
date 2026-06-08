@@ -1,55 +1,5 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-enum LineType { start, stop, mv }
-
-Map<LineType, List<LineType>> successors = {
-  LineType.start: [LineType.mv],
-  LineType.stop: [LineType.start],
-  LineType.mv: [LineType.mv, LineType.stop],
-};
-
-enum DataType {
-  date(r'\d{4}(\-\d{2}){2} \d{2}(:\d{2}){2}'),
-  power(r'\d+\.\d{2,3}'),
-  tagID(r'[0-9A-Z]{5,}')
-  ;
-
-  final String regExSource;
-  const DataType(this.regExSource);
-}
-
-RegExp startExp = RegExp(r'txstart');
-RegExp stopExp = RegExp(r'txstop');
-RegExp mvExp = RegExp(r'mv');
-
-class WallBoxParser2 {}
-
-class WallBoxLog {
-  WallBoxLog(String source) {
-    final lines = List<WallboxLine>.empty(growable: true);
-    final split = source.split('\n');
-    LineType? currentType;
-
-    for (final l in split) {
-      WallboxLine? line = WallboxLine.tryParse(l);
-      if (line != null) {
-        assert(
-          currentType == null || successors[currentType]!.contains(line.type),
-          'Mismatching order of lines in Log file: $currentType followed by ${line.type} at file line ${split.indexOf(l)}',
-        );
-        lines.add(line);
-      }
-    }
-    this.lines = lines;
-  }
-  late final List<WallboxLine> lines;
-
-  @override
-  String toString() => lines.fold(
-    '',
-    (previousValue, element) => '${previousValue}${element.toString()}\n',
-  );
-}
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/parser/wall_box_log.dart';
 
 const _startTag = 'txstart';
 const _stopTag = 'txstop';
@@ -57,14 +7,14 @@ const _mvTag = 'mv';
 
 abstract class WallboxLine {
   late final DateTime timeStamp;
-  late final double powerUsage;
+  late final int powerLevelWh;
 
   LineType get type;
 
   static WallboxLine? tryParse(String source) {
     bool isMV = source.startsWith(_mvTag);
     bool isStart = !isMV && source.startsWith(_startTag);
-    bool isStop = !isMV && !isStart && source.startsWith(_startTag);
+    bool isStop = !isMV && !isStart && source.startsWith(_stopTag);
 
     if (!isMV && !isStart && !isStop) return null;
 
@@ -78,7 +28,11 @@ abstract class WallboxLine {
     final powerUsageMatch = RegExp(
       DataType.power.regExSource,
     ).stringMatch(source);
-    final double? powerUsage = double.tryParse(powerUsageMatch.toString());
+
+    final double? pU = double.tryParse(
+      powerUsageMatch.toString(),
+    );
+    final int? powerUsage = pU != null ? (pU * 1000).floor() : null;
 
     assert(
       powerUsage != null,
@@ -98,18 +52,19 @@ abstract class WallboxLine {
   }
 
   @override
-  String toString() => 'Type: $type, TimeStamp: $timeStamp, Usage: $powerUsage';
+  String toString() =>
+      'Type: $type, TimeStamp: $timeStamp, Usage: $powerLevelWh';
 }
 
 class MainLine extends WallboxLine {
   MainLine(
     this.timeStamp,
-    this.powerUsage,
+    this.powerLevelWh,
     this.tagID,
     this.isStart,
   );
   @override
-  final double powerUsage;
+  final int powerLevelWh;
 
   @override
   final DateTime timeStamp;
@@ -122,15 +77,21 @@ class MainLine extends WallboxLine {
   String toString() {
     return '${super.toString()}, $tagID';
   }
+
+  ChargingEvent get toEvent => ChargingEvent(
+    tagID: tagID,
+    timeStamp: timeStamp,
+    powerLevelWh: powerLevelWh,
+  );
 }
 
 class MVLine extends WallboxLine {
   @override
   LineType get type => LineType.mv;
 
-  MVLine(this.timeStamp, this.powerUsage);
+  MVLine(this.timeStamp, this.powerLevelWh);
   @override
-  late final double powerUsage;
+  late final int powerLevelWh;
 
   @override
   late final DateTime timeStamp;

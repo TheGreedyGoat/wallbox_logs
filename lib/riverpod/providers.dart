@@ -9,8 +9,8 @@ final widgetTreeProvider = NotifierProvider(
   () => WidgetTreeNotifier(),
 );
 
-final transactionFilterProvider = NotifierProvider(
-  () => TableFilterNotifier<WallBoxTransaction>(),
+final transactionTableProvider = NotifierProvider(
+  () => TransactionTableNotifierNotifier<WallBoxTransaction>(),
 );
 
 final appDataProvider = NotifierProvider(

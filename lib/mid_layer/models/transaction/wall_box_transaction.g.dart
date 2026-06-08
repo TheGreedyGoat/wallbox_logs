@@ -10,10 +10,15 @@ WallBoxTransaction _$WallBoxTransactionFromJson(Map<String, dynamic> json) =>
     WallBoxTransaction(
       start: ChargingEvent.fromJson(json['start'] as Map<String, dynamic>),
       stop: ChargingEvent.fromJson(json['stop'] as Map<String, dynamic>),
+      isPaid: json['isPaid'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$WallBoxTransactionToJson(WallBoxTransaction instance) =>
-    <String, dynamic>{'start': instance.start, 'stop': instance.stop};
+    <String, dynamic>{
+      'isPaid': instance.isPaid,
+      'start': instance.start,
+      'stop': instance.stop,
+    };
 
 ChargingEvent _$ChargingEventFromJson(Map<String, dynamic> json) =>
     ChargingEvent(

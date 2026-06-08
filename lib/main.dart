@@ -6,24 +6,33 @@ import 'package:wallbox_logs/front_layer/widget_tree.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
-import 'package:wallbox_logs/mid_layer/wall_box_parser_2.0.dart';
+import 'package:wallbox_logs/mid_layer/parser/wall_box_log.dart';
+import 'package:wallbox_logs/utility.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AssetFileReader.loadFileData(
-    'assets/20260414 ACE0398688_Transactions.csv',
-    (file) async {
-      print(WallBoxLog(file.content));
-    },
-  );
-  // await windowManager.ensureInitialized();
-  // await windowManager.setMinimumSize(Size(1500, 800));
-
-  // await preload();
-  // runApp(
-  //   const ProviderScope(child: MyApp()),
+  // await AssetFileReader.loadFileData(
+  //   'assets/20260414 ACE0398688_Transactions.csv',
+  //   (file) {
+  //     try {
+  //       printList(WallBoxLog(file.content).createTransactions());
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //   },
   // );
+
+  await windowManager.setMinimumSize(Size(1500, 800));
+
+  try {
+    await preload();
+    runApp(
+      const ProviderScope(child: MyApp()),
+    );
+  } catch (e) {
+    print(e);
+  }
 }
 
 Future<void> preload() async {
@@ -34,7 +43,7 @@ Future<void> preload() async {
   }
 
   try {
-    await WallBoxTransaction.repo.preload();
+    await WallBoxTransaction.repo.clear();
   } catch (e) {
     WallBoxTransaction.repo.clear();
   }
@@ -43,7 +52,13 @@ Future<void> preload() async {
     await AssetFileReader.loadFileData(
       'assets/20260414 ACE0398688_Transactions.csv',
       (file) async {
-        await WallBoxParser.parseWallBoxFile(file);
+        WallBoxLog(file.content).createTransactions(true);
+      },
+    );
+    await AssetFileReader.loadFileData(
+      'assets/part_2.csv',
+      (file) async {
+        WallBoxLog(file.content).createTransactions(true);
       },
     );
   }
@@ -51,7 +66,12 @@ Future<void> preload() async {
   if (WallBoxTransaction.repo.cache.isEmpty) {}
   for (final transaction in WallBoxTransaction.repo.getAll()) {
     if (transaction.powerUsageWh == 0) {
-      WallBoxTransaction.repo.delete(transaction.tagID);
+      WallBoxTransaction.repo.delete(
+        transaction.tagID,
+        () async {
+          return true;
+        },
+      );
     }
   }
 }
@@ -68,8 +88,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.dark().copyWith(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.light,
+          seedColor: Colors.amberAccent,
+          brightness: Brightness.dark,
         ),
       ),
 

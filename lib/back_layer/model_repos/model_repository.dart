@@ -67,7 +67,10 @@ abstract class ModelRepository<T extends DatabaseModel> {
   }
 
   /// Deletes the object with the given id if it exists
-  Future<void> delete(String id);
+  Future<void> delete(
+    String id,
+    Future<bool> Function() deletionConfirmationCallback,
+  );
 
   /// Returns true if a Database entry with the given [id] exits
   bool hasEntry(String id) => getById(id) != null;

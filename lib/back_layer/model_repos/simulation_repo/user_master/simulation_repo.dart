@@ -32,7 +32,11 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   }
 
   @override
-  Future<void> delete(String id) async {
+  Future<void> delete(
+    String id,
+    Future<bool> Function() deletionConfirmationCallback,
+  ) async {
+    if (!await deletionConfirmationCallback()) return;
     if (cache.remove(id) != null) {
       await updateFile();
     }

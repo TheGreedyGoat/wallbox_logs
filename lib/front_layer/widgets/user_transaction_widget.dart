@@ -88,10 +88,8 @@ class _UserTransactionsWidgetState extends State<UserTransactionsWidget> {
             surfaceColor: colorScheme.surfaceContainerHigh,
             borderColor: colorScheme.onSurface,
 
-            left: Text(
-              'Individueller Preis: ',
-              style: textStyle,
-            ),
+            label: 'Individueller Preis: ',
+
             right: Row(
               children: [
                 if (!editPrice) ...[
