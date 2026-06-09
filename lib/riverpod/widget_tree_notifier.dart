@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/pages/file_upload.dart';
 import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
 import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
 import 'package:wallbox_logs/front_layer/pages/user_overview.dart';
-import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/models/page_state.dart';
 
 /// The Apps default main pages to navigate between via the [SideBar]
@@ -30,6 +31,13 @@ enum MainPage {
       page: TransactionOverview(),
       title: 'Transaktionen',
       icon: Icon(Icons.power),
+    ),
+  ),
+  fileUpload(
+    pageState: PageState(
+      page: FileUpload(),
+      title: 'Datei hochladen',
+      icon: Icon(Icons.upload_file_sharp),
     ),
   )
   ;

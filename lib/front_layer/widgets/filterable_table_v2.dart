@@ -1,10 +1,8 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/diagnostics.dart';
-import 'package:wallbox_logs/riverpod/table_filter_notifier.dart';
 
-class FilterableTableV2 extends StatefulWidget {
-  FilterableTableV2({
+/// Widget structure wich can take
+class FilterableTable extends StatefulWidget {
+  FilterableTable({
     required this.headers,
     required this.data,
     required this.filterWidgets,
@@ -26,10 +24,10 @@ class FilterableTableV2 extends StatefulWidget {
   final void Function(int index, bool invert) onSortChanged;
 
   @override
-  State<FilterableTableV2> createState() => _FilterableTableV2State();
+  State<FilterableTable> createState() => _FilterableTableState();
 }
 
-class _FilterableTableV2State extends State<FilterableTableV2> {
+class _FilterableTableState extends State<FilterableTable> {
   List<String> get headers => widget.headers;
   List<List<String>> get data => widget.data;
   List<Widget?> get filterWidgets => widget.filterWidgets;

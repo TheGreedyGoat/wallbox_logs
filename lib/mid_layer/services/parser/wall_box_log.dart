@@ -1,6 +1,7 @@
-import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/mid_layer/parser/wall_box_line.dart';
-import 'package:wallbox_logs/mid_layer/parser/wall_box_transaction_block.dart';
+import 'dart:io';
+import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/services/parser/wall_box_line/wall_box_line.dart';
+import 'package:wallbox_logs/mid_layer/services/parser/wall_box_transaction_block/wall_box_transaction_block.dart';
 
 enum LineType { start, stop, mv }
 
@@ -25,6 +26,12 @@ RegExp stopExp = RegExp(r'txstop');
 RegExp mvExp = RegExp(r'mv');
 
 class WallBoxLog {
+  static Future<WallBoxLog> fromFile(File file) async {
+    print(file.path.split('\\').last);
+    String content = await file.readAsString();
+    return WallBoxLog(content);
+  }
+
   WallBoxLog(String source) {
     final split = source.split('\n');
     List<WallBoxTransactionBlock> blocks = List.empty(growable: true);
@@ -59,7 +66,7 @@ class WallBoxLog {
       );
       i = j;
     }
-    this.blocks = blocks.toList(growable: true);
+    this.blocks = blocks.toList(growable: false);
   }
   late final List<WallBoxTransactionBlock> blocks;
 

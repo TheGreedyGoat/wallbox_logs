@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:wallbox_logs/back_layer/my_local_database.dart';
-import 'package:wallbox_logs/mid_layer/models/database_model.dart';
+import 'package:wallbox_logs/mid_layer/services/database_model.dart';
 
 /// basic Repository class
 /// to be implemented for the type of database used
 abstract class ModelRepository<T extends DatabaseModel> {
   /// runtime storage for model objects
   final Map<String, T> cache = {};
-  bool queueIsWorking = false;
-  final List<T> writingQueue = List.empty(growable: true);
+
+  bool _queueIsWorking = false;
+  final List<T> _writingQueue = List.empty(growable: true);
 
   /// check if DB files are loaded
   bool isLoaded = false;
@@ -38,19 +39,20 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// Replaces an existing object witht the same id as [model]
   Future<T> update(T model);
 
+  /// adds [model] to the writing queue and starts it if nessecary
   Future<void> enqeueCacheValue(T model) async {
-    writingQueue.add(model);
+    _writingQueue.add(model);
     _resolveQueue();
   }
 
   Future<void> _resolveQueue() async {
-    if (queueIsWorking) return;
-    while (writingQueue.isNotEmpty) {
-      final model = writingQueue.removeAt(0);
+    if (_queueIsWorking) return;
+    while (_writingQueue.isNotEmpty) {
+      final model = _writingQueue.removeAt(0);
       cache[model.repoID] = model;
     }
     await updateFile();
-    queueIsWorking = false;
+    _queueIsWorking = false;
   }
 
   /// Updates the entry if it exists or creates it if not

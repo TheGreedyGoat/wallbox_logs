@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_list_view.dart';
 import 'package:wallbox_logs/front_layer/widgets/user_list_tile.dart';
-import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
 
 /// Presents all charging data sorted by Users
 class UserOverview extends StatefulWidget {
@@ -30,7 +30,6 @@ class _UserOverviewState extends State<UserOverview> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: UserListTile(
-                profile: profiles[i],
                 userTagID: profiles[i].tagID,
               ),
             ),

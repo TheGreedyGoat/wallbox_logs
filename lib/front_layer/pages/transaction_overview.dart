@@ -5,14 +5,39 @@ import 'package:wallbox_logs/front_layer/widgets/filter_widgets/date_filter_widg
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/number_range_filter_widget.dart';
 import 'package:wallbox_logs/front_layer/widgets/filterable_table_v2.dart';
 import 'package:wallbox_logs/front_layer/widgets/neat_row.dart';
-import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
-import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
+/// A Main Page.
+///
+/// Shows a table of all stored [WallBoxTransaction]s.
+///
+/// attributes shown:
+/// - Tag-ID
+/// - users full name (if set)
+/// - the transaction's (start-) date
+/// - power usage
+/// - costs
+///
+/// The table can be filtered and sorted by any of these attributes
+///
 class TransactionOverview extends ConsumerStatefulWidget {
+  /// A Main Page.
+  ///
+  /// Shows a table of all stored [WallBoxTransaction]s.
+  ///
+  /// attributes shown:
+  /// - Tag-ID
+  /// - users full name (if set)
+  /// - the transaction's (start-) date
+  /// - power usage
+  /// - costs
+  ///
+  /// The table can be filtered and sorted by any of these attributes
+  ///
   const TransactionOverview({super.key});
 
-  final List<String> headers = const [
+  final List<String> _headers = const [
     'Tag-ID',
     'Name',
     'Datum',
@@ -25,7 +50,7 @@ class TransactionOverview extends ConsumerStatefulWidget {
 }
 
 class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
-  List<String> get headers => widget.headers;
+  List<String> get headers => widget._headers;
   bool showPaid = false;
   @override
   Widget build(BuildContext context) {
@@ -49,7 +74,7 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
             ),
           ),
 
-          FilterableTableV2(
+          FilterableTable(
             selectedActions: [
               (int index) async {
                 final transaction = state.getFiltered()[index];
@@ -98,9 +123,6 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
               Text('als bezahlt kennzeichnen'),
             ],
             onSortChanged: (index, invert) {
-              print(
-                'TransactionOverview tries setting filter for ${[headers[index]]}. Inversion: $invert',
-              );
               ref
                   .read(transactionTableProvider.notifier)
                   .setSorting(index, invert);

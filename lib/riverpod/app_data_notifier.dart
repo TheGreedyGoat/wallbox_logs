@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/back_layer/appdata.dart';
-import 'package:wallbox_logs/back_layer/my_local_database.dart';
 
+/// controls the app's state
 class AppDataNotifier extends Notifier<AppData> {
   @override
   build() {
@@ -13,6 +11,7 @@ class AppDataNotifier extends Notifier<AppData> {
         : cache.values.toList()[0];
   }
 
+  /// Set the price to use for users that dont have an individual price set
   void setDefaultPrice(int newPrice) =>
       state = state.copyWith(defaultPricePerkWHInCents: newPrice);
 

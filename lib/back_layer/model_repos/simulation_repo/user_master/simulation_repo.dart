@@ -1,5 +1,5 @@
-import 'dart:io';
-import 'package:wallbox_logs/mid_layer/models/database_model.dart';
+import 'dart:async';
+import 'package:wallbox_logs/mid_layer/services/database_model.dart';
 import 'package:wallbox_logs/back_layer/model_repos/model_repository.dart';
 
 ///Implementation for the simulated local database
@@ -15,7 +15,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   Future<T> create(T model) async {
     assert(
       !hasEntry(model.repoID),
-      'Database entry for ${T.toString()} $model already exists, use update to change it!',
+      'Database entry for ${T.toString()} $model (repoId : ${model.repoID}) already exists, use update to change it!\n$cache',
     );
     await enqeueCacheValue(model);
     return model;
@@ -34,7 +34,7 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   @override
   Future<void> delete(
     String id,
-    Future<bool> Function() deletionConfirmationCallback,
+    FutureOr<bool> Function() deletionConfirmationCallback,
   ) async {
     if (!await deletionConfirmationCallback()) return;
     if (cache.remove(id) != null) {

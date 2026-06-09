@@ -6,7 +6,11 @@ import 'package:wallbox_logs/mid_layer/data/file_data.dart';
 import 'package:path/path.dart' as path;
 
 class WallboxLogGenerator {
-  static const List<String> ids = ['ALEX000000', 'ANDREAS000', 'YACUP9999'];
+  static const List<String> ids = [
+    'ALEX000000',
+    'ANDREAS000',
+    'YACUP9999',
+  ];
 
   static String _filename(DateTime date) {
     return '${date.year}${date.month < 10 ? '0' : ''}${date.month}${date.day < 10 ? '0' : ''}${date.day} ACE0398688_transactions_generated';

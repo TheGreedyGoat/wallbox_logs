@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:text_input_formatter/text_input_formatter.dart';
@@ -14,11 +12,11 @@ enum InputType {
   /// integers only
   integer,
 
-  // double
+  /// doubles
   double,
 }
 
-/// a custom wrapper for a TextFormField to keep a coherent style etc.
+/// a custom wrapper for a TextFormField to keep voherent visuals
 class MyTextFormField extends StatefulWidget {
   /// The TextFormFields initialValue
   final String? initialValue;
@@ -26,6 +24,7 @@ class MyTextFormField extends StatefulWidget {
   /// The TextFormFields label
   final String label;
 
+  /// if set to true, the field will be marked as soon as the user gives an input to the Formfield
   final bool markEdited;
 
   /// set to add additional validation logic.
@@ -56,6 +55,7 @@ class MyTextFormField extends StatefulWidget {
   /// preset
   final InputType inputType;
 
+  /// adds space around the TextFormField
   final EdgeInsetsGeometry? margin;
 
   /// a custom wrapper for a TextFormField to keep a coherent style etc.

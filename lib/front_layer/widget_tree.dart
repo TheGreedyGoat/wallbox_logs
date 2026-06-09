@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
 import 'package:wallbox_logs/front_layer/widgets/sidebar.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
