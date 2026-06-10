@@ -6,6 +6,8 @@ import 'package:wallbox_logs/mid_layer/services/database_model.dart';
 /// basic Repository class
 /// to be implemented for the type of database used
 abstract class ModelRepository<T extends DatabaseModel> {
+  static const String _filePath = 'repositories';
+
   /// runtime storage for model objects
   final Map<String, T> cache = {};
 
@@ -81,18 +83,18 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// The [isLoaded] property has to be set to ```false```
   Future<void> preload() async {
     if (isLoaded) return;
-    String data = await MyLocalDatabase.readFile(fullFileName);
+    String data = await MyLocalDatabase.readFile(fullFileName, _filePath);
     try {
       final decoded = jsonDecode(data);
       for (var json in decoded) {
         final model = DatabaseModel.convertFromJson<T>(json);
         if (model is T) {
-          create(model);
+          createOrUpdate(model);
         }
       }
     } catch (e) {
-      print('error');
       print(e);
+      if (e is FormatException) await clear();
     }
   }
 
@@ -101,7 +103,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
     cache.removeWhere(
       (key, value) => true,
     );
-    updateFile();
+    await updateFile();
   }
 
   /// Overrides the reop files content with the cache
@@ -109,6 +111,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
     final file = await MyLocalDatabase.writeFile(
       fullFileName,
       jsonEncode(cache.values.toList()),
+      _filePath,
     );
     return file;
   }

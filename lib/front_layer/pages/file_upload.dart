@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 import 'package:wallbox_logs/mid_layer/parser.dart';
 
 /// A Page used to load new WalboxLog files into the app
@@ -25,7 +26,7 @@ class _FileUploadState extends State<FileUpload> {
             height: 300,
             child: GestureDetector(
               onTap: () async {
-                await WallBoxParser.processFilePickerResult(
+                int successful = await WallBoxParser.processFilePickerResult(
                   await FilePicker.pickFiles(
                     dialogTitle: 'Hello',
                     type: FileType.custom,
@@ -34,8 +35,21 @@ class _FileUploadState extends State<FileUpload> {
                     lockParentWindow: true,
                   ),
                   (fileName) async {
-                    return await _existingDialog(context, fileName) ?? false;
+                    String? newName = await _changeExistingFileNameDialog(
+                      context,
+                      fileName,
+                    );
+                    return newName;
                   },
+                );
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      successful == 0
+                          ? 'Datei(en) wurden nicht eingelesen'
+                          : '$successful Datei${successful > 1 ? 'en' : ''} erfolgreich eingelesen',
+                    ),
+                  ),
                 );
                 setState(
                   () {},
@@ -71,72 +85,57 @@ class _FileUploadState extends State<FileUpload> {
               ),
             ),
           ),
-
-          FutureBuilder(
-            future: WallBoxParser.existingFileNames,
-            builder: (context, asyncSnapshot) {
-              return !asyncSnapshot.hasData
-                  ? CircularProgressIndicator()
-                  : SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Bekannte Dateien:',
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
-                          for (final name in asyncSnapshot.data!)
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.circle,
-                                  size: 10,
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Text(name),
-                              ],
-                            ),
-                        ],
-                      ),
-                    );
-            },
-          ),
         ],
       ),
     );
   }
 
-  Future<bool?> _existingDialog(BuildContext context, String fileName) async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          'Doppelte Datei',
-        ),
-        content: Text.rich(
-          TextSpan(
+  Future<String?> _changeExistingFileNameDialog(
+    BuildContext context,
+    String fileName,
+  ) async => await showDialog<String>(
+    context: context,
+    builder: (context) {
+      TextEditingController controller = TextEditingController(text: fileName);
+      return AlertDialog(
+        title: Text('Dateiname $fileName existiert bereits.'),
+        content: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 200, maxWidth: 200),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextSpan(text: 'Eine Datei mit dem Namen\n'),
-              TextSpan(text: '$fileName\n'),
-              TextSpan(
-                text: 'existiert bereits. Soll sie übersprungen werden?',
+              Text(
+                softWrap: true,
+                'Achtung! Wird der Name geändert, werden alle Transaktionen eingelesen, selbst wenn sie bereits existieren',
+                style: TextStyle(color: Colors.red),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              InputFieldDecoration(
+                child: TextField(
+                  controller: controller,
+                ),
               ),
             ],
           ),
         ),
+
         actions: [
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () {
+              Navigator.pop(context, null);
+            },
             child: Text('überspringen'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('trotzdem einlesen'),
+            onPressed: () {
+              Navigator.pop(context, controller.text);
+            },
+            child: Text('umbenennen'),
           ),
         ],
-      ),
-    );
-  }
+      );
+    },
+  );
 }

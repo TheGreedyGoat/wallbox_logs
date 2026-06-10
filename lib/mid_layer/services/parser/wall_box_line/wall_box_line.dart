@@ -92,6 +92,14 @@ abstract class WallboxLine {
   @override
   String toString() =>
       'Type: $type, TimeStamp: $timeStamp, Usage: $powerLevelWh';
+
+  bool equals(Object other);
+
+  static bool equality(WallboxLine a, WallboxLine b) {
+    return a.type == b.type &&
+        a.powerLevelWh == b.powerLevelWh &&
+        a.timeStamp == b.timeStamp;
+  }
 }
 
 @freezed
@@ -164,6 +172,13 @@ class MainLine extends WallboxLine with _$MainLine {
 
   /// creation from a json map
   Map<String, Object?> toJson() => _$MainLineToJson(this);
+
+  @override
+  bool equals(Object other) =>
+      other is MainLine &&
+      WallboxLine.equality(this, other) &&
+      isStart == other.isStart &&
+      tagID == other.tagID;
 }
 
 /// Represents an 'mv'- line: Log lines in between a start and stop that show an interim status.
@@ -198,4 +213,8 @@ class MVLine extends WallboxLine with _$MVLine {
 
   ///
   Map<String, Object?> toJson() => _$MVLineToJson(this);
+
+  @override
+  bool equals(Object other) =>
+      other is MVLine && WallboxLine.equality(this, other);
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/front_layer/pages/file_overview.dart';
 import 'package:wallbox_logs/front_layer/pages/file_upload.dart';
 import 'package:wallbox_logs/front_layer/pages/transaction_overview.dart';
 import 'package:wallbox_logs/front_layer/pages/user_editing.dart';
@@ -33,14 +34,20 @@ enum MainPage {
       icon: Icon(Icons.power),
     ),
   ),
+  fileOverview(
+    pageState: PageState(
+      page: FileOverview(),
+      title: 'Log-Übersicht',
+      icon: Icon(Icons.file_copy_sharp),
+    ),
+  ),
   fileUpload(
     pageState: PageState(
       page: FileUpload(),
       title: 'Datei hochladen',
       icon: Icon(Icons.upload_file_sharp),
     ),
-  )
-  ;
+  );
 
   /// The corresponding default [PageState]
   final PageState pageState;
@@ -57,7 +64,7 @@ class WidgetTreeNotifier extends Notifier<PageState> {
   final List<PageState> history = List.empty(growable: true);
 
   @override
-  PageState build() => MainPage.userOverview.pageState;
+  PageState build() => MainPage.fileOverview.pageState;
 
   void _setState(PageState pageState) {
     history.add(state);

@@ -119,4 +119,23 @@ class WallBoxTransactionBlock
 
   ///
   Map<String, Object?> toJson() => _$WallBoxTransactionBlockToJson(this);
+
+  bool equals(Object other) =>
+      other is WallBoxTransactionBlock &&
+      _equalLines(start, other.start) &&
+      _equalLines(stop, other.stop) &&
+      _equalMVLines(mvLines, other.mvLines);
+
+  static bool _equalLines(MainLine? a, MainLine? b) {
+    return a == null && b == null || (a != null && b != null && a.equals(b));
+  }
+
+  static bool _equalMVLines(List<MVLine> a, List<MVLine> b) {
+    if (a.length != b.length) return false;
+
+    for (int i = 0; i < a.length; i++) {
+      if (!a[i].equals(b[i])) return false;
+    }
+    return true;
+  }
 }
