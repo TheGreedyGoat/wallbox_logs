@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart';
+
 /// A collection of general functionalities
 class Utility {
   /// inserts the [element] into the [list].
@@ -23,6 +25,10 @@ class Utility {
 
   static RegExp doubleInputRegExp(int fractions, [bool addPrefix = true]) =>
       RegExp(r'^\d+[.,]?\d{0,#}|^$'.replaceAll('#', fractions.toString()));
+
+  static TextInputFormatter doubleFormatter(int fractions) {
+    return FilteringTextInputFormatter.allow(doubleInputRegExp(fractions));
+  }
 
   static String niceFullDateString(DateTime date) =>
       '${niceDateString(date)}, ${niceTimeString(date)}';
@@ -61,8 +67,8 @@ class Utility {
   static int euroToCents(double euros) => (euros * 100).floor();
   static double centsToEuros(int cents) => cents.toDouble() / 100;
 
-  static String costsDisplay(int cents) =>
-      '${centsToEuros(cents).toStringAsFixed(2)} €';
+  static String costsDisplay(int cents, [bool showUnit = true]) =>
+      '${centsToEuros(cents).toStringAsFixed(2)}${showUnit ? ' €' : ''}';
 
   static const List<String> _monthNames = [
     'Januar',

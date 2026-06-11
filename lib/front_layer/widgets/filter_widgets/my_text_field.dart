@@ -9,6 +9,7 @@ class MyTextField extends StatefulWidget {
     this.inputFormatters,
     this.backgroundColor,
     this.foregroundColor,
+    this.initialValue,
     super.key,
   });
   final String? label;
@@ -17,16 +18,27 @@ class MyTextField extends StatefulWidget {
   final Color? backgroundColor;
   final Color? foregroundColor;
 
+  final String? initialValue;
+
   @override
   State<MyTextField> createState() => MyTextFieldState();
 }
 
 class MyTextFieldState extends State<MyTextField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
+
   @override
   Widget build(BuildContext context) {
     return InputFieldDecoration(
       backgroundColor: widget.backgroundColor,
       child: TextField(
+        controller: _controller,
         textAlignVertical: TextAlignVertical.top,
         textAlign: TextAlign.right,
         decoration: InputDecoration(

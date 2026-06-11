@@ -25,7 +25,7 @@ class LogFileData {
   final String ext;
 
   static Future<LogFileData> fromFile(File file) async {
-    final splitName = file.path.split('/').last.split('.');
+    final splitName = file.path.split('/').last.split('\\').last.split('.');
     return LogFileData._p(name: splitName[0], ext: splitName[1]);
   }
 
@@ -36,7 +36,7 @@ class LogFileData {
 
   Future<void> writeContent(String content) async {
     print('Writing ${content.length} chars to $pathRoot/$fullName');
-    await MyLocalDatabase.writeFile(fullName, content, pathRoot);
+    MyLocalDatabase.writeFile(fullName, content, pathRoot);
   }
 
   static Future<LogFileData> create({

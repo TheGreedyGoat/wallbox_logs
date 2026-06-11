@@ -25,7 +25,7 @@ class InputFieldDecoration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 8.0),
+      // padding: EdgeInsets.only(left: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(5)),
         color:

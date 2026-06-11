@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:wallbox_logs/back_layer/my_local_database.dart';
 import 'package:wallbox_logs/mid_layer/services/database_model.dart';
 
@@ -10,9 +9,6 @@ abstract class ModelRepository<T extends DatabaseModel> {
 
   /// runtime storage for model objects
   final Map<String, T> cache = {};
-
-  bool _queueIsWorking = false;
-  final List<T> _writingQueue = List.empty(growable: true);
 
   /// check if DB files are loaded
   bool isLoaded = false;
@@ -34,40 +30,12 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// Returns an object with the given id if it exists, else null
   T? getById(String id);
 
-  /// Creates a new entry for that model.
-  /// Throws an Exception If another model with the same ID already exists
-  Future<T> create(T model);
-
-  /// Replaces an existing object witht the same id as [model]
-  Future<T> update(T model);
-
-  /// adds [model] to the writing queue and starts it if nessecary
-  Future<void> enqeueCacheValue(T model) async {
-    _writingQueue.add(model);
-    _resolveQueue();
-  }
-
-  Future<void> _resolveQueue() async {
-    if (_queueIsWorking) return;
-    while (_writingQueue.isNotEmpty) {
-      final model = _writingQueue.removeAt(0);
-      cache[model.repoID] = model;
-    }
-    await updateFile();
-    _queueIsWorking = false;
-  }
-
   /// Updates the entry if it exists or creates it if not
   ///
   /// Returns it asynchronously afterwards
-  Future<T> createOrUpdate(T model) async {
-    if (hasEntry(model.repoID)) {
-      await update(model);
-    } else {
-      await create(model);
-    }
-
-    return model;
+  void createOrUpdate(T model) {
+    cache[model.repoID] = model;
+    updateFile();
   }
 
   /// Deletes the object with the given id if it exists
@@ -89,11 +57,12 @@ abstract class ModelRepository<T extends DatabaseModel> {
       for (var json in decoded) {
         final model = DatabaseModel.convertFromJson<T>(json);
         if (model is T) {
-          createOrUpdate(model);
+          cache[model.repoID] = model;
         }
       }
+      isLoaded = true;
     } catch (e) {
-      print(e);
+      print('Error while loading data for $T: $e \n data: $data');
       if (e is FormatException) await clear();
     }
   }
@@ -103,16 +72,15 @@ abstract class ModelRepository<T extends DatabaseModel> {
     cache.removeWhere(
       (key, value) => true,
     );
-    await updateFile();
+    updateFile();
   }
 
   /// Overrides the reop files content with the cache
-  Future<File> updateFile() async {
-    final file = await MyLocalDatabase.writeFile(
+  void updateFile() {
+    MyLocalDatabase.writeFile(
       fullFileName,
       jsonEncode(cache.values.toList()),
       _filePath,
     );
-    return file;
   }
 }

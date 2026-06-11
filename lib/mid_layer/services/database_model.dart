@@ -20,8 +20,6 @@ abstract class DatabaseModel {
         return UserMasterData.fromJson(json);
       case const (WallBoxTransaction):
         return WallBoxTransaction.fromJson(json);
-      case const (AppData):
-        return AppData.fromJson(json);
       default:
         throw (Exception(
           'No convertFormJson implementation for DatabaseModel subclass $T',

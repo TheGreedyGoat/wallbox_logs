@@ -4,7 +4,7 @@ import 'package:wallbox_logs/front_layer/widgets/filter_widgets/contains_filter_
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/date_filter_widget.dart';
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/number_range_filter_widget.dart';
 import 'package:wallbox_logs/front_layer/widgets/filterable_table_v2.dart';
-import 'package:wallbox_logs/front_layer/widgets/neat_row.dart';
+import 'package:wallbox_logs/front_layer/widgets/labeled_field.dart';
 import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
@@ -112,7 +112,7 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
               (int index) {
                 final transaction = state.getFiltered()[index];
 
-                WallBoxTransaction.repo.update(
+                WallBoxTransaction.repo.createOrUpdate(
                   transaction.copyWith(isPaid: true),
                 );
                 ref.read(transactionTableProvider.notifier).refresh();

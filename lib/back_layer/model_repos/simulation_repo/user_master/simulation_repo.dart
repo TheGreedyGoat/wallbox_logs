@@ -12,33 +12,13 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   T? getById(String id) => cache[id];
 
   @override
-  Future<T> create(T model) async {
-    assert(
-      !hasEntry(model.repoID),
-      'Database entry for ${T.toString()} $model (repoId : ${model.repoID}) already exists, use update to change it!\n$cache',
-    );
-    await enqeueCacheValue(model);
-    return model;
-  }
-
-  @override
-  Future<T> update(T model) async {
-    assert(
-      hasEntry(model.repoID),
-      'Database entry for ${T.toString()} $model does not exist, use create to create it!',
-    );
-    await enqeueCacheValue(model);
-    return model;
-  }
-
-  @override
   Future<void> delete(
     String id,
     FutureOr<bool> Function() deletionConfirmationCallback,
   ) async {
     if (!await deletionConfirmationCallback()) return;
     if (cache.remove(id) != null) {
-      await updateFile();
+      updateFile();
     }
   }
 

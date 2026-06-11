@@ -403,7 +403,7 @@ class _UserEditingState extends ConsumerState<UserEditing> {
     String action = 'nicht gespeichert';
     print(individualPriceInCent);
     if (check != null && (await _idExistsDialog(check))!) {
-      UserMasterData.repo.update(
+      UserMasterData.repo.createOrUpdate(
         check.copyWith(
           title: title,
           prename: prename,
@@ -419,7 +419,7 @@ class _UserEditingState extends ConsumerState<UserEditing> {
       );
       action = 'aktualisiert';
     } else if (check == null) {
-      UserMasterData.repo.create(
+      UserMasterData.repo.createOrUpdate(
         UserMasterData(
           tagID: tagID!,
           title: title,
@@ -442,13 +442,8 @@ class _UserEditingState extends ConsumerState<UserEditing> {
   // ignore: unused_element
   Future<String> _saveUser(UserMasterData user) async {
     final repo = UserMasterData.repo;
-    if (repo.hasEntry(user.tagID)) {
-      repo.update(user);
-      return 'aktualisiert';
-    } else {
-      repo.create(user);
-      return 'erstellt';
-    }
+    repo.createOrUpdate(user);
+    return 'gespeichert';
   }
 
   Future<bool?> _idExistsDialog(UserMasterData existing) async {

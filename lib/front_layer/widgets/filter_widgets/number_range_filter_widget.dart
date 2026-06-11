@@ -22,6 +22,7 @@ class NumberRangeFilterWidget extends ConsumerWidget {
           SizedBox(
             width: 60,
             child: MyTextField(
+              label: 'von',
               onChanged: onFromChanged,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}|^$')),
@@ -32,6 +33,7 @@ class NumberRangeFilterWidget extends ConsumerWidget {
           SizedBox(
             width: 60,
             child: MyTextField(
+              label: 'bis',
               onChanged: onToChanged,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(

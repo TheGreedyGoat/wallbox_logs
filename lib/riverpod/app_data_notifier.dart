@@ -5,23 +5,29 @@ import 'package:wallbox_logs/back_layer/appdata.dart';
 class AppDataNotifier extends Notifier<AppData> {
   @override
   build() {
-    final cache = AppData.repo.cache;
-    return cache.isEmpty
-        ? AppData(defaultPricePerkWhInCents: 100)
-        : cache.values.toList()[0];
+    return AppData.instance;
   }
 
   /// Set the price to use for users that dont have an individual price set
   void setDefaultPrice(int newPrice) =>
       state = state.copyWith(defaultPricePerkWHInCents: newPrice);
 
-  @override
-  bool updateShouldNotify(AppData previous, AppData next) {
-    bool shouldNotify = super.updateShouldNotify(previous, next);
-    if (shouldNotify) {
-      AppData.repo.createOrUpdate(next);
-      // MyLocalDatabase.writeFile('app_data.json', jsonEncode(next.toJson()));
+  void setCompanyPrice(String key, int cents) {
+    Map<String, int> newMap = {};
+    for (final key in state.companyPrices.keys) {
+      newMap[key] = state.companyPrices[key]!;
     }
-    return shouldNotify;
+    newMap[key] = cents;
+    state = state.copyWith(companyPrices: newMap);
   }
+
+  // @override
+  // bool updateShouldNotify(AppData previous, AppData next) {
+  //   bool shouldNotify = super.updateShouldNotify(previous, next);
+  //   if (shouldNotify) {
+  //     AppData.repo.createOrUpdate(next);
+  //     // MyLocalDatabase.writeFile('app_data.json', jsonEncode(next.toJson()));
+  //   }
+  //   return shouldNotify;
+  // }
 }

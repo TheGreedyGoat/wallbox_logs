@@ -35,7 +35,7 @@ class WallBoxTransaction with _$WallBoxTransaction implements DatabaseModel {
       'ERROR while creating $WallBoxTransaction:\n id2s dont match up:\n* Process: $tagID\n* start: ${start.tagID},\n* Stop:${stop.tagID}',
     );
     if (!UserMasterData.repo.hasEntry(tagID)) {
-      UserMasterData.repo.create(UserMasterData(tagID: tagID));
+      UserMasterData.repo.createOrUpdate(UserMasterData(tagID: tagID));
     }
   }
   @override

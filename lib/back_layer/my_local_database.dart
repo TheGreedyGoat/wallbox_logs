@@ -64,14 +64,49 @@ class MyLocalDatabase {
     }
   }
 
+  static final List<Future<void> Function()> _writingQueue = List.empty(
+    growable: true,
+  );
+  static bool _queueIsActive = false;
+
   /// Writes the [content] to the file and returns it
-  static Future<File> writeFile(
+  static void writeFile(
+    String fullFileName,
+    String content,
+    String subPath,
+  ) {
+    print('Database enqueues $content');
+    _writingQueue.add(
+      () async {
+        print('writing to file $fullFileName');
+        await _writeToFile(fullFileName, content, subPath);
+      },
+    );
+    if (!_queueIsActive) {
+      _queueIsActive = true;
+      _processQueue();
+    }
+  }
+
+  static Future<void> _writeToFile(
     String fullFileName,
     String content,
     String subPath,
   ) async {
     final file = await _localFile(fullFileName, subPath);
-    return await file.writeAsString(content);
+    await file.writeAsString(content);
+  }
+
+  static Future<void> _processQueue() async {
+    _queueIsActive = true;
+    try {
+      while (_writingQueue.isNotEmpty) {
+        print(_writingQueue.length);
+        await _writingQueue.removeAt(0)();
+      }
+    } finally {
+      _queueIsActive = false;
+    }
   }
 
   static Future<void> openDirectory(String path) async {

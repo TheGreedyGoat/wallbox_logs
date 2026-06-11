@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
 import 'package:wallbox_logs/mid_layer/data/file_data_2.dart';
 import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
@@ -23,18 +24,10 @@ void main() async {
 
 /// ...
 Future<void> preload() async {
-  try {
-    await WallBoxTransaction.repo.preload();
-  } catch (e) {
-    await WallBoxTransaction.repo.clear();
-  }
-
-  try {
-    await UserMasterData.repo.preload();
-  } catch (e) {
-    await UserMasterData.repo.clear();
-  }
+  await AppData.load();
+  await UserMasterData.repo.preload();
   await LogFileData.preload();
+  await WallBoxTransaction.repo.preload();
 }
 
 /// The apps root

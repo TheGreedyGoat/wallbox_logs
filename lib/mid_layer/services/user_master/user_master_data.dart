@@ -19,8 +19,7 @@ enum Titles {
   mr(label: 'Frau'),
 
   /// Diverse
-  div(label: 'divers')
-  ;
+  div(label: 'divers');
 
   ///a String representation for the title
   final String label;
@@ -115,6 +114,12 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   String get fullCostsDisplay =>
       '${(fullCostsInCent.toDouble() / 100).toStringAsFixed(2)} €';
 
+  int get pricePerkWhInCents =>
+      individualPricePerkWhInCents ?? AppData.companyPrice(company);
+
+  String get pricePerkWhDisplay =>
+      '${(pricePerkWhInCents.toDouble() / 100).toStringAsFixed(2)} €';
+
   @override
   final Titles title;
   @override
@@ -137,12 +142,6 @@ class UserMasterData with _$UserMasterData implements DatabaseModel {
   final String? postCode;
   @override
   final String? city;
-
-  int get pricePerkWhInCents =>
-      individualPricePerkWhInCents ?? AppData.defaultPriceInCents;
-
-  String get pricePerkWhDisplay =>
-      '${(pricePerkWhInCents.toDouble() / 100).toStringAsFixed(2)} €';
 
   @override
   String get repoID => tagID;
