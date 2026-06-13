@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:wallbox_logs/back_layer/my_local_database.dart';
 import 'package:wallbox_logs/mid_layer/class_extensions.dart';
 import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
@@ -19,6 +22,14 @@ class Bill {
   final String userTagID;
   final List<String> transactionIDs;
 
+  static const String monthKey = 'month';
+  static const String idKey = 'tagID';
+  static const String taKey = 'transacions';
+
+  static const _directoryPath = 'rechnungen';
+
+  String get fullFileName =>
+      'bill_${userTagID}_${Utility.monthYearDisplay(month)}.json';
   //  ###### #    # ##### #####    ##    ####  #####
   //  #       #  #    #   #    #  #  #  #    #   #
   //  #####    ##     #   #    # #    # #        #
@@ -70,6 +81,27 @@ class Bill {
   int get hashCode => userTagID.hashCode ^ month.hashCode;
 
   String get monthDisplay => Utility.monthYearDisplay(month);
+
+  void _save(Function()? callback) {
+    MyLocalDatabase.writeFile(
+      fullFileName,
+      jsonEncode(toJson),
+      _directoryPath,
+      callback,
+    );
+  }
+
+  Map<String, dynamic> get toJson => {
+    monthKey: month,
+    idKey: userTagID,
+    taKey: transactionIDs,
+  };
+
+  static Bill fromJson(Map<String, dynamic> json) => Bill(
+    userTagID: json[idKey],
+    transactionIDs: json[taKey],
+    month: json[monthKey],
+  );
 }
 
 class BillService {
@@ -92,7 +124,7 @@ class BillService {
     final List<Bill> billsOfUser = List.empty(growable: true);
     // create bills
     for (final month in monthToTransactionID.keys) {
-      billsOfUser.add(
+      final bill = billsOfUser.add(
         Bill(
           userTagID: tagID,
           transactionIDs: monthToTransactionID[month]!,
