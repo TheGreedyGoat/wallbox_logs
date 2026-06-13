@@ -5,7 +5,7 @@ import 'package:wallbox_logs/front_layer/widgets/filter_widgets/my_text_field.da
 import 'package:wallbox_logs/front_layer/widgets/my_container.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
 import 'package:wallbox_logs/front_layer/widgets/section_title.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 import 'package:wallbox_logs/utility.dart';
 

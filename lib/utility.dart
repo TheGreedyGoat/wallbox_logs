@@ -2,33 +2,19 @@ import 'package:flutter/services.dart';
 
 /// A collection of general functionalities
 class Utility {
-  /// inserts the [element] into the [list].
-  /// ---
-  /// - [list] : The list to insert the element to. NOTE: This list should already be sorted according to the same logic as passed with [compare].
-  /// - [element] : The element to insert
-  /// - [compare] : int function to check if a one element is supposed to come before or after the other:
-  /// as soon as compare returns 0 or smaller, the [element] gets inserted.
-  static void insertToList<T>(
-    List<T> list,
-    T element,
-    int Function(T, T) compare,
-  ) {
-    int i = 0;
-    for (; i < list.length; i++) {
-      int check = compare(element, list[i]);
-      if (check <= 0) {
-        break;
-      }
-    }
-    list.insert(i, element);
-  }
-
   static RegExp doubleInputRegExp(int fractions, [bool addPrefix = true]) =>
       RegExp(r'^\d+[.,]?\d{0,#}|^$'.replaceAll('#', fractions.toString()));
 
   static TextInputFormatter doubleFormatter(int fractions) {
     return FilteringTextInputFormatter.allow(doubleInputRegExp(fractions));
   }
+  //  ######
+  //  #     #   ##   ##### ######  ####
+  //  #     #  #  #    #   #      #
+  //  #     # #    #   #   #####   ####
+  //  #     # ######   #   #           #
+  //  #     # #    #   #   #      #    #
+  //  ######  #    #   #   ######  ####
 
   static String niceFullDateString(DateTime date) =>
       '${niceDateString(date)}, ${niceTimeString(date)}';
@@ -42,6 +28,38 @@ class Utility {
   static String niceTimeString(DateTime date, [bool showSeconds = false]) {
     return '${minDigits(date.hour, 2)}:${minDigits(date.minute, 2)}${showSeconds ? ':${minDigits(date.second, 2)}' : ''}';
   }
+
+  static const List<String> _monthNames = [
+    'Januar',
+    'Februar',
+    'März',
+    'April',
+    'Mai',
+    'Juni',
+    'Juli',
+    'August',
+    'September',
+    'Oktober',
+    'November',
+    'Dezember',
+  ];
+
+  static String monthName(int month) {
+    while (month < 1) month += 12;
+    while (month > 12) month -= 12;
+    return _monthNames[month - 1];
+  }
+
+  static String monthYearDisplay(DateTime date) =>
+      '${monthName(date.month)} ${date.year}';
+
+  //  #     #
+  //  ##    # #    # #    # #####  ###### #####   ####
+  //  # #   # #    # ##  ## #    # #      #    # #
+  //  #  #  # #    # # ## # #####  #####  #    #  ####
+  //  #   # # #    # #    # #    # #      #####       #
+  //  #    ## #    # #    # #    # #      #   #  #    #
+  //  #     #  ####  #    # #####  ###### #    #  ####
 
   /// returns the [number] as a String. If it has less than [numDigits] digits, they are filled with leading zeros:
 
@@ -70,25 +88,42 @@ class Utility {
   static String costsDisplay(int cents, [bool showUnit = true]) =>
       '${centsToEuros(cents).toStringAsFixed(2)}${showUnit ? ' €' : ''}';
 
-  static const List<String> _monthNames = [
-    'Januar',
-    'Februar',
-    'März',
-    'April',
-    'Mai',
-    'Juni',
-    'Juli',
-    'August',
-    'September',
-    'Oktober',
-    'November',
-    'Dezember',
-  ];
+  static String kWhDisplay(int wh, [bool showUnit = true]) =>
+      doubleWithUnitDisplay(wh / 1000, 3, showUnit ? 'kWh' : '');
 
-  static String monthName(int month) {
-    while (month < 1) month += 12;
-    while (month > 12) month -= 12;
-    return _monthNames[month - 1];
+  static String doubleWithUnitDisplay(
+    double value,
+    int digitfractios, [
+    String unit = '',
+  ]) => '${value.toStringAsFixed(digitfractios)} $unit';
+
+  //  #
+  //  #       #  ####  #####  ####
+  //  #       # #        #   #
+  //  #       #  ####    #    ####
+  //  #       #      #   #        #
+  //  #       # #    #   #   #    #
+  //  ####### #  ####    #    ####
+
+  /// inserts the [element] into the [list].
+  /// ---
+  /// - [list] : The list to insert the element to. NOTE: This list should already be sorted according to the same logic as passed with [compare].
+  /// - [element] : The element to insert
+  /// - [compare] : int function to check if a one element is supposed to come before or after the other:
+  /// as soon as compare returns 0 or smaller, the [element] gets inserted.
+  static void insertToList<T>(
+    List<T> list,
+    T element,
+    int Function(T, T) compare,
+  ) {
+    int i = 0;
+    for (; i < list.length; i++) {
+      int check = compare(element, list[i]);
+      if (check <= 0) {
+        break;
+      }
+    }
+    list.insert(i, element);
   }
 }
 

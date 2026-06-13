@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/back_layer/appdata.dart';
 import 'package:wallbox_logs/front_layer/widget_tree.dart';
-import 'package:wallbox_logs/mid_layer/data/file_data_2.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/data/log_file_data.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -27,6 +27,7 @@ Future<void> preload() async {
   await AppData.load();
   await UserMasterData.repo.preload();
   await LogFileData.preload();
+  await LogFileData.clear();
   await WallBoxTransaction.repo.preload();
 }
 

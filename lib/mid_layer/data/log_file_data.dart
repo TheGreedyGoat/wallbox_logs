@@ -11,6 +11,16 @@ class LogFileData {
 
   LogFileData._p({required this.name, required this.ext});
 
+  final String name;
+  final String ext;
+
+  bool _access = false;
+
+  String get fullName => '$name.$ext';
+
+  Future<String> get content async =>
+      await MyLocalDatabase.readFile(fullName, pathRoot);
+
   static Future<void> openDirectory() async =>
       MyLocalDatabase.openDirectory(pathRoot);
 
@@ -21,22 +31,32 @@ class LogFileData {
     }
   }
 
-  final String name;
-  final String ext;
+  static Future<void> clear() async {
+    final copy = logs.toList(growable: false);
+    for (final log in copy) {
+      log._delete();
+    }
+  }
+
+  Future<void> _delete() async {
+    _existing.remove(this);
+    await MyLocalDatabase.deleteFile(fullName, pathRoot);
+  }
 
   static Future<LogFileData> fromFile(File file) async {
     final splitName = file.path.split('/').last.split('\\').last.split('.');
     return LogFileData._p(name: splitName[0], ext: splitName[1]);
   }
 
-  String get fullName => '$name.$ext';
-
-  Future<String> get content async =>
-      await MyLocalDatabase.readFile(fullName, pathRoot);
-
-  Future<void> writeContent(String content) async {
+  void writeContent(String content) {
     print('Writing ${content.length} chars to $pathRoot/$fullName');
-    MyLocalDatabase.writeFile(fullName, content, pathRoot);
+    _access == false;
+    MyLocalDatabase.writeFile(
+      fullName,
+      content,
+      pathRoot,
+      () => _access = true,
+    );
   }
 
   static Future<LogFileData> create({
@@ -44,14 +64,21 @@ class LogFileData {
     required String ext,
     String content = '',
   }) async {
-    final data = LogFileData._p(name: name, ext: ext);
+    final logFileData = LogFileData._p(name: name, ext: ext);
     assert(
       !checkExisting(name, ext),
       'File $name.$ext already exists!',
     );
-    await data.writeContent(content);
-    _existing.add(data);
-    return data;
+    logFileData.writeContent(content);
+
+    _existing.add(logFileData);
+    return logFileData;
+  }
+
+  Future<void> waitForAccess() async {
+    while (!_access) {
+      await Future.delayed(Duration(seconds: 1));
+    }
   }
 
   static bool checkExisting(String name, String ext) {

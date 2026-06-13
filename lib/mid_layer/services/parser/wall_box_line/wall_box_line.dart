@@ -1,7 +1,7 @@
 // ignore_for_file: overridden_fields
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/services/parser/wall_box_log.dart';
 part 'wall_box_line.freezed.dart';
 part 'wall_box_line.g.dart';

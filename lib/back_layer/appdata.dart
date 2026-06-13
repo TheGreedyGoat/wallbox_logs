@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/back_layer/my_local_database.dart';
 import 'package:wallbox_logs/mid_layer/services/database_model.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 /// Stores informations about the app's general state (For now only the general price per kWh)
 class AppData {

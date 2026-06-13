@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:wallbox_logs/back_layer/my_local_database.dart';
 import 'package:wallbox_logs/mid_layer/services/database_model.dart';
@@ -27,6 +28,12 @@ abstract class ModelRepository<T extends DatabaseModel> {
   /// Returns a list of all saved model objects
   List<T> getAll();
 
+  List<String> get allKeys => getAll()
+      .map(
+        (model) => model.repoKey,
+      )
+      .toList();
+
   /// Returns an object with the given id if it exists, else null
   T? getById(String id);
 
@@ -34,18 +41,24 @@ abstract class ModelRepository<T extends DatabaseModel> {
   ///
   /// Returns it asynchronously afterwards
   void createOrUpdate(T model) {
-    cache[model.repoID] = model;
+    cache[model.repoKey] = model;
     updateFile();
   }
 
   /// Deletes the object with the given id if it exists
   Future<void> delete(
     String id,
-    Future<bool> Function() deletionConfirmationCallback,
+    FutureOr<bool> Function() deletionConfirmationCallback,
+  );
+  Future<void> deleteList(
+    List<String> keys,
+    FutureOr<bool> Function() deletionConfirmationCallback,
   );
 
-  /// Returns true if a Database entry with the given [id] exits
-  bool hasEntry(String id) => getById(id) != null;
+  /// Returns true if a Database entry with the given [key] exits
+  bool hasEntry(String key) => getById(key) != null;
+
+  bool hasNoEntry(String key) => !hasEntry(key);
 
   /// Overrides the cache with data in database.
   /// The [isLoaded] property has to be set to ```false```
@@ -57,7 +70,7 @@ abstract class ModelRepository<T extends DatabaseModel> {
       for (var json in decoded) {
         final model = DatabaseModel.convertFromJson<T>(json);
         if (model is T) {
-          cache[model.repoID] = model;
+          cache[model.repoKey] = model;
         }
       }
       isLoaded = true;

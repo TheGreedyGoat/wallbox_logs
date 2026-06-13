@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 import 'package:wallbox_logs/front_layer/widgets/labeled_field.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 import 'package:wallbox_logs/utility.dart';
 

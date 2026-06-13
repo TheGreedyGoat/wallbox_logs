@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallbox_logs/mid_layer/data/file_data_2.dart';
+import 'package:wallbox_logs/mid_layer/data/log_file_data.dart';
 
 class FileOverview extends StatelessWidget {
   const FileOverview({super.key});

@@ -23,6 +23,20 @@ class SimulationRepo<T extends DatabaseModel> extends ModelRepository<T> {
   }
 
   @override
+  Future<void> deleteList(
+    List<String> keys,
+    FutureOr<bool> Function() deletionConfirmationCallback,
+  ) async {
+    if (!await deletionConfirmationCallback()) return;
+    for (final key in keys) {
+      delete(
+        key,
+        () => true,
+      );
+    }
+  }
+
+  @override
   List<T> getAll() {
     return cache.values.toList();
   }

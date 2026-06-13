@@ -1,5 +1,5 @@
-import 'package:wallbox_logs/mid_layer/data/file_data_2.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/data/log_file_data.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/services/parser/wall_box_line/wall_box_line.dart';
 import 'package:wallbox_logs/mid_layer/services/parser/wall_box_transaction_block/wall_box_transaction_block.dart';
 
@@ -14,7 +14,8 @@ Map<LineType, List<LineType>> successors = {
 enum DataType {
   date(r'\d{4}(\-\d{2}){2} \d{2}(:\d{2}){2}'),
   power(r'\d+\.\d{2,3}'),
-  tagID(r'[0-9A-Z]{5,}');
+  tagID(r'[0-9A-Z]{5,}')
+  ;
 
   final String regExSource;
   const DataType(this.regExSource);
@@ -27,6 +28,7 @@ RegExp mvExp = RegExp(r'mv');
 class WallBoxLog {
   static Future<WallBoxLog> fromFileData(LogFileData file) async {
     String content = await file.content;
+    print('WallboxLog creator recieved content with ${content.length} chars');
     return WallBoxLog(content);
   }
 

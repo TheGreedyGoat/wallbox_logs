@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 class MyContainer extends StatelessWidget {
-  const MyContainer({this.child, this.level = 0, super.key});
+  const MyContainer({this.child, this.level = 0, this.padding, super.key});
   final Widget? child;
   final int level;
+  final double? padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(padding ?? 8.0),
       decoration: BoxDecoration(
         color: _backGroundColor(context),
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       ),
       child: child,
     );

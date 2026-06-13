@@ -1,5 +1,5 @@
 import 'package:wallbox_logs/mid_layer/data/data_filter.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 
 /// What field of [WallBoxTransaction] should we sort by?
 enum Sorting {
@@ -88,7 +88,7 @@ class TransactionTableState {
     filtered = List.empty(growable: true);
     for (int i = 0; i < raw.length; i++) {
       final currentTransaction = raw[i];
-      if ((includePaid || !currentTransaction.isPaid) &&
+      if ((includePaid || !currentTransaction.isBilled) &&
           (filterTagID?.check(currentTransaction.tagID) ?? true) &&
           (filterName?.check(currentTransaction.username) ?? true) &&
           (filterDate?.checkDate(currentTransaction.startTimeStamp) ?? true) &&

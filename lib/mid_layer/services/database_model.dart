@@ -1,6 +1,6 @@
 import 'package:wallbox_logs/back_layer/appdata.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 
 /// Base class for any data base classes.
 ///
@@ -9,7 +9,7 @@ import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dar
 abstract class DatabaseModel {
   /// The objects ID within the Repository
   /// unique within the same subclass
-  String get repoID;
+  String get repoKey;
 
   /// access method for repository class
   static DatabaseModel convertFromJson<T extends DatabaseModel>(

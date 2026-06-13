@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:wallbox_logs/front_layer/widgets/input_field_decoration.dart';
 import 'package:wallbox_logs/front_layer/widgets/my_text_form_field.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
 /// Main Page for creating a new or editing an existing Wallbox user

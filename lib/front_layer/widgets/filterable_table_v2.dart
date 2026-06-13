@@ -9,6 +9,7 @@ class FilterableTable extends StatefulWidget {
     required this.onSortChanged,
     this.onFilterRefresh,
     this.selectedActions,
+    this.actions,
     this.selectedActionslabels,
     super.key,
   });
@@ -20,6 +21,7 @@ class FilterableTable extends StatefulWidget {
 
   final void Function()? onFilterRefresh;
   final List<void Function(int index)>? selectedActions;
+  final List<void Function(List<int> indices)>? actions;
   final List<Widget>? selectedActionslabels;
   final void Function(int index, bool invert) onSortChanged;
 
@@ -266,19 +268,18 @@ class _FilterableTableState extends State<FilterableTable> {
                     color: Colors.black,
                   ),
                 ),
-                if (widget.selectedActions != null &&
+                if (widget.actions != null &&
                     widget.selectedActionslabels != null)
                   Row(
                     children: [
-                      for (final action in widget.selectedActions!)
+                      for (final action in widget.actions!)
                         ElevatedButton(
                           onPressed: () {
-                            for (final index in selected) action(index);
+                            action(selected);
                             selected.clear();
                           },
                           child:
-                              widget.selectedActionslabels![widget
-                                  .selectedActions!
+                              widget.selectedActionslabels![widget.actions!
                                   .indexOf(action)],
                         ),
                     ],

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wallbox_logs/back_layer/model_repos/simulation_repo/user_master/simulation_repo.dart';
 import 'package:wallbox_logs/mid_layer/services/database_model.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/mid_layer/services/parser/wall_box_line/wall_box_line.dart';
 
 part 'wall_box_transaction_block.freezed.dart';
@@ -77,7 +77,7 @@ class WallBoxTransactionBlock
   WallBoxTransactionBlock? _tryMerge(WallBoxTransactionBlock other) {
     if (_canMergeAtStart(other)) {
       inCompleteRepo.delete(
-        other.repoID,
+        other.repoKey,
         () async => true,
       );
       return WallBoxTransactionBlock(
@@ -87,7 +87,7 @@ class WallBoxTransactionBlock
       );
     } else if (_canMergeAtEnd(other)) {
       inCompleteRepo.delete(
-        other.repoID,
+        other.repoKey,
         () async => true,
       );
       return WallBoxTransactionBlock(
@@ -111,7 +111,7 @@ class WallBoxTransactionBlock
   }
 
   @override
-  String get repoID => DateTime.now().millisecondsSinceEpoch.toString();
+  String get repoKey => DateTime.now().millisecondsSinceEpoch.toString();
 
   ///
   factory WallBoxTransactionBlock.fromJson(Map<String, Object?> json) =>

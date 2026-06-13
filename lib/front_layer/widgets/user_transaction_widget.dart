@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/my_text_field.dart';
 import 'package:wallbox_logs/front_layer/widgets/labeled_field.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
-import 'package:wallbox_logs/mid_layer/services/user_master/user_master_data.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/user_master/user_master_data.dart';
 import 'package:wallbox_logs/utility.dart';
 
 /// Shows all available informations about the [user]'s transactions

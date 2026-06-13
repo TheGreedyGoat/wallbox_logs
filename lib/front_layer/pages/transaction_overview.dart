@@ -5,7 +5,7 @@ import 'package:wallbox_logs/front_layer/widgets/filter_widgets/date_filter_widg
 import 'package:wallbox_logs/front_layer/widgets/filter_widgets/number_range_filter_widget.dart';
 import 'package:wallbox_logs/front_layer/widgets/filterable_table_v2.dart';
 import 'package:wallbox_logs/front_layer/widgets/labeled_field.dart';
-import 'package:wallbox_logs/mid_layer/services/transaction/wall_box_transaction.dart';
+import 'package:wallbox_logs/mid_layer/models/transaction/wall_box_transaction.dart';
 import 'package:wallbox_logs/riverpod/providers.dart';
 
 /// A Main Page.
@@ -75,11 +75,23 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
           ),
 
           FilterableTable(
-            selectedActions: [
-              (int index) async {
-                final transaction = state.getFiltered()[index];
-                await WallBoxTransaction.repo.delete(
-                  transaction.repoID,
+            actions: [
+              (indices) async {
+                print('deleion indices: $indices');
+                if (indices.isEmpty) return;
+                final transactions = state.getFiltered();
+                final selected = transactions
+                    .where(
+                      (element) =>
+                          indices.contains(transactions.indexOf(element)),
+                    )
+                    .map(
+                      (transaction) => transaction.repoKey,
+                    )
+                    .toList(growable: false);
+
+                await WallBoxTransaction.repo.deleteList(
+                  selected,
                   () async {
                     return await showDialog<bool>(
                           barrierDismissible: false,
@@ -87,7 +99,7 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                'Sind Sie sicher, dass Sie diese Transaktion löschen wollen? Der Vorgang kann nicht rückgängig gemacht',
+                                'Sind Sie sicher, dass Sie diese Transaktion(en) löschen wollen? Der Vorgang kann nicht rückgängig gemacht',
                               ),
                               actions: [
                                 TextButton(
@@ -109,13 +121,14 @@ class _TransactionOverviewState extends ConsumerState<TransactionOverview> {
                 );
                 ref.read(transactionTableProvider.notifier).refresh();
               },
-              (int index) {
-                final transaction = state.getFiltered()[index];
-
-                WallBoxTransaction.repo.createOrUpdate(
-                  transaction.copyWith(isPaid: true),
-                );
-                ref.read(transactionTableProvider.notifier).refresh();
+              (indices) {
+                // final transactions = state.getFiltered();
+                // for (int i in indices) {
+                //   WallBoxTransaction.repo.createOrUpdate(
+                //     transactions[i].copyWith(isBilled: true),
+                //   );
+                // }
+                // ref.read(transactionTableProvider.notifier).refresh();
               },
             ],
             selectedActionslabels: [

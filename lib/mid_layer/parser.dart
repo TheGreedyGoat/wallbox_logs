@@ -2,37 +2,12 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:wallbox_logs/back_layer/my_local_database.dart';
-import 'package:wallbox_logs/mid_layer/data/file_data_2.dart';
+import 'package:wallbox_logs/mid_layer/data/log_file_data.dart';
 import 'package:wallbox_logs/mid_layer/services/parser/wall_box_log.dart';
 
 ///static class to validate and parse Wallbox files
 class WallBoxParser {
   static bool isLoaded = false;
-
-  // static Future<void> _ensurePreload() async {
-  //   if (isLoaded) return;
-  //   String data = await MyLocalDatabase.readFile(_fileName);
-  //   _existingFileNames = data
-  //       .split('\n')
-  //       .where(
-  //         (element) => element.isNotEmpty,
-  //       )
-  //       .toList(growable: true);
-  //   isLoaded = true;
-  // }
-
-  // static Future<void> _registerFileName(String fileName) async {
-  //   _existingFileNames.add(fileName);
-  //   MyLocalDatabase.writeFile(
-  //     _fileName,
-  //     _existingFileNames.fold(
-  //       '',
-  //       (previousValue, element) {
-  //         return '$previousValue\n$element';
-  //       },
-  //     ),
-  //   );
-  // }
 
   static Future<int> processFilePickerResult(
     FilePickerResult? result,
@@ -76,7 +51,7 @@ class WallBoxParser {
       return true;
     } catch (e) {
       String? override = await overrideOnExisting(name);
-      print('new file name: $override');
+      // print('new file name: $override');
       if (override != null) {
         return await _createLog(override, ext, content, overrideOnExisting);
       }

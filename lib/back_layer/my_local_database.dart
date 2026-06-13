@@ -27,6 +27,7 @@ class MyLocalDatabase {
     final directory = Directory(
       (await _subDirectory(path)).path,
     );
+    print('local path is: ${directory.path}');
     if (!await directory.exists()) {
       await directory.create();
     }
@@ -58,8 +59,10 @@ class MyLocalDatabase {
     try {
       final file = await _localFile(fullFileName, subPath);
       final content = await file.readAsString();
+
       return content;
     } catch (e) {
+      print('Error while reading file $fullFileName from $subPath: $e');
       return '';
     }
   }
@@ -73,13 +76,14 @@ class MyLocalDatabase {
   static void writeFile(
     String fullFileName,
     String content,
-    String subPath,
-  ) {
-    print('Database enqueues $content');
+    String subPath, [
+    Function()? callback,
+  ]) {
+    print('Enqueuing ');
     _writingQueue.add(
       () async {
-        print('writing to file $fullFileName');
         await _writeToFile(fullFileName, content, subPath);
+        callback?.call();
       },
     );
     if (!_queueIsActive) {
@@ -101,7 +105,6 @@ class MyLocalDatabase {
     _queueIsActive = true;
     try {
       while (_writingQueue.isNotEmpty) {
-        print(_writingQueue.length);
         await _writingQueue.removeAt(0)();
       }
     } finally {
@@ -114,5 +117,13 @@ class MyLocalDatabase {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     }
+  }
+
+  static Future<void> deleteFile(
+    String fullFileName,
+    String subPath,
+  ) async {
+    final file = await _localFile(fullFileName, subPath);
+    if (await file.exists()) await file.delete();
   }
 }
